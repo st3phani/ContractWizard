@@ -25,9 +25,10 @@ Contract Manager is a full-stack web application for managing contracts, benefic
 
 ### Data Storage Solutions
 - **ORM**: Drizzle ORM for type-safe database operations
-- **Database**: PostgreSQL (configured for Neon serverless)
-- **Schema**: Centralized schema definitions in `shared/schema.ts`
-- **Migrations**: Drizzle migrations in `./migrations` directory
+- **Database**: PostgreSQL (configured for Neon serverless) - **ACTIVE**
+- **Schema**: Centralized schema definitions in `shared/schema.ts` with relations
+- **Storage**: DatabaseStorage class replaces MemStorage for persistent data
+- **Migrations**: Schema pushed via `npm run db:push`
 
 ## Key Components
 
@@ -47,6 +48,8 @@ Three main entities:
 - **Dashboard** - Overview with statistics and recent contracts
 - **Contract Form** - Create new contracts with beneficiary information
 - **Templates** - Manage contract templates
+- **Beneficiaries** - Manage beneficiary database with CRUD operations
+- **Settings** - Application configuration and company information
 - **Not Found** - 404 error page
 
 ### UI Components

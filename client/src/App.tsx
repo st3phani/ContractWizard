@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Dashboard from "@/pages/dashboard";
 import ContractForm from "@/pages/contract-form";
 import Templates from "@/pages/templates";
+import Beneficiaries from "@/pages/beneficiaries";
+import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -14,6 +16,8 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/contract-form" component={ContractForm} />
       <Route path="/templates" component={Templates} />
+      <Route path="/beneficiaries" component={Beneficiaries} />
+      <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -1,4 +1,5 @@
 import { pgTable, text, serial, integer, timestamp, decimal, boolean } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -61,6 +62,26 @@ export type InsertBeneficiary = z.infer<typeof insertBeneficiarySchema>;
 
 export type Contract = typeof contracts.$inferSelect;
 export type InsertContract = z.infer<typeof insertContractSchema>;
+
+// Relations
+export const contractTemplatesRelations = relations(contractTemplates, ({ many }) => ({
+  contracts: many(contracts),
+}));
+
+export const beneficiariesRelations = relations(beneficiaries, ({ many }) => ({
+  contracts: many(contracts),
+}));
+
+export const contractsRelations = relations(contracts, ({ one }) => ({
+  template: one(contractTemplates, {
+    fields: [contracts.templateId],
+    references: [contractTemplates.id],
+  }),
+  beneficiary: one(beneficiaries, {
+    fields: [contracts.beneficiaryId],
+    references: [beneficiaries.id],
+  }),
+}));
 
 export type ContractWithDetails = Contract & {
   template: ContractTemplate;

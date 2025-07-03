@@ -117,6 +117,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/beneficiaries/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteBeneficiary(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Beneficiary not found" });
+      }
+      res.json({ message: "Beneficiary deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete beneficiary" });
+    }
+  });
+
   // Contract stats (must be before /:id route)
   app.get("/api/contracts/stats", async (req, res) => {
     try {

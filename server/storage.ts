@@ -10,6 +10,8 @@ import {
   type InsertBeneficiary,
   type ContractWithDetails
 } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // Contract Templates
@@ -323,4 +325,221 @@ _________________           _________________`,
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  async getContractTemplates(): Promise<ContractTemplate[]> {
+    const templates = await db.select().from(contractTemplates);
+    return templates;
+  }
+
+  async getContractTemplate(id: number): Promise<ContractTemplate | undefined> {
+    const [template] = await db.select().from(contractTemplates).where(eq(contractTemplates.id, id));
+    return template || undefined;
+  }
+
+  async createContractTemplate(template: InsertContractTemplate): Promise<ContractTemplate> {
+    const [newTemplate] = await db
+      .insert(contractTemplates)
+      .values(template)
+      .returning();
+    return newTemplate;
+  }
+
+  async updateContractTemplate(id: number, template: Partial<InsertContractTemplate>): Promise<ContractTemplate | undefined> {
+    const [updated] = await db
+      .update(contractTemplates)
+      .set(template)
+      .where(eq(contractTemplates.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  async deleteContractTemplate(id: number): Promise<boolean> {
+    const result = await db.delete(contractTemplates).where(eq(contractTemplates.id, id));
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  async getBeneficiaries(): Promise<Beneficiary[]> {
+    const beneficiariesList = await db.select().from(beneficiaries);
+    return beneficiariesList;
+  }
+
+  async getBeneficiary(id: number): Promise<Beneficiary | undefined> {
+    const [beneficiary] = await db.select().from(beneficiaries).where(eq(beneficiaries.id, id));
+    return beneficiary || undefined;
+  }
+
+  async getBeneficiaryByEmail(email: string): Promise<Beneficiary | undefined> {
+    const [beneficiary] = await db.select().from(beneficiaries).where(eq(beneficiaries.email, email));
+    return beneficiary || undefined;
+  }
+
+  async createBeneficiary(beneficiary: InsertBeneficiary): Promise<Beneficiary> {
+    const [newBeneficiary] = await db
+      .insert(beneficiaries)
+      .values(beneficiary)
+      .returning();
+    return newBeneficiary;
+  }
+
+  async updateBeneficiary(id: number, beneficiary: Partial<InsertBeneficiary>): Promise<Beneficiary | undefined> {
+    const [updated] = await db
+      .update(beneficiaries)
+      .set(beneficiary)
+      .where(eq(beneficiaries.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  async deleteBeneficiary(id: number): Promise<boolean> {
+    const result = await db.delete(beneficiaries).where(eq(beneficiaries.id, id));
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  async getContracts(): Promise<ContractWithDetails[]> {
+    const contractsWithDetails = await db.query.contracts.findMany({
+      with: {
+        template: true,
+        beneficiary: true,
+      },
+      orderBy: (contracts, { desc }) => [desc(contracts.createdAt)],
+    });
+    return contractsWithDetails;
+  }
+
+  async getContract(id: number): Promise<ContractWithDetails | undefined> {
+    const contract = await db.query.contracts.findFirst({
+      where: eq(contracts.id, id),
+      with: {
+        template: true,
+        beneficiary: true,
+      },
+    });
+    return contract || undefined;
+  }
+
+  async getContractByOrderNumber(orderNumber: string): Promise<ContractWithDetails | undefined> {
+    const contract = await db.query.contracts.findFirst({
+      where: eq(contracts.orderNumber, orderNumber),
+      with: {
+        template: true,
+        beneficiary: true,
+      },
+    });
+    return contract || undefined;
+  }
+
+  async createContract(contractData: InsertContract): Promise<ContractWithDetails> {
+    const [newContract] = await db
+      .insert(contracts)
+      .values(contractData)
+      .returning();
+
+    const contractWithDetails = await this.getContract(newContract.id);
+    if (!contractWithDetails) {
+      throw new Error("Failed to retrieve created contract");
+    }
+    
+    return contractWithDetails;
+  }
+
+  async updateContract(id: number, contractData: Partial<Contract>): Promise<ContractWithDetails | undefined> {
+    const [updated] = await db
+      .update(contracts)
+      .set(contractData)
+      .where(eq(contracts.id, id))
+      .returning();
+    
+    if (!updated) return undefined;
+    
+    return await this.getContract(id);
+  }
+
+  async deleteContract(id: number): Promise<boolean> {
+    const result = await db.delete(contracts).where(eq(contracts.id, id));
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  async getContractStats(): Promise<{
+    totalContracts: number;
+    pendingContracts: number;
+    sentContracts: number;
+    completedContracts: number;
+  }> {
+    const allContracts = await db.select().from(contracts);
+    
+    return {
+      totalContracts: allContracts.length,
+      pendingContracts: allContracts.filter(c => c.status === "draft").length,
+      sentContracts: allContracts.filter(c => c.status === "sent").length,
+      completedContracts: allContracts.filter(c => c.status === "completed").length,
+    };
+  }
+}
+
+// Initialize database storage with default templates
+const initializeDatabase = async () => {
+  try {
+    // Check if we already have templates
+    const existingTemplates = await db.select().from(contractTemplates);
+    
+    if (existingTemplates.length === 0) {
+      // Add default template
+      await db.insert(contractTemplates).values({
+        name: "Contract de Servicii",
+        content: `CONTRACT DE SERVICII
+
+Nr. {{orderNumber}} din {{currentDate}}
+
+Între:
+
+PRESTATOR: [Numele Companiei], cu sediul în [Adresa Companiei], 
+înregistrată la Registrul Comerțului sub nr. [Nr. Registrul Comerțului], 
+CIF [CIF Companie], reprezentată legal prin [Reprezentant Legal], 
+în calitate de prestator,
+
+și
+
+BENEFICIAR: {{beneficiary.fullName}}, 
+domiciliat în {{beneficiary.address}}, 
+CNP/CUI: {{beneficiary.cnp}}, 
+în calitate de beneficiar,
+
+S-a încheiat prezentul contract având următoarele clauze:
+
+Art. 1 - Obiectul contractului
+Prestatorul se obligă să execute pentru beneficiar serviciile prevăzute în anexa care face parte integrantă din prezentul contract.
+
+Art. 2 - Durata contractului
+Prezentul contract se încheie pe perioada: {{contract.startDate}} - {{contract.endDate}}
+
+Art. 3 - Valoarea contractului
+Valoarea totală a contractului este de {{contract.value}} {{contract.currency}}, TVA inclus.
+
+Art. 4 - Obligațiile părților
+Părțile își asumă obligațiile prevăzute în legislația în vigoare și în prezentul contract.
+
+{{contract.notes}}
+
+PRESTATOR                    BENEFICIAR
+_________________           _________________`,
+        fields: JSON.stringify([
+          { name: "beneficiary.fullName", type: "text", required: true },
+          { name: "beneficiary.address", type: "textarea", required: true },
+          { name: "beneficiary.cnp", type: "text", required: true },
+          { name: "contract.value", type: "number", required: true },
+          { name: "contract.currency", type: "select", options: ["RON", "EUR", "USD"], required: true },
+          { name: "contract.startDate", type: "date", required: true },
+          { name: "contract.endDate", type: "date", required: true },
+          { name: "contract.notes", type: "textarea", required: false }
+        ])
+      });
+    }
+  } catch (error) {
+    console.error("Failed to initialize database:", error);
+  }
+};
+
+export const storage = new DatabaseStorage();
+
+// Initialize database on startup
+initializeDatabase();
