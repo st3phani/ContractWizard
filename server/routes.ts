@@ -117,6 +117,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Contract stats (must be before /:id route)
+  app.get("/api/contracts/stats", async (req, res) => {
+    try {
+      const stats = await storage.getContractStats();
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch contract stats" });
+    }
+  });
+
   // Contracts
   app.get("/api/contracts", async (req, res) => {
     try {
@@ -280,16 +290,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Email sent successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to send email" });
-    }
-  });
-
-  // Contract stats
-  app.get("/api/contracts/stats", async (req, res) => {
-    try {
-      const stats = await storage.getContractStats();
-      res.json(stats);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch contract stats" });
     }
   });
 
