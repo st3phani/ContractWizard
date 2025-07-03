@@ -9,11 +9,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useLocation } from "wouter";
+import { Search, Check, Plus, User } from "lucide-react";
+import { cn } from "@/lib/utils";
 import Sidebar from "@/components/sidebar";
-import type { ContractTemplate } from "@shared/schema";
+import type { ContractTemplate, Beneficiary } from "@shared/schema";
 
 const contractFormSchema = z.object({
   // Beneficiary data
@@ -41,6 +47,9 @@ export default function ContractForm() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [beneficiarySearchOpen, setBeneficiarySearchOpen] = useState(false);
+  const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
+  const [showNewBeneficiaryForm, setShowNewBeneficiaryForm] = useState(true);
 
   const form = useForm<ContractFormData>({
     resolver: zodResolver(contractFormSchema),
@@ -66,6 +75,11 @@ export default function ContractForm() {
   // Fetch templates
   const { data: templates = [] } = useQuery<ContractTemplate[]>({
     queryKey: ["/api/contract-templates"],
+  });
+
+  // Fetch beneficiaries for search
+  const { data: beneficiaries = [] } = useQuery<Beneficiary[]>({
+    queryKey: ["/api/beneficiaries"],
   });
 
   // Create contract mutation
@@ -106,6 +120,32 @@ export default function ContractForm() {
     createContractMutation.mutate(data);
   };
 
+  const handleSelectBeneficiary = (beneficiary: Beneficiary) => {
+    setSelectedBeneficiary(beneficiary);
+    setShowNewBeneficiaryForm(false);
+    setBeneficiarySearchOpen(false);
+    
+    // Update form with selected beneficiary data
+    form.setValue("beneficiary.fullName", beneficiary.fullName);
+    form.setValue("beneficiary.email", beneficiary.email);
+    form.setValue("beneficiary.phone", beneficiary.phone || "");
+    form.setValue("beneficiary.address", beneficiary.address || "");
+    form.setValue("beneficiary.cnp", beneficiary.cnp || "");
+  };
+
+  const handleNewBeneficiary = () => {
+    setSelectedBeneficiary(null);
+    setShowNewBeneficiaryForm(true);
+    setBeneficiarySearchOpen(false);
+    
+    // Clear form
+    form.setValue("beneficiary.fullName", "");
+    form.setValue("beneficiary.email", "");
+    form.setValue("beneficiary.phone", "");
+    form.setValue("beneficiary.address", "");
+    form.setValue("beneficiary.cnp", "");
+  };
+
   return (
     <div className="min-h-screen flex bg-gray-50">
       <Sidebar />
@@ -132,75 +172,195 @@ export default function ContractForm() {
                     <CardTitle>Date Beneficiar</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="beneficiary.fullName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Nume Complet</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Numele complet al beneficiarului" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    {/* Beneficiary Search Section */}
+                    <div className="space-y-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-medium text-blue-900">Selectează Beneficiarul</h4>
+                          <p className="text-sm text-blue-700">Caută un beneficiar existent sau creează unul nou</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        <Popover open={beneficiarySearchOpen} onOpenChange={setBeneficiarySearchOpen}>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={beneficiarySearchOpen}
+                              className="flex-1 justify-start"
+                            >
+                              {selectedBeneficiary ? (
+                                <div className="flex items-center">
+                                  <Avatar className="h-6 w-6 mr-2">
+                                    <AvatarFallback className="text-xs">
+                                      {selectedBeneficiary.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  {selectedBeneficiary.fullName}
+                                </div>
+                              ) : (
+                                <>
+                                  <Search className="mr-2 h-4 w-4" />
+                                  Caută beneficiar existent...
+                                </>
+                              )}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-full p-0" align="start">
+                            <Command>
+                              <CommandInput placeholder="Caută după nume sau email..." />
+                              <CommandList>
+                                <CommandEmpty>Nu s-au găsit beneficiari.</CommandEmpty>
+                                <CommandGroup>
+                                  {beneficiaries.map((beneficiary) => (
+                                    <CommandItem
+                                      key={beneficiary.id}
+                                      value={`${beneficiary.fullName} ${beneficiary.email}`}
+                                      onSelect={() => handleSelectBeneficiary(beneficiary)}
+                                    >
+                                      <div className="flex items-center w-full">
+                                        <Avatar className="h-8 w-8 mr-3">
+                                          <AvatarFallback className="text-xs">
+                                            {beneficiary.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                          </AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex-1">
+                                          <div className="font-medium">{beneficiary.fullName}</div>
+                                          <div className="text-sm text-gray-500">{beneficiary.email}</div>
+                                        </div>
+                                        {selectedBeneficiary?.id === beneficiary.id && (
+                                          <Check className="h-4 w-4" />
+                                        )}
+                                      </div>
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                        
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={handleNewBeneficiary}
+                          className={cn(
+                            "shrink-0",
+                            showNewBeneficiaryForm && "bg-blue-100 border-blue-300 text-blue-700"
+                          )}
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Beneficiar Nou
+                        </Button>
+                      </div>
 
-                    <FormField
-                      control={form.control}
-                      name="beneficiary.email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input type="email" placeholder="adresa@email.com" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                      {selectedBeneficiary && (
+                        <div className="p-3 bg-white rounded border border-blue-200">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <Avatar className="h-10 w-10 mr-3">
+                                <AvatarFallback>
+                                  {selectedBeneficiary.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <div className="font-medium">{selectedBeneficiary.fullName}</div>
+                                <div className="text-sm text-gray-500">{selectedBeneficiary.email}</div>
+                                {selectedBeneficiary.phone && (
+                                  <div className="text-sm text-gray-500">{selectedBeneficiary.phone}</div>
+                                )}
+                              </div>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={handleNewBeneficiary}
+                              className="text-blue-600 hover:text-blue-700"
+                            >
+                              <User className="h-4 w-4 mr-1" />
+                              Schimbă
+                            </Button>
+                          </div>
+                        </div>
                       )}
-                    />
+                    </div>
 
-                    <FormField
-                      control={form.control}
-                      name="beneficiary.phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Telefon</FormLabel>
-                          <FormControl>
-                            <Input placeholder="+40 xxx xxx xxx" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    {/* Show form fields only when creating new beneficiary */}
+                    {showNewBeneficiaryForm && (
+                      <div className="space-y-4">
+                        <FormField
+                          control={form.control}
+                          name="beneficiary.fullName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Nume Complet</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Numele complet al beneficiarului" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                    <FormField
-                      control={form.control}
-                      name="beneficiary.address"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Adresa</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="Adresa completă" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        <FormField
+                          control={form.control}
+                          name="beneficiary.email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Email</FormLabel>
+                              <FormControl>
+                                <Input type="email" placeholder="adresa@email.com" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                    <FormField
-                      control={form.control}
-                      name="beneficiary.cnp"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>CNP/CUI</FormLabel>
-                          <FormControl>
-                            <Input placeholder="CNP sau CUI" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        <FormField
+                          control={form.control}
+                          name="beneficiary.phone"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Telefon</FormLabel>
+                              <FormControl>
+                                <Input placeholder="+40 xxx xxx xxx" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="beneficiary.address"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Adresa</FormLabel>
+                              <FormControl>
+                                <Textarea placeholder="Adresa completă" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="beneficiary.cnp"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>CNP/CUI</FormLabel>
+                              <FormControl>
+                                <Input placeholder="CNP sau CUI" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
 
