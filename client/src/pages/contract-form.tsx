@@ -644,7 +644,7 @@ export default function ContractForm() {
                     value={formData.companyName || ""}
                     onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                     placeholder="Denumirea companiei"
-                    className={!formData.companyName?.trim() ? "border-red-500" : ""}
+                    className={!formData.companyName?.trim() ? "border-pink-500" : ""}
                   />
                 </div>
 
@@ -656,7 +656,7 @@ export default function ContractForm() {
                     onChange={(e) => setFormData({ ...formData, companyAddress: e.target.value })}
                     rows={3}
                     placeholder="Adresa completă a companiei"
-                    className={!formData.companyAddress?.trim() ? "border-red-500" : ""}
+                    className={!formData.companyAddress?.trim() ? "border-pink-500" : ""}
                   />
                 </div>
 
@@ -668,7 +668,7 @@ export default function ContractForm() {
                       value={formData.companyCui || ""}
                       onChange={(e) => setFormData({ ...formData, companyCui: e.target.value })}
                       placeholder="RO12345678"
-                      className={!formData.companyCui?.trim() ? "border-red-500" : ""}
+                      className={!formData.companyCui?.trim() ? "border-pink-500" : ""}
                     />
                   </div>
 
@@ -679,7 +679,7 @@ export default function ContractForm() {
                       value={formData.companyRegistrationNumber || ""}
                       onChange={(e) => setFormData({ ...formData, companyRegistrationNumber: e.target.value })}
                       placeholder="J40/1234/2023"
-                      className={!formData.companyRegistrationNumber?.trim() ? "border-red-500" : ""}
+                      className={!formData.companyRegistrationNumber?.trim() ? "border-pink-500" : ""}
                     />
                   </div>
                 </div>
@@ -692,7 +692,7 @@ export default function ContractForm() {
                       value={formData.companyLegalRepresentative || ""}
                       onChange={(e) => setFormData({ ...formData, companyLegalRepresentative: e.target.value })}
                       placeholder="Numele reprezentantului legal"
-                      className={!formData.companyLegalRepresentative?.trim() ? "border-red-500" : ""}
+                      className={!formData.companyLegalRepresentative?.trim() ? "border-pink-500" : ""}
                     />
                   </div>
 
@@ -703,7 +703,7 @@ export default function ContractForm() {
                       value={formData.cnp || ""}
                       onChange={(e) => setFormData({ ...formData, cnp: e.target.value })}
                       placeholder="CNP reprezentant legal"
-                      className={!formData.cnp?.trim() ? "border-red-500" : ""}
+                      className={!formData.cnp?.trim() ? "border-pink-500" : ""}
                     />
                   </div>
                 </div>
@@ -719,7 +719,7 @@ export default function ContractForm() {
                       value={formData.fullName}
                       onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                       placeholder="Numele complet al beneficiarului"
-                      className={!formData.fullName.trim() ? "border-red-500" : ""}
+                      className={!formData.fullName.trim() ? "border-pink-500" : ""}
                     />
                   </div>
 
@@ -730,7 +730,7 @@ export default function ContractForm() {
                       value={formData.cnp || ""}
                       onChange={(e) => setFormData({ ...formData, cnp: e.target.value })}
                       placeholder="1234567890123"
-                      className={!formData.cnp?.trim() ? "border-red-500" : ""}
+                      className={!formData.cnp?.trim() ? "border-pink-500" : ""}
                     />
                   </div>
                 </div>
@@ -743,7 +743,7 @@ export default function ContractForm() {
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                     rows={3}
                     placeholder="Adresa completă"
-                    className={!formData.address?.trim() ? "border-red-500" : ""}
+                    className={!formData.address?.trim() ? "border-pink-500" : ""}
                   />
                 </div>
               </>
@@ -759,7 +759,7 @@ export default function ContractForm() {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="adresa@email.com"
-                  className={!formData.email.trim() ? "border-red-500" : ""}
+                  className={!formData.email.trim() ? "border-pink-500" : ""}
                 />
               </div>
 
@@ -770,7 +770,7 @@ export default function ContractForm() {
                   value={formData.phone || ""}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   placeholder="+40 xxx xxx xxx"
-                  className={!formData.phone?.trim() ? "border-red-500" : ""}
+                  className={!formData.phone?.trim() ? "border-pink-500" : ""}
                 />
               </div>
             </div>
