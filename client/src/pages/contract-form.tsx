@@ -85,7 +85,10 @@ const contractFormSchema = z.object({
   }),
   // Contract data
   contract: z.object({
-    templateId: z.number({ required_error: "Template-ul este obligatoriu" }).min(1, "Selectați un template"),
+    templateId: z.number({
+      required_error: "Template-ul este obligatoriu",
+      invalid_type_error: "Template-ul este obligatoriu",
+    }).min(1, "Template-ul este obligatoriu"),
     value: z.string().optional(),
     currency: z.string().default("RON"),
     startDate: z.string().optional(),
@@ -176,17 +179,31 @@ export default function ContractForm() {
   });
 
   const onSubmit = (data: ContractFormData) => {
+    // Force validation and trigger errors
+    form.trigger();
+    
     // Check for validation errors
     const errors = form.formState.errors;
-    if (errors.beneficiary) {
-      const firstErrorField = Object.keys(errors.beneficiary)[0];
-      const element = document.querySelector(`[name="beneficiary.${firstErrorField}"]`) as HTMLElement;
-      if (element) {
-        element.focus();
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        // Add red border
-        element.classList.add('field-error');
+    if (Object.keys(errors).length > 0) {
+      // Find the first error field
+      let firstErrorField = null;
+      
+      if (errors.beneficiary) {
+        const beneficiaryError = Object.keys(errors.beneficiary)[0];
+        firstErrorField = `beneficiary.${beneficiaryError}`;
+      } else if (errors.contract) {
+        const contractError = Object.keys(errors.contract)[0];
+        firstErrorField = `contract.${contractError}`;
       }
+
+      if (firstErrorField) {
+        const element = document.querySelector(`[name="${firstErrorField}"]`) as HTMLElement;
+        if (element) {
+          element.focus();
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+      
       return;
     }
 

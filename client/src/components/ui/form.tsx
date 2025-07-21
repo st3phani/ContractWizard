@@ -113,6 +113,7 @@ const FormControl = React.forwardRef<
     <Slot
       ref={ref}
       id={formItemId}
+      className={cn(error && "field-error")}
       aria-describedby={
         !error
           ? `${formDescriptionId}`
