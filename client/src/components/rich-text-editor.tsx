@@ -102,6 +102,9 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
       }),
       Table.configure({
         resizable: true,
+        HTMLAttributes: {
+          class: null,
+        },
       }),
       TableRow,
       TableHeader,
@@ -119,10 +122,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
       
       // Check table border state
       if (inTable) {
-        const tableElement = editor.view.dom.querySelector('table');
-        if (tableElement) {
-          setTableHasBorder(!tableElement.classList.contains('no-border'));
-        }
+        const tableAttrs = editor.getAttributes('table');
+        setTableHasBorder(tableAttrs.class !== 'no-border');
       }
     },
     onSelectionUpdate: ({ editor }) => {
@@ -135,10 +136,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
       
       // Check table border state
       if (inTable) {
-        const tableElement = editor.view.dom.querySelector('table');
-        if (tableElement) {
-          setTableHasBorder(!tableElement.classList.contains('no-border'));
-        }
+        const tableAttrs = editor.getAttributes('table');
+        setTableHasBorder(tableAttrs.class !== 'no-border');
       }
     },
     editorProps: {
@@ -390,14 +389,11 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
                 const newBorderState = !tableHasBorder;
                 setTableHasBorder(newBorderState);
                 
-                // Find the table element in DOM and toggle class
-                const tableElement = editor.view.dom.querySelector('table');
-                if (tableElement) {
-                  if (newBorderState) {
-                    tableElement.classList.remove('no-border');
-                  } else {
-                    tableElement.classList.add('no-border');
-                  }
+                // Use editor commands to properly update attributes
+                if (newBorderState) {
+                  editor.chain().focus().updateAttributes('table', { class: null }).run();
+                } else {
+                  editor.chain().focus().updateAttributes('table', { class: 'no-border' }).run();
                 }
               }}
               className="h-8 w-8 p-0"
