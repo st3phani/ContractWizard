@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { formatDate } from "@/lib/utils";
 import Sidebar from "@/components/sidebar";
-import TinyMCEEditor from "@/components/tinymce-editor";
+import SimpleHtmlEditor from "@/components/simple-html-editor";
 import type { ContractTemplate, InsertContractTemplate } from "@shared/schema";
 
 export default function Templates() {
@@ -187,7 +187,7 @@ export default function Templates() {
             
             <div className="space-y-2">
               <Label>Conținut Contract *</Label>
-              <TinyMCEEditor
+              <SimpleHtmlEditor
                 content={formData.content}
                 onChange={(content) => setFormData({ ...formData, content })}
                 placeholder="Conținutul contractului cu placeholder-uri (ex: {{beneficiary.name}})"
