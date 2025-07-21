@@ -1,0 +1,128 @@
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { BeneficiaryFormFields } from "./beneficiary-form-fields";
+import { apiRequest } from "@/lib/queryClient";
+import type { InsertBeneficiary, Beneficiary } from "@shared/schema";
+import { useToast } from "@/hooks/use-toast";
+
+interface BeneficiaryFormModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  beneficiary?: Beneficiary | null;
+  onSuccess?: (beneficiary: Beneficiary) => void;
+}
+
+export function BeneficiaryFormModal({ isOpen, onClose, beneficiary, onSuccess }: BeneficiaryFormModalProps) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const form = useForm<InsertBeneficiary>({
+    defaultValues: {
+      fullName: beneficiary?.fullName || "",
+      email: beneficiary?.email || "",
+      phone: beneficiary?.phone || "",
+      address: beneficiary?.address || "",
+      cnp: beneficiary?.cnp || "",
+      companyName: beneficiary?.companyName || "",
+      companyAddress: beneficiary?.companyAddress || "",
+      companyCui: beneficiary?.companyCui || "",
+      companyRegistrationNumber: beneficiary?.companyRegistrationNumber || "",
+      companyLegalRepresentative: beneficiary?.companyLegalRepresentative || "",
+      isCompany: beneficiary?.isCompany || false,
+    },
+  });
+
+  const createBeneficiaryMutation = useMutation({
+    mutationFn: (data: InsertBeneficiary) => apiRequest("POST", "/api/beneficiaries", data),
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
+      onClose();
+      form.reset();
+      if (onSuccess && response) {
+        onSuccess(response as Beneficiary);
+      }
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "A apărut o eroare la crearea beneficiarului.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateBeneficiaryMutation = useMutation({
+    mutationFn: (data: InsertBeneficiary) => 
+      apiRequest("PATCH", `/api/beneficiaries/${beneficiary!.id}`, data),
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
+      onClose();
+      form.reset();
+      if (onSuccess && response) {
+        onSuccess(response as Beneficiary);
+      }
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "A apărut o eroare la actualizarea beneficiarului.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit = (data: InsertBeneficiary) => {
+    if (beneficiary) {
+      updateBeneficiaryMutation.mutate(data);
+    } else {
+      createBeneficiaryMutation.mutate(data);
+    }
+  };
+
+  const handleClose = () => {
+    form.reset();
+    onClose();
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>
+            {beneficiary ? "Editează Beneficiar" : "Adaugă Beneficiar Nou"}
+          </DialogTitle>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <BeneficiaryFormFields
+              control={form.control}
+              watch={form.watch}
+            />
+
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button type="button" variant="outline" onClick={handleClose}>
+                Anulează
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={createBeneficiaryMutation.isPending || updateBeneficiaryMutation.isPending}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                {(createBeneficiaryMutation.isPending || updateBeneficiaryMutation.isPending) ? 
+                  "Se salvează..." : 
+                  (beneficiary ? "Actualizează Beneficiar" : "Adaugă Beneficiar")
+                }
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}

@@ -19,6 +19,7 @@ import { useLocation } from "wouter";
 import { Search, Check, Plus, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Sidebar from "@/components/sidebar";
+import { BeneficiaryFormFields } from "@/components/beneficiary-form-fields";
 import type { ContractTemplate, Beneficiary } from "@shared/schema";
 
 const contractFormSchema = z.object({
