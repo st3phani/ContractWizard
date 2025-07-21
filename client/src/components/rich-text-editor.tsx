@@ -20,6 +20,7 @@ import {
   AlignLeft, 
   AlignCenter, 
   AlignRight,
+  AlignJustify,
   List,
   ListOrdered,
   Image as ImageIcon,
@@ -209,6 +210,15 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           className="h-8 w-8 p-0"
         >
           <AlignRight className="h-4 w-4" />
+        </Button>
+        
+        <Button
+          variant={editor.isActive({ textAlign: 'justify' }) ? 'default' : 'ghost'}
+          size="sm"
+          onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+          className="h-8 w-8 p-0"
+        >
+          <AlignJustify className="h-4 w-4" />
         </Button>
 
         <div className="w-px h-6 bg-gray-300 mx-1" />
