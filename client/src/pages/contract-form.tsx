@@ -19,9 +19,9 @@ import { useLocation } from "wouter";
 import { Search, Check, Plus, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Sidebar from "@/components/sidebar";
-import { BeneficiaryFormFields } from "@/components/beneficiary-form-fields";
 import type { ContractTemplate, Beneficiary, InsertBeneficiary } from "@shared/schema";
 import { insertBeneficiarySchema } from "@shared/schema";
+import { Label } from "@/components/ui/label";
 
 const contractFormSchema = z.object({
   // Beneficiary data
@@ -109,22 +109,19 @@ export default function ContractForm() {
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
   const [showNewBeneficiaryModal, setShowNewBeneficiaryModal] = useState(false);
 
-  // Beneficiary form for modal
-  const beneficiaryForm = useForm<InsertBeneficiary>({
-    resolver: zodResolver(insertBeneficiarySchema),
-    defaultValues: {
-      fullName: "",
-      email: "",
-      phone: "",
-      address: "",
-      cnp: "",
-      companyName: "",
-      companyAddress: "",
-      companyCui: "",
-      companyRegistrationNumber: "",
-      companyLegalRepresentative: "",
-      isCompany: false,
-    },
+  // Beneficiary form data for modal (same as in Beneficiaries page)
+  const [formData, setFormData] = useState<InsertBeneficiary>({
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+    cnp: "",
+    companyName: "",
+    companyAddress: "",
+    companyCui: "",
+    companyRegistrationNumber: "",
+    companyLegalRepresentative: "",
+    isCompany: false,
   });
 
   const form = useForm<ContractFormData>({
@@ -273,7 +270,19 @@ export default function ContractForm() {
       form.setValue("beneficiary.isCompany", newBeneficiary.isCompany);
       
       // Reset modal form
-      beneficiaryForm.reset();
+      setFormData({
+        fullName: "",
+        email: "",
+        phone: "",
+        address: "",
+        cnp: "",
+        companyName: "",
+        companyAddress: "",
+        companyCui: "",
+        companyRegistrationNumber: "",
+        companyLegalRepresentative: "",
+        isCompany: false,
+      });
       
       // Remove success toast as per user preference
     },
@@ -283,15 +292,38 @@ export default function ContractForm() {
     },
   });
 
-  const handleCreateBeneficiary = (data: InsertBeneficiary) => {
-    // Check if form has validation errors
-    const errors = beneficiaryForm.formState.errors;
+  const handleCreateBeneficiary = () => {
+    // Validate required fields manually (same validation as in Beneficiaries page)
+    const errors: { [key: string]: boolean } = {};
+
+    if (!formData.fullName.trim()) errors.fullName = true;
+    if (!formData.email.trim()) errors.email = true;
+    if (!formData.phone?.trim()) errors.phone = true;
+
+    if (formData.isCompany) {
+      if (!formData.companyName?.trim()) errors.companyName = true;
+      if (!formData.companyAddress?.trim()) errors.companyAddress = true;
+      if (!formData.companyCui?.trim()) errors.companyCui = true;
+      if (!formData.companyRegistrationNumber?.trim()) errors.companyRegistrationNumber = true;
+      if (!formData.companyLegalRepresentative?.trim()) errors.companyLegalRepresentative = true;
+      if (!formData.cnp?.trim()) errors.cnp = true;
+    } else {
+      if (!formData.address?.trim()) errors.address = true;
+      if (!formData.cnp?.trim()) errors.cnp = true;
+    }
+
     if (Object.keys(errors).length > 0) {
-      // Don't submit if there are validation errors
+      // Focus first error field
+      const firstErrorField = Object.keys(errors)[0];
+      const element = document.querySelector(`[id="${firstErrorField}"]`) as HTMLElement;
+      if (element) {
+        element.focus();
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return;
     }
-    
-    createBeneficiaryMutation.mutate(data);
+
+    createBeneficiaryMutation.mutate(formData);
   };
 
   return (
@@ -584,31 +616,178 @@ export default function ContractForm() {
             <DialogTitle>Adaugă Beneficiar Nou</DialogTitle>
           </DialogHeader>
 
-          <Form {...beneficiaryForm}>
-            <form onSubmit={beneficiaryForm.handleSubmit(handleCreateBeneficiary)} className="space-y-4">
-              <BeneficiaryFormFields
-                control={beneficiaryForm.control}
-                watch={beneficiaryForm.watch}
-              />
+          <div className="space-y-4">
+            {/* Toggle between Individual/Company */}
+            <div className="space-y-2">
+              <Label>Tip Beneficiar</Label>
+              <Select 
+                value={formData.isCompany ? "true" : "false"}
+                onValueChange={(value) => setFormData({ ...formData, isCompany: value === "true" })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selectează tipul" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="false">Persoană Fizică</SelectItem>
+                  <SelectItem value="true">Companie</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-              <div className="flex justify-end space-x-2 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setShowNewBeneficiaryModal(false)}
-                >
-                  Anulează
-                </Button>
-                <Button 
-                  type="submit" 
-                  disabled={createBeneficiaryMutation.isPending}
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  {createBeneficiaryMutation.isPending ? "Se salvează..." : "Adaugă Beneficiar"}
-                </Button>
+            {formData.isCompany ? (
+              <>
+                {/* Company Fields */}
+                <div className="space-y-2">
+                  <Label htmlFor="companyName">Nume Companie *</Label>
+                  <Input
+                    id="companyName"
+                    value={formData.companyName || ""}
+                    onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                    placeholder="Denumirea companiei"
+                    className={!formData.companyName?.trim() ? "border-red-500" : ""}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="companyAddress">Adresa Companiei *</Label>
+                  <Textarea
+                    id="companyAddress"
+                    value={formData.companyAddress || ""}
+                    onChange={(e) => setFormData({ ...formData, companyAddress: e.target.value })}
+                    rows={3}
+                    placeholder="Adresa completă a companiei"
+                    className={!formData.companyAddress?.trim() ? "border-red-500" : ""}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="companyCui">CUI Companie *</Label>
+                    <Input
+                      id="companyCui"
+                      value={formData.companyCui || ""}
+                      onChange={(e) => setFormData({ ...formData, companyCui: e.target.value })}
+                      placeholder="RO12345678"
+                      className={!formData.companyCui?.trim() ? "border-red-500" : ""}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="companyRegistrationNumber">Nr. Înregistrare *</Label>
+                    <Input
+                      id="companyRegistrationNumber"
+                      value={formData.companyRegistrationNumber || ""}
+                      onChange={(e) => setFormData({ ...formData, companyRegistrationNumber: e.target.value })}
+                      placeholder="J40/1234/2023"
+                      className={!formData.companyRegistrationNumber?.trim() ? "border-red-500" : ""}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="companyLegalRepresentative">Reprezentant Legal *</Label>
+                    <Input
+                      id="companyLegalRepresentative"
+                      value={formData.companyLegalRepresentative || ""}
+                      onChange={(e) => setFormData({ ...formData, companyLegalRepresentative: e.target.value })}
+                      placeholder="Numele reprezentantului legal"
+                      className={!formData.companyLegalRepresentative?.trim() ? "border-red-500" : ""}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="cnp">CNP Reprezentant *</Label>
+                    <Input
+                      id="cnp"
+                      value={formData.cnp || ""}
+                      onChange={(e) => setFormData({ ...formData, cnp: e.target.value })}
+                      placeholder="CNP reprezentant legal"
+                      className={!formData.cnp?.trim() ? "border-red-500" : ""}
+                    />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Individual Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">Nume Complet *</Label>
+                    <Input
+                      id="fullName"
+                      value={formData.fullName}
+                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                      placeholder="Numele complet al beneficiarului"
+                      className={!formData.fullName.trim() ? "border-red-500" : ""}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="cnp">CNP *</Label>
+                    <Input
+                      id="cnp"
+                      value={formData.cnp || ""}
+                      onChange={(e) => setFormData({ ...formData, cnp: e.target.value })}
+                      placeholder="1234567890123"
+                      className={!formData.cnp?.trim() ? "border-red-500" : ""}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="address">Adresa *</Label>
+                  <Textarea
+                    id="address"
+                    value={formData.address || ""}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    rows={3}
+                    placeholder="Adresa completă"
+                    className={!formData.address?.trim() ? "border-red-500" : ""}
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Common fields for both */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="adresa@email.com"
+                  className={!formData.email.trim() ? "border-red-500" : ""}
+                />
               </div>
-            </form>
-          </Form>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone">Telefon *</Label>
+                <Input
+                  id="phone"
+                  value={formData.phone || ""}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  placeholder="+40 xxx xxx xxx"
+                  className={!formData.phone?.trim() ? "border-red-500" : ""}
+                />
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex justify-end space-x-3 pt-4">
+            <Button variant="outline" onClick={() => setShowNewBeneficiaryModal(false)}>
+              Anulează
+            </Button>
+            <Button 
+              onClick={handleCreateBeneficiary}
+              disabled={createBeneficiaryMutation.isPending}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              {createBeneficiaryMutation.isPending ? "Se salvează..." : "Adaugă Beneficiar"}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
