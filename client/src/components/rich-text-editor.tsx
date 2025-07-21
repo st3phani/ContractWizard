@@ -102,9 +102,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
       }),
       Table.configure({
         resizable: true,
-        HTMLAttributes: {
-          class: null,
-        },
+        allowTableNodeSelection: false,
       }),
       TableRow,
       TableHeader,
@@ -122,8 +120,10 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
       
       // Check table border state
       if (inTable) {
-        const tableAttrs = editor.getAttributes('table');
-        setTableHasBorder(tableAttrs.class !== 'no-border');
+        const tableElement = editor.view.dom.querySelector('table');
+        if (tableElement) {
+          setTableHasBorder(!tableElement.classList.contains('no-border'));
+        }
       }
     },
     onSelectionUpdate: ({ editor }) => {
@@ -136,8 +136,10 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
       
       // Check table border state
       if (inTable) {
-        const tableAttrs = editor.getAttributes('table');
-        setTableHasBorder(tableAttrs.class !== 'no-border');
+        const tableElement = editor.view.dom.querySelector('table');
+        if (tableElement) {
+          setTableHasBorder(!tableElement.classList.contains('no-border'));
+        }
       }
     },
     editorProps: {
@@ -389,11 +391,22 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
                 const newBorderState = !tableHasBorder;
                 setTableHasBorder(newBorderState);
                 
-                // Use editor commands to properly update attributes
-                if (newBorderState) {
-                  editor.chain().focus().updateAttributes('table', { class: null }).run();
-                } else {
-                  editor.chain().focus().updateAttributes('table', { class: 'no-border' }).run();
+                // Find the table element in DOM and toggle class directly
+                const tableElement = editor.view.dom.querySelector('table');
+                if (tableElement) {
+                  if (newBorderState) {
+                    tableElement.classList.remove('no-border');
+                    tableElement.removeAttribute('class');
+                  } else {
+                    tableElement.classList.add('no-border');
+                    tableElement.setAttribute('class', 'no-border');
+                  }
+                  
+                  // Trigger content update to save changes
+                  setTimeout(() => {
+                    editor.commands.focus();
+                    onChange(editor.getHTML());
+                  }, 10);
                 }
               }}
               className="h-8 w-8 p-0"
