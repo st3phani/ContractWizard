@@ -24,7 +24,7 @@ export default function ContractTable({ contracts, onView, onDownload, onEmail, 
 
   const filteredContracts = contracts.filter((contract) => {
     const matchesSearch = 
-      contract.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      String(contract.orderNumber || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       contract.beneficiary.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contract.template.name.toLowerCase().includes(searchTerm.toLowerCase());
     

@@ -4,11 +4,16 @@ import { storage } from "./storage";
 import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema, insertSystemSettingsSchema } from "@shared/schema";
 import { z } from "zod";
 
-// Helper function to generate order numbers
-function generateOrderNumber(): string {
-  const year = new Date().getFullYear();
-  const timestamp = Date.now().toString().slice(-6);
-  return `CNT-${year}-${timestamp}`;
+// Helper function to generate sequential order numbers
+async function generateOrderNumber(): Promise<number> {
+  // Get the highest existing order number
+  const contracts = await storage.getContracts();
+  const maxOrderNumber = contracts.reduce((max, contract) => {
+    const orderNum = contract.orderNumber || 0;
+    return Math.max(max, orderNum);
+  }, 0);
+  
+  return maxOrderNumber + 1;
 }
 
 // Helper function to populate contract template
@@ -231,7 +236,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const companySettings = await storage.getCompanySettings();
       
       // Generate order number
-      const orderNumber = generateOrderNumber();
+      const orderNumber = await generateOrderNumber();
       
       // Validate contract data with company info
       const validatedContract = insertContractSchema.parse({

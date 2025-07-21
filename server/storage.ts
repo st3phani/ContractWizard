@@ -38,7 +38,7 @@ export interface IStorage {
   // Contracts
   getContracts(): Promise<ContractWithDetails[]>;
   getContract(id: number): Promise<ContractWithDetails | undefined>;
-  getContractByOrderNumber(orderNumber: string): Promise<ContractWithDetails | undefined>;
+  getContractByOrderNumber(orderNumber: number): Promise<ContractWithDetails | undefined>;
   createContract(contract: InsertContract): Promise<ContractWithDetails>;
   updateContract(id: number, contract: Partial<InsertContract>): Promise<ContractWithDetails | undefined>;
   deleteContract(id: number): Promise<boolean>;
@@ -305,7 +305,7 @@ _________________           _________________`,
     };
   }
 
-  async getContractByOrderNumber(orderNumber: string): Promise<ContractWithDetails | undefined> {
+  async getContractByOrderNumber(orderNumber: number): Promise<ContractWithDetails | undefined> {
     const contract = Array.from(this.contracts.values()).find(c => c.orderNumber === orderNumber);
     if (!contract) return undefined;
     
@@ -493,7 +493,7 @@ export class DatabaseStorage implements IStorage {
     return contract || undefined;
   }
 
-  async getContractByOrderNumber(orderNumber: string): Promise<ContractWithDetails | undefined> {
+  async getContractByOrderNumber(orderNumber: number): Promise<ContractWithDetails | undefined> {
     const contract = await db.query.contracts.findFirst({
       where: eq(contracts.orderNumber, orderNumber),
       with: {

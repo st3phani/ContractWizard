@@ -113,6 +113,9 @@ Three main entities:
 
 ```
 Changelog:
+- July 22, 2025. Modified contract order numbering to use sequential integers (1, 2, 3...) instead of complex format strings
+- July 22, 2025. Updated database schema to change order_number column from text to integer type
+- July 22, 2025. Fixed contract table component to handle integer order numbers and null values gracefully
 - July 22, 2025. Implemented system settings with date format configuration that applies to all contract forms
 - July 22, 2025. Added system_settings table to database with support for language, currency, date format, and auto backup settings
 - July 22, 2025. Created dateUtils library for consistent date formatting across application using configurable formats (DD/MM/YYYY, MM/DD/YYYY, YYYY-MM-DD)

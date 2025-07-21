@@ -51,7 +51,7 @@ export const systemSettings = pgTable("system_settings", {
 
 export const contracts = pgTable("contracts", {
   id: serial("id").primaryKey(),
-  orderNumber: text("order_number").notNull().unique(),
+  orderNumber: integer("order_number").notNull().unique(),
   templateId: integer("template_id").notNull(),
   beneficiaryId: integer("beneficiary_id").notNull(),
   value: decimal("value", { precision: 10, scale: 2 }),
