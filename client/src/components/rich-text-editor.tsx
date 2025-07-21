@@ -10,6 +10,7 @@ import { Table } from '@tiptap/extension-table'
 import { TableRow } from '@tiptap/extension-table-row'
 import { TableHeader } from '@tiptap/extension-table-header'
 import { TableCell } from '@tiptap/extension-table-cell'
+import { Extension } from '@tiptap/core'
 import { Button } from '@/components/ui/button'
 import { 
   Bold, 
@@ -26,6 +27,49 @@ import {
   Minus
 } from 'lucide-react'
 
+// Custom extension for font size
+const FontSize = Extension.create({
+  name: 'fontSize',
+  
+  addGlobalAttributes() {
+    return [
+      {
+        types: ['textStyle'],
+        attributes: {
+          fontSize: {
+            default: null,
+            parseHTML: element => element.style.fontSize.replace(/['"]+/g, ''),
+            renderHTML: attributes => {
+              if (!attributes.fontSize) {
+                return {}
+              }
+              return {
+                style: `font-size: ${attributes.fontSize}`,
+              }
+            },
+          },
+        },
+      },
+    ]
+  },
+  
+  addCommands() {
+    return {
+      setFontSize: (fontSize: string) => ({ chain }) => {
+        return chain()
+          .setMark('textStyle', { fontSize })
+          .run()
+      },
+      unsetFontSize: () => ({ chain }) => {
+        return chain()
+          .setMark('textStyle', { fontSize: null })
+          .removeEmptyTextStyle()
+          .run()
+      },
+    }
+  },
+})
+
 interface RichTextEditorProps {
   content: string;
   onChange: (content: string) => void;
@@ -37,11 +81,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
   const editor = useEditor({
     extensions: [
       StarterKit,
-      TextStyle.configure({
-        HTMLAttributes: {
-          style: 'font-size',
-        },
-      }),
+      TextStyle,
+      FontSize,
       Color,
       FontFamily,
       TextAlign.configure({
@@ -176,13 +217,13 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
         <select
           onChange={(e) => {
             if (e.target.value) {
-              editor.chain().focus().setMark('textStyle', { 'font-size': e.target.value }).run()
+              editor.chain().focus().setFontSize(e.target.value).run()
             } else {
-              editor.chain().focus().unsetMark('textStyle').run()
+              editor.chain().focus().unsetFontSize().run()
             }
           }}
           className="text-xs px-2 py-1 border border-gray-300 rounded"
-          value={editor.getAttributes('textStyle')['font-size'] || ''}
+          value={editor.getAttributes('textStyle').fontSize || ''}
         >
           <option value="">Mărime</option>
           <option value="10px">10px</option>
@@ -290,8 +331,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           max-width: 100%;
           height: auto;
         }
-        .ProseMirror span[style*="font-size"] {
-          font-size: inherit !important;
+        .ProseMirror [style*="font-size"] {
+          line-height: 1.2;
         }
       `}</style>
     </div>
