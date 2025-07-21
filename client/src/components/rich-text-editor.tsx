@@ -37,7 +37,11 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
   const editor = useEditor({
     extensions: [
       StarterKit,
-      TextStyle,
+      TextStyle.configure({
+        HTMLAttributes: {
+          style: 'font-size',
+        },
+      }),
       Color,
       FontFamily,
       TextAlign.configure({
@@ -172,11 +176,13 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
         <select
           onChange={(e) => {
             if (e.target.value) {
-              editor.chain().focus().setMark('textStyle', { fontSize: e.target.value }).run()
+              editor.chain().focus().setMark('textStyle', { 'font-size': e.target.value }).run()
+            } else {
+              editor.chain().focus().unsetMark('textStyle').run()
             }
           }}
           className="text-xs px-2 py-1 border border-gray-300 rounded"
-          defaultValue=""
+          value={editor.getAttributes('textStyle')['font-size'] || ''}
         >
           <option value="">Mărime</option>
           <option value="10px">10px</option>
@@ -283,6 +289,9 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
         .ProseMirror img {
           max-width: 100%;
           height: auto;
+        }
+        .ProseMirror span[style*="font-size"] {
+          font-size: inherit !important;
         }
       `}</style>
     </div>
