@@ -98,14 +98,52 @@ export default function Templates() {
   });
 
   const handleSaveTemplate = () => {
-    if (!formData.name || !formData.content) {
+    const missingFields = [];
+    const fieldsToFocus = [];
+
+    if (!formData.name) {
+      missingFields.push('Nume Template');
+      fieldsToFocus.push('templateName');
+    }
+    if (!formData.content) {
+      missingFields.push('Conținut Template');
+      fieldsToFocus.push('templateContent');
+    }
+
+    if (missingFields.length > 0) {
+      // Add red border to missing fields
+      fieldsToFocus.forEach(fieldId => {
+        const element = document.getElementById(fieldId);
+        if (element) {
+          element.classList.add('field-error');
+        }
+      });
+
+      // Focus on first missing field
+      if (fieldsToFocus.length > 0) {
+        const firstField = document.getElementById(fieldsToFocus[0]);
+        if (firstField) {
+          firstField.focus();
+          firstField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+
       toast({
         title: "Error",
-        description: "Numele și conținutul sunt obligatorii.",
+        description: `Următoarele câmpuri sunt obligatorii: ${missingFields.join(', ')}`,
         variant: "destructive",
       });
       return;
     }
+
+    // Remove red borders on successful validation
+    const allFields = ['templateName', 'templateContent'];
+    allFields.forEach(fieldId => {
+      const element = document.getElementById(fieldId);
+      if (element) {
+        element.classList.remove('field-error');
+      }
+    });
 
     if (selectedTemplate) {
       // Edit existing template
@@ -239,21 +277,33 @@ export default function Templates() {
           
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Nume Template</Label>
+              <Label htmlFor="templateName">Nume Template *</Label>
               <Input
-                id="name"
+                id="templateName"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, name: e.target.value });
+                  // Remove error styling when user starts typing
+                  if (e.target.value.length > 0) {
+                    e.target.classList.remove('field-error');
+                  }
+                }}
                 placeholder="Numele template-ului"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="content">Conținut Contract</Label>
+              <Label htmlFor="templateContent">Conținut Contract *</Label>
               <Textarea
-                id="content"
+                id="templateContent"
                 value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, content: e.target.value });
+                  // Remove error styling when user starts typing
+                  if (e.target.value.length > 0) {
+                    e.target.classList.remove('field-error');
+                  }
+                }}
                 rows={15}
                 placeholder="Conținutul contractului cu placeholder-uri (ex: {{beneficiary.fullName}})"
               />

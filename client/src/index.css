@@ -90,8 +90,9 @@
   /* Error field styling */
   .field-error {
     border-color: #ef4444 !important;
-    border-width: 2px !important;
-    box-shadow: 0 0 0 1px #ef4444 !important;
+    border-width: 1px !important;
+    box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2) !important;
+    background-color: rgba(239, 68, 68, 0.05) !important;
   }
 
   /* Focus enhancement for required fields */

@@ -88,6 +88,73 @@ export default function Settings() {
   });
 
   const handleSaveCompanySettings = () => {
+    const missingFields = [];
+    const fieldsToFocus = [];
+
+    if (!companySettings.name) {
+      missingFields.push('Nume Companie');
+      fieldsToFocus.push('companyName');
+    }
+    if (!companySettings.address) {
+      missingFields.push('Adresa');
+      fieldsToFocus.push('companyAddress');
+    }
+    if (!companySettings.phone) {
+      missingFields.push('Telefon');
+      fieldsToFocus.push('companyPhone');
+    }
+    if (!companySettings.email) {
+      missingFields.push('Email');
+      fieldsToFocus.push('companyEmail');
+    }
+    if (!companySettings.cui) {
+      missingFields.push('CUI');
+      fieldsToFocus.push('companyCui');
+    }
+    if (!companySettings.registrationNumber) {
+      missingFields.push('Număr Înregistrare');
+      fieldsToFocus.push('companyRegistrationNumber');
+    }
+    if (!companySettings.legalRepresentative) {
+      missingFields.push('Reprezentant Legal');
+      fieldsToFocus.push('companyLegalRepresentative');
+    }
+
+    if (missingFields.length > 0) {
+      // Add red border to missing fields
+      fieldsToFocus.forEach(fieldId => {
+        const element = document.getElementById(fieldId);
+        if (element) {
+          element.classList.add('field-error');
+        }
+      });
+
+      // Focus on first missing field
+      if (fieldsToFocus.length > 0) {
+        const firstField = document.getElementById(fieldsToFocus[0]);
+        if (firstField) {
+          firstField.focus();
+          firstField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+
+      toast({
+        title: "Error",
+        description: `Următoarele câmpuri sunt obligatorii: ${missingFields.join(', ')}`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Remove red borders on successful validation
+    const allFields = ['companyName', 'companyAddress', 'companyPhone', 'companyEmail', 'companyCui', 'companyRegistrationNumber', 'companyLegalRepresentative'];
+    allFields.forEach(fieldId => {
+      const element = document.getElementById(fieldId);
+      if (element) {
+        element.classList.remove('field-error');
+      }
+    });
+
     saveCompanySettingsMutation.mutate(companySettings);
   };
 
@@ -147,71 +214,113 @@ export default function Settings() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="companyName">Nume Companie</Label>
+                  <Label htmlFor="companyName">Nume Companie *</Label>
                   <Input
                     id="companyName"
                     value={companySettings.name}
-                    onChange={(e) => setCompanySettings({ ...companySettings, name: e.target.value })}
+                    onChange={(e) => {
+                      setCompanySettings({ ...companySettings, name: e.target.value });
+                      // Remove error styling when user starts typing
+                      if (e.target.value.length > 0) {
+                        e.target.classList.remove('field-error');
+                      }
+                    }}
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="cui">CUI</Label>
+                  <Label htmlFor="companyCui">CUI *</Label>
                   <Input
-                    id="cui"
+                    id="companyCui"
                     value={companySettings.cui}
-                    onChange={(e) => setCompanySettings({ ...companySettings, cui: e.target.value })}
+                    onChange={(e) => {
+                      setCompanySettings({ ...companySettings, cui: e.target.value });
+                      // Remove error styling when user starts typing
+                      if (e.target.value.length > 0) {
+                        e.target.classList.remove('field-error');
+                      }
+                    }}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="registrationNumber">Nr. Registrul Comerțului</Label>
+                  <Label htmlFor="companyRegistrationNumber">Nr. Registrul Comerțului *</Label>
                   <Input
-                    id="registrationNumber"
+                    id="companyRegistrationNumber"
                     value={companySettings.registrationNumber}
-                    onChange={(e) => setCompanySettings({ ...companySettings, registrationNumber: e.target.value })}
+                    onChange={(e) => {
+                      setCompanySettings({ ...companySettings, registrationNumber: e.target.value });
+                      // Remove error styling when user starts typing
+                      if (e.target.value.length > 0) {
+                        e.target.classList.remove('field-error');
+                      }
+                    }}
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="legalRepresentative">Reprezentant Legal</Label>
+                  <Label htmlFor="companyLegalRepresentative">Reprezentant Legal *</Label>
                   <Input
-                    id="legalRepresentative"
+                    id="companyLegalRepresentative"
                     value={companySettings.legalRepresentative}
-                    onChange={(e) => setCompanySettings({ ...companySettings, legalRepresentative: e.target.value })}
+                    onChange={(e) => {
+                      setCompanySettings({ ...companySettings, legalRepresentative: e.target.value });
+                      // Remove error styling when user starts typing
+                      if (e.target.value.length > 0) {
+                        e.target.classList.remove('field-error');
+                      }
+                    }}
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="companyAddress">Adresa</Label>
+                <Label htmlFor="companyAddress">Adresa *</Label>
                 <Textarea
                   id="companyAddress"
                   value={companySettings.address}
-                  onChange={(e) => setCompanySettings({ ...companySettings, address: e.target.value })}
+                  onChange={(e) => {
+                    setCompanySettings({ ...companySettings, address: e.target.value });
+                    // Remove error styling when user starts typing
+                    if (e.target.value.length > 0) {
+                      e.target.classList.remove('field-error');
+                    }
+                  }}
                   rows={3}
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="companyPhone">Telefon</Label>
+                  <Label htmlFor="companyPhone">Telefon *</Label>
                   <Input
                     id="companyPhone"
                     value={companySettings.phone}
-                    onChange={(e) => setCompanySettings({ ...companySettings, phone: e.target.value })}
+                    onChange={(e) => {
+                      setCompanySettings({ ...companySettings, phone: e.target.value });
+                      // Remove error styling when user starts typing
+                      if (e.target.value.length > 0) {
+                        e.target.classList.remove('field-error');
+                      }
+                    }}
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="companyEmail">Email</Label>
+                  <Label htmlFor="companyEmail">Email *</Label>
                   <Input
                     id="companyEmail"
                     type="email"
                     value={companySettings.email}
-                    onChange={(e) => setCompanySettings({ ...companySettings, email: e.target.value })}
+                    onChange={(e) => {
+                      setCompanySettings({ ...companySettings, email: e.target.value });
+                      // Remove error styling when user starts typing
+                      if (e.target.value.length > 0) {
+                        e.target.classList.remove('field-error');
+                      }
+                    }}
                   />
                 </div>
               </div>
