@@ -297,10 +297,10 @@ export default function ContractForm() {
                                 <div className="flex items-center">
                                   <Avatar className="h-6 w-6 mr-2">
                                     <AvatarFallback className="text-xs">
-                                      {selectedBeneficiary.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                      {selectedBeneficiary?.fullName ? selectedBeneficiary.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : "B"}
                                     </AvatarFallback>
                                   </Avatar>
-                                  {selectedBeneficiary.fullName}
+                                  {selectedBeneficiary?.fullName || "Beneficiar fără nume"}
                                 </div>
                               ) : (
                                 <>
@@ -364,13 +364,13 @@ export default function ContractForm() {
                             <div className="flex items-center">
                               <Avatar className="h-10 w-10 mr-3">
                                 <AvatarFallback>
-                                  {selectedBeneficiary.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                  {selectedBeneficiary?.fullName ? selectedBeneficiary.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : "B"}
                                 </AvatarFallback>
                               </Avatar>
                               <div>
-                                <div className="font-medium">{selectedBeneficiary.fullName}</div>
-                                <div className="text-sm text-gray-500">{selectedBeneficiary.email}</div>
-                                {selectedBeneficiary.phone && (
+                                <div className="font-medium">{selectedBeneficiary?.fullName || "Beneficiar fără nume"}</div>
+                                <div className="text-sm text-gray-500">{selectedBeneficiary?.email}</div>
+                                {selectedBeneficiary?.phone && (
                                   <div className="text-sm text-gray-500">{selectedBeneficiary.phone}</div>
                                 )}
                               </div>
