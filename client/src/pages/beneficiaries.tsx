@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { formatDate } from "@/lib/utils";
@@ -24,6 +25,12 @@ export default function Beneficiaries() {
     phone: "",
     address: "",
     cnp: "",
+    companyName: "",
+    companyAddress: "",
+    companyCui: "",
+    companyRegistrationNumber: "",
+    companyLegalRepresentative: "",
+    isCompany: false,
   });
   
   const { toast } = useToast();
@@ -45,7 +52,7 @@ export default function Beneficiaries() {
         description: "Beneficiarul a fost creat cu succes!",
       });
       setIsCreateModalOpen(false);
-      setFormData({ fullName: "", email: "", phone: "", address: "", cnp: "" });
+      setFormData({ fullName: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", companyLegalRepresentative: "", isCompany: false });
       setSelectedBeneficiary(null);
     },
     onError: () => {
@@ -97,6 +104,12 @@ export default function Beneficiaries() {
       phone: beneficiary.phone ?? "",
       address: beneficiary.address ?? "",
       cnp: beneficiary.cnp ?? "",
+      companyName: beneficiary.companyName ?? "",
+      companyAddress: beneficiary.companyAddress ?? "",
+      companyCui: beneficiary.companyCui ?? "",
+      companyRegistrationNumber: beneficiary.companyRegistrationNumber ?? "",
+      companyLegalRepresentative: beneficiary.companyLegalRepresentative ?? "",
+      isCompany: beneficiary.isCompany ?? false,
     });
     setIsCreateModalOpen(true);
   };
@@ -110,7 +123,7 @@ export default function Beneficiaries() {
   const resetForm = () => {
     setIsCreateModalOpen(false);
     setSelectedBeneficiary(null);
-    setFormData({ fullName: "", email: "", phone: "", address: "", cnp: "" });
+    setFormData({ fullName: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", companyLegalRepresentative: "", isCompany: false });
   };
 
   return (
@@ -236,17 +249,131 @@ export default function Beneficiaries() {
           </DialogHeader>
           
           <div className="space-y-4">
+            {/* Toggle between Individual/Company */}
+            <div className="space-y-2">
+              <Label>Tip Beneficiar</Label>
+              <Select 
+                value={formData.isCompany ? "true" : "false"}
+                onValueChange={(value) => setFormData({ ...formData, isCompany: value === "true" })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selectează tipul" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="false">Persoană Fizică</SelectItem>
+                  <SelectItem value="true">Companie</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {formData.isCompany ? (
+              <>
+                {/* Company Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="companyName">Nume Companie *</Label>
+                    <Input
+                      id="companyName"
+                      value={formData.companyName || ""}
+                      onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                      placeholder="Denumirea companiei"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="companyCui">CUI Companie</Label>
+                    <Input
+                      id="companyCui"
+                      value={formData.companyCui || ""}
+                      onChange={(e) => setFormData({ ...formData, companyCui: e.target.value })}
+                      placeholder="RO12345678"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="companyAddress">Adresa Companiei</Label>
+                  <Textarea
+                    id="companyAddress"
+                    value={formData.companyAddress || ""}
+                    onChange={(e) => setFormData({ ...formData, companyAddress: e.target.value })}
+                    rows={3}
+                    placeholder="Adresa completă a companiei"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="companyRegistrationNumber">Nr. Înregistrare</Label>
+                    <Input
+                      id="companyRegistrationNumber"
+                      value={formData.companyRegistrationNumber || ""}
+                      onChange={(e) => setFormData({ ...formData, companyRegistrationNumber: e.target.value })}
+                      placeholder="J40/1234/2023"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="companyLegalRepresentative">Reprezentant Legal</Label>
+                    <Input
+                      id="companyLegalRepresentative"
+                      value={formData.companyLegalRepresentative || ""}
+                      onChange={(e) => setFormData({ ...formData, companyLegalRepresentative: e.target.value })}
+                      placeholder="Numele reprezentantului legal"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Persoană de Contact *</Label>
+                  <Input
+                    id="fullName"
+                    value={formData.fullName}
+                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    placeholder="Numele persoanei de contact"
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Individual Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">Nume Complet *</Label>
+                    <Input
+                      id="fullName"
+                      value={formData.fullName}
+                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                      placeholder="Numele complet al beneficiarului"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="cnp">CNP</Label>
+                    <Input
+                      id="cnp"
+                      value={formData.cnp || ""}
+                      onChange={(e) => setFormData({ ...formData, cnp: e.target.value })}
+                      placeholder="1234567890123"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="address">Adresa</Label>
+                  <Textarea
+                    id="address"
+                    value={formData.address || ""}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    rows={3}
+                    placeholder="Adresa completă"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Common fields for both */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Nume Complet *</Label>
-                <Input
-                  id="fullName"
-                  value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  placeholder="Numele complet"
-                />
-              </div>
-              
               <div className="space-y-2">
                 <Label htmlFor="email">Email *</Label>
                 <Input
@@ -257,9 +384,7 @@ export default function Beneficiaries() {
                   placeholder="adresa@email.com"
                 />
               </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
               <div className="space-y-2">
                 <Label htmlFor="phone">Telefon</Label>
                 <Input
@@ -269,27 +394,6 @@ export default function Beneficiaries() {
                   placeholder="+40 xxx xxx xxx"
                 />
               </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="cnp">CNP/CUI</Label>
-                <Input
-                  id="cnp"
-                  value={formData.cnp || ""}
-                  onChange={(e) => setFormData({ ...formData, cnp: e.target.value })}
-                  placeholder="CNP sau CUI"
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="address">Adresa</Label>
-              <Textarea
-                id="address"
-                value={formData.address || ""}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                rows={3}
-                placeholder="Adresa completă"
-              />
             </div>
           </div>
           

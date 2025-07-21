@@ -329,19 +329,35 @@ export default function ContractForm() {
                         {form.watch("beneficiary.isCompany") ? (
                           <>
                             {/* Company Fields */}
-                            <FormField
-                              control={form.control}
-                              name="beneficiary.companyName"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Nume Companie</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="Denumirea companiei" {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <FormField
+                                control={form.control}
+                                name="beneficiary.companyName"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Nume Companie *</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Denumirea companiei" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
+                              <FormField
+                                control={form.control}
+                                name="beneficiary.companyCui"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>CUI Companie</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="RO12345678" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
 
                             <FormField
                               control={form.control}
@@ -350,61 +366,49 @@ export default function ContractForm() {
                                 <FormItem>
                                   <FormLabel>Adresa Companiei</FormLabel>
                                   <FormControl>
-                                    <Textarea placeholder="Adresa completă a companiei" {...field} />
+                                    <Textarea placeholder="Adresa completă a companiei" rows={3} {...field} />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
                               )}
                             />
 
-                            <FormField
-                              control={form.control}
-                              name="beneficiary.companyCui"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>CUI Companie</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="RO12345678" {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <FormField
+                                control={form.control}
+                                name="beneficiary.companyRegistrationNumber"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Nr. Înregistrare</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="J40/1234/2023" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
 
-                            <FormField
-                              control={form.control}
-                              name="beneficiary.companyRegistrationNumber"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Nr. Înregistrare</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="J40/1234/2023" {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-
-                            <FormField
-                              control={form.control}
-                              name="beneficiary.companyLegalRepresentative"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Reprezentant Legal</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="Numele reprezentantului legal" {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
+                              <FormField
+                                control={form.control}
+                                name="beneficiary.companyLegalRepresentative"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Reprezentant Legal</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Numele reprezentantului legal" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
 
                             <FormField
                               control={form.control}
                               name="beneficiary.fullName"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Persoană de Contact</FormLabel>
+                                  <FormLabel>Persoană de Contact *</FormLabel>
                                   <FormControl>
                                     <Input placeholder="Numele persoanei de contact" {...field} />
                                   </FormControl>
@@ -416,28 +420,44 @@ export default function ContractForm() {
                         ) : (
                           <>
                             {/* Individual Fields */}
-                            <FormField
-                              control={form.control}
-                              name="beneficiary.fullName"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Nume Complet</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="Numele complet al beneficiarului" {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <FormField
+                                control={form.control}
+                                name="beneficiary.fullName"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Nume Complet *</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Numele complet al beneficiarului" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
+                              <FormField
+                                control={form.control}
+                                name="beneficiary.cnp"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>CNP</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="1234567890123" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
 
                             <FormField
                               control={form.control}
-                              name="beneficiary.cnp"
+                              name="beneficiary.address"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>CNP</FormLabel>
+                                  <FormLabel>Adresa</FormLabel>
                                   <FormControl>
-                                    <Input placeholder="1234567890123" {...field} />
+                                    <Textarea placeholder="Adresa completă" rows={3} {...field} />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
@@ -447,49 +467,35 @@ export default function ContractForm() {
                         )}
 
                         {/* Common fields for both */}
-                        <FormField
-                          control={form.control}
-                          name="beneficiary.email"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Email</FormLabel>
-                              <FormControl>
-                                <Input type="email" placeholder="adresa@email.com" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="beneficiary.phone"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Telefon</FormLabel>
-                              <FormControl>
-                                <Input placeholder="+40 xxx xxx xxx" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        {!form.watch("beneficiary.isCompany") && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <FormField
                             control={form.control}
-                            name="beneficiary.address"
+                            name="beneficiary.email"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Adresa</FormLabel>
+                                <FormLabel>Email *</FormLabel>
                                 <FormControl>
-                                  <Textarea placeholder="Adresa completă" {...field} />
+                                  <Input type="email" placeholder="adresa@email.com" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
-                        )}
+
+                          <FormField
+                            control={form.control}
+                            name="beneficiary.phone"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Telefon</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="+40 xxx xxx xxx" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
                       </div>
                     )}
                   </CardContent>
