@@ -220,14 +220,14 @@ export default function Templates() {
                         <TableCell>
                           <div className="flex items-center space-x-2">
                             <Button
-                              variant="ghost"
+                              variant="outline"
                               size="sm"
                               onClick={() => handlePreview(template)}
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
                             <Button
-                              variant="ghost"
+                              variant="outline"
                               size="sm"
                               onClick={() => {
                                 setSelectedTemplate(template);
@@ -242,7 +242,7 @@ export default function Templates() {
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button
-                              variant="ghost"
+                              variant="outline"
                               size="sm"
                               onClick={() => handleDeleteTemplate(template.id)}
                             >
@@ -313,13 +313,13 @@ export default function Templates() {
               <div className="bg-blue-50 p-4 rounded-lg">
                 <h4 className="font-semibold text-blue-900 mb-3">📋 Variabile Prestator (Companie)</h4>
                 <div className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-blue-700">{"{{provider.name}}"}</code>
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
+                    <code className="text-blue-700 text-xs">{"{{provider.name}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -332,18 +332,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-blue-700">{"{{provider.address}}"}</code>
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
+                    <code className="text-blue-700 text-xs">{"{{provider.address}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -356,18 +356,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-blue-700">{"{{provider.cui}}"}</code>
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
+                    <code className="text-blue-700 text-xs">{"{{provider.cui}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -380,18 +380,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-blue-700">{"{{provider.registrationNumber}}"}</code>
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
+                    <code className="text-blue-700 text-xs">{"{{provider.registrationNumber}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -404,18 +404,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-blue-700">{"{{provider.legalRepresentative}}"}</code>
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
+                    <code className="text-blue-700 text-xs">{"{{provider.legalRepresentative}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -428,18 +428,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-blue-700">{"{{provider.phone}}"}</code>
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
+                    <code className="text-blue-700 text-xs">{"{{provider.phone}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -452,18 +452,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-blue-700">{"{{provider.email}}"}</code>
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
+                    <code className="text-blue-700 text-xs">{"{{provider.email}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -476,7 +476,7 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
@@ -487,13 +487,13 @@ export default function Templates() {
               <div className="bg-green-50 p-4 rounded-lg">
                 <h4 className="font-semibold text-green-900 mb-3">👤 Variabile Beneficiar & Contract</h4>
                 <div className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                     <code className="text-green-700">{"{{beneficiary.name}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -507,18 +507,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                     <code className="text-green-700">{"{{beneficiary.email}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -531,18 +531,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                     <code className="text-green-700">{"{{beneficiary.phone}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -555,18 +555,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                     <code className="text-green-700">{"{{beneficiary.address}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -579,18 +579,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                     <code className="text-green-700">{"{{beneficiary.cnp}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -603,18 +603,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                     <code className="text-green-700">{"{{contract.value}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -627,18 +627,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                     <code className="text-green-700">{"{{contract.currency}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -651,18 +651,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                     <code className="text-green-700">{"{{contract.startDate}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -675,18 +675,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                     <code className="text-green-700">{"{{contract.endDate}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -699,18 +699,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                     <code className="text-green-700">{"{{contract.notes}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -723,18 +723,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                     <code className="text-green-700">{"{{orderNumber}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -747,18 +747,18 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                  <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                     <code className="text-green-700">{"{{currentDate}}"}</code>
                     <Button 
                       size="sm" 
-                      variant="ghost" 
+                      variant="outline" 
                       onClick={() => {
-                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        const textarea = document.getElementById('templateContent') as HTMLTextAreaElement;
                         if (textarea) {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
@@ -771,7 +771,7 @@ export default function Templates() {
                           }, 0);
                         }
                       }}
-                      className="text-xs"
+                      className="text-xs h-6 px-2"
                     >
                       Adaugă
                     </Button>
