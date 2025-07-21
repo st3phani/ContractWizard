@@ -218,6 +218,10 @@ export default function Templates() {
                           const textAfter = textarea.value.substring(cursorPos);
                           const newValue = textBefore + '{{provider.name}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 17, cursorPos + 17);
+                          }, 0);
                         }
                       }}
                       className="text-xs"
@@ -238,6 +242,10 @@ export default function Templates() {
                           const textAfter = textarea.value.substring(cursorPos);
                           const newValue = textBefore + '{{provider.address}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 20, cursorPos + 20);
+                          }, 0);
                         }
                       }}
                       className="text-xs"
@@ -258,6 +266,10 @@ export default function Templates() {
                           const textAfter = textarea.value.substring(cursorPos);
                           const newValue = textBefore + '{{provider.cui}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 16, cursorPos + 16);
+                          }, 0);
                         }
                       }}
                       className="text-xs"
@@ -278,6 +290,10 @@ export default function Templates() {
                           const textAfter = textarea.value.substring(cursorPos);
                           const newValue = textBefore + '{{provider.registrationNumber}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 30, cursorPos + 30);
+                          }, 0);
                         }
                       }}
                       className="text-xs"
@@ -298,6 +314,10 @@ export default function Templates() {
                           const textAfter = textarea.value.substring(cursorPos);
                           const newValue = textBefore + '{{provider.legalRepresentative}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 32, cursorPos + 32);
+                          }, 0);
                         }
                       }}
                       className="text-xs"
@@ -318,6 +338,10 @@ export default function Templates() {
                           const textAfter = textarea.value.substring(cursorPos);
                           const newValue = textBefore + '{{provider.phone}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 18, cursorPos + 18);
+                          }, 0);
                         }
                       }}
                       className="text-xs"
@@ -338,6 +362,10 @@ export default function Templates() {
                           const textAfter = textarea.value.substring(cursorPos);
                           const newValue = textBefore + '{{provider.email}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 18, cursorPos + 18);
+                          }, 0);
                         }
                       }}
                       className="text-xs"
@@ -352,7 +380,7 @@ export default function Templates() {
                 <h4 className="font-semibold text-green-900 mb-3">👤 Variabile Beneficiar & Contract</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-green-700">[Nume Beneficiar]</code>
+                    <code className="text-green-700">{"{{beneficiary.fullName}}"}</code>
                     <Button 
                       size="sm" 
                       variant="ghost" 
@@ -362,8 +390,13 @@ export default function Templates() {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
                           const textAfter = textarea.value.substring(cursorPos);
-                          const newValue = textBefore + '[Nume Beneficiar]' + textAfter;
+                          const newValue = textBefore + '{{beneficiary.fullName}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
+                          // Update cursor position after insertion
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 23, cursorPos + 23);
+                          }, 0);
                         }
                       }}
                       className="text-xs"
@@ -372,7 +405,7 @@ export default function Templates() {
                     </Button>
                   </div>
                   <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-green-700">[Email Beneficiar]</code>
+                    <code className="text-green-700">{"{{beneficiary.email}}"}</code>
                     <Button 
                       size="sm" 
                       variant="ghost" 
@@ -382,8 +415,12 @@ export default function Templates() {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
                           const textAfter = textarea.value.substring(cursorPos);
-                          const newValue = textBefore + '[Email Beneficiar]' + textAfter;
+                          const newValue = textBefore + '{{beneficiary.email}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 21, cursorPos + 21);
+                          }, 0);
                         }
                       }}
                       className="text-xs"
@@ -392,7 +429,7 @@ export default function Templates() {
                     </Button>
                   </div>
                   <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-green-700">[Telefon Beneficiar]</code>
+                    <code className="text-green-700">{"{{beneficiary.phone}}"}</code>
                     <Button 
                       size="sm" 
                       variant="ghost" 
@@ -402,8 +439,12 @@ export default function Templates() {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
                           const textAfter = textarea.value.substring(cursorPos);
-                          const newValue = textBefore + '[Telefon Beneficiar]' + textAfter;
+                          const newValue = textBefore + '{{beneficiary.phone}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 21, cursorPos + 21);
+                          }, 0);
                         }
                       }}
                       className="text-xs"
@@ -412,7 +453,7 @@ export default function Templates() {
                     </Button>
                   </div>
                   <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-green-700">[Adresa Beneficiar]</code>
+                    <code className="text-green-700">{"{{beneficiary.address}}"}</code>
                     <Button 
                       size="sm" 
                       variant="ghost" 
@@ -422,8 +463,12 @@ export default function Templates() {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
                           const textAfter = textarea.value.substring(cursorPos);
-                          const newValue = textBefore + '[Adresa Beneficiar]' + textAfter;
+                          const newValue = textBefore + '{{beneficiary.address}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 23, cursorPos + 23);
+                          }, 0);
                         }
                       }}
                       className="text-xs"
@@ -432,7 +477,7 @@ export default function Templates() {
                     </Button>
                   </div>
                   <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-green-700">[Valoare Contract]</code>
+                    <code className="text-green-700">{"{{beneficiary.cnp}}"}</code>
                     <Button 
                       size="sm" 
                       variant="ghost" 
@@ -442,8 +487,12 @@ export default function Templates() {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
                           const textAfter = textarea.value.substring(cursorPos);
-                          const newValue = textBefore + '[Valoare Contract]' + textAfter;
+                          const newValue = textBefore + '{{beneficiary.cnp}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 19, cursorPos + 19);
+                          }, 0);
                         }
                       }}
                       className="text-xs"
@@ -452,7 +501,7 @@ export default function Templates() {
                     </Button>
                   </div>
                   <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-green-700">[Număr Comandă]</code>
+                    <code className="text-green-700">{"{{contract.value}}"}</code>
                     <Button 
                       size="sm" 
                       variant="ghost" 
@@ -462,8 +511,12 @@ export default function Templates() {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
                           const textAfter = textarea.value.substring(cursorPos);
-                          const newValue = textBefore + '[Număr Comandă]' + textAfter;
+                          const newValue = textBefore + '{{contract.value}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 18, cursorPos + 18);
+                          }, 0);
                         }
                       }}
                       className="text-xs"
@@ -472,7 +525,7 @@ export default function Templates() {
                     </Button>
                   </div>
                   <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-green-700">[Data Curentă]</code>
+                    <code className="text-green-700">{"{{contract.currency}}"}</code>
                     <Button 
                       size="sm" 
                       variant="ghost" 
@@ -482,8 +535,132 @@ export default function Templates() {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
                           const textAfter = textarea.value.substring(cursorPos);
-                          const newValue = textBefore + '[Data Curentă]' + textAfter;
+                          const newValue = textBefore + '{{contract.currency}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 21, cursorPos + 21);
+                          }, 0);
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-green-700">{"{{contract.startDate}}"}</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '{{contract.startDate}}' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 22, cursorPos + 22);
+                          }, 0);
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-green-700">{"{{contract.endDate}}"}</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '{{contract.endDate}}' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 20, cursorPos + 20);
+                          }, 0);
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-green-700">{"{{contract.notes}}"}</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '{{contract.notes}}' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 18, cursorPos + 18);
+                          }, 0);
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-green-700">{"{{orderNumber}}"}</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '{{orderNumber}}' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 15, cursorPos + 15);
+                          }, 0);
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-green-700">{"{{currentDate}}"}</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '{{currentDate}}' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                          setTimeout(() => {
+                            textarea.focus();
+                            textarea.setSelectionRange(cursorPos + 15, cursorPos + 15);
+                          }, 0);
                         }
                       }}
                       className="text-xs"

@@ -15,9 +15,8 @@ function generateOrderNumber(): string {
 function populateContractTemplate(template: string, data: any): string {
   let populated = template;
   
-  // Manual replacements with explicit patterns for all provider fields
+  // Provider fields
   if (data.provider) {
-    // Provider fields with {{}} format
     populated = populated.replace(/\{\{provider\.name\}\}/g, data.provider.name || '');
     populated = populated.replace(/\{\{provider\.address\}\}/g, data.provider.address || '');
     populated = populated.replace(/\{\{provider\.cui\}\}/g, data.provider.cui || '');
@@ -25,56 +24,29 @@ function populateContractTemplate(template: string, data: any): string {
     populated = populated.replace(/\{\{provider\.legalRepresentative\}\}/g, data.provider.legalRepresentative || '');
     populated = populated.replace(/\{\{provider\.phone\}\}/g, data.provider.phone || '');
     populated = populated.replace(/\{\{provider\.email\}\}/g, data.provider.email || '');
-    
-    // Provider fields with [] format (legacy support)
-    populated = populated.replace(/\[Numele Companiei\]/g, data.provider.name || '');
-    populated = populated.replace(/\[Adresa Companiei\]/g, data.provider.address || '');
-    populated = populated.replace(/\[CIF Companie\]/g, data.provider.cui || '');
-    populated = populated.replace(/\[Nr\. Registrul Comerțului\]/g, data.provider.registrationNumber || '');
-    populated = populated.replace(/\[Reprezentant Legal\]/g, data.provider.legalRepresentative || '');
-    populated = populated.replace(/\[Telefon Companie\]/g, data.provider.phone || '');
-    populated = populated.replace(/\[Email Companie\]/g, data.provider.email || '');
   }
   
-  // Manual replacements for beneficiary fields
+  // Beneficiary fields
   if (data.beneficiary) {
-    // Beneficiary fields with {{}} format
     populated = populated.replace(/\{\{beneficiary\.fullName\}\}/g, data.beneficiary.fullName || '');
     populated = populated.replace(/\{\{beneficiary\.email\}\}/g, data.beneficiary.email || '');
     populated = populated.replace(/\{\{beneficiary\.phone\}\}/g, data.beneficiary.phone || '');
     populated = populated.replace(/\{\{beneficiary\.address\}\}/g, data.beneficiary.address || '');
     populated = populated.replace(/\{\{beneficiary\.cnp\}\}/g, data.beneficiary.cnp || '');
-    
-    // Beneficiary fields with [] format (legacy support)
-    populated = populated.replace(/\[Nume Beneficiar\]/g, data.beneficiary.fullName || '');
-    populated = populated.replace(/\[Email Beneficiar\]/g, data.beneficiary.email || '');
-    populated = populated.replace(/\[Telefon Beneficiar\]/g, data.beneficiary.phone || '');
-    populated = populated.replace(/\[Adresa Beneficiar\]/g, data.beneficiary.address || '');
-    populated = populated.replace(/\[CNP Beneficiar\]/g, data.beneficiary.cnp || '');
   }
   
-  // Manual replacements for contract fields
+  // Contract fields
   if (data.contract) {
-    // Contract fields with {{}} format
     populated = populated.replace(/\{\{contract\.value\}\}/g, data.contract.value || '');
     populated = populated.replace(/\{\{contract\.currency\}\}/g, data.contract.currency || 'RON');
     populated = populated.replace(/\{\{contract\.startDate\}\}/g, data.contract.startDate || '');
     populated = populated.replace(/\{\{contract\.endDate\}\}/g, data.contract.endDate || '');
     populated = populated.replace(/\{\{contract\.notes\}\}/g, data.contract.notes || '');
-    
-    // Contract fields with [] format (legacy support)
-    populated = populated.replace(/\[Valoare Contract\]/g, data.contract.value || '');
-    populated = populated.replace(/\[Moneda\]/g, data.contract.currency || 'RON');
-    populated = populated.replace(/\[Data Start\]/g, data.contract.startDate || '');
-    populated = populated.replace(/\[Data Sfârșit\]/g, data.contract.endDate || '');
-    populated = populated.replace(/\[Note\]/g, data.contract.notes || '');
   }
   
-  // Order number and current date (both formats)
+  // Order number and current date
   populated = populated.replace(/\{\{orderNumber\}\}/g, data.orderNumber || '');
   populated = populated.replace(/\{\{currentDate\}\}/g, new Date().toLocaleDateString('ro-RO'));
-  populated = populated.replace(/\[Număr Comandă\]/g, data.orderNumber || '');
-  populated = populated.replace(/\[Data Curentă\]/g, new Date().toLocaleDateString('ro-RO'));
   
   return populated;
 }
