@@ -14,12 +14,25 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { formatDate } from "@/lib/utils";
 import Sidebar from "@/components/sidebar";
-import { BeneficiaryFormModal } from "@/components/beneficiary-form-modal";
+import { BeneficiaryFormFields } from "@/components/beneficiary-form-fields";
 import type { Beneficiary, InsertBeneficiary } from "@shared/schema";
 
 export default function Beneficiaries() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
+  const [formData, setFormData] = useState<InsertBeneficiary>({
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+    cnp: "",
+    companyName: "",
+    companyAddress: "",
+    companyCui: "",
+    companyRegistrationNumber: "",
+    companyLegalRepresentative: "",
+    isCompany: false,
+  });
   
   const { toast } = useToast();
   const queryClient = useQueryClient();

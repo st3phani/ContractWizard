@@ -113,6 +113,9 @@ Three main entities:
 
 ```
 Changelog:
+- July 21, 2025. Made contract fields mandatory with proper validation: "Valoare Contract", "Data Începerii", "Data Încheierii"
+- July 21, 2025. Started code refactoring - created reusable BeneficiaryFormFields component to eliminate duplicate beneficiary form code
+- July 21, 2025. Created BeneficiaryFormModal component for consistent beneficiary form handling across pages
 - July 21, 2025. Uniformized validation across all forms - removed success notifications, error messages under fields, and made labels black
 - July 21, 2025. Implemented consistent field validation with red borders and focus management on all forms
 - July 21, 2025. Fixed contract template deletion functionality - added DELETE route and mutation
