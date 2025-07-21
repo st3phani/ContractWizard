@@ -18,6 +18,13 @@ export const beneficiaries = pgTable("beneficiaries", {
   phone: text("phone"),
   address: text("address"),
   cnp: text("cnp"),
+  // Company fields (optional for companies)
+  companyName: text("company_name"), 
+  companyAddress: text("company_address"),
+  companyCui: text("company_cui"),
+  companyRegistrationNumber: text("company_registration_number"),
+  companyLegalRepresentative: text("company_legal_representative"),
+  isCompany: boolean("is_company").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

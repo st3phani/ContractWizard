@@ -33,6 +33,12 @@ function populateContractTemplate(template: string, data: any): string {
     populated = populated.replace(/\{\{beneficiary\.phone\}\}/g, data.beneficiary.phone || '');
     populated = populated.replace(/\{\{beneficiary\.address\}\}/g, data.beneficiary.address || '');
     populated = populated.replace(/\{\{beneficiary\.cnp\}\}/g, data.beneficiary.cnp || '');
+    // Company fields for beneficiary
+    populated = populated.replace(/\{\{beneficiary\.companyName\}\}/g, data.beneficiary.companyName || '');
+    populated = populated.replace(/\{\{beneficiary\.companyAddress\}\}/g, data.beneficiary.companyAddress || '');
+    populated = populated.replace(/\{\{beneficiary\.companyCui\}\}/g, data.beneficiary.companyCui || '');
+    populated = populated.replace(/\{\{beneficiary\.companyRegistrationNumber\}\}/g, data.beneficiary.companyRegistrationNumber || '');
+    populated = populated.replace(/\{\{beneficiary\.companyLegalRepresentative\}\}/g, data.beneficiary.companyLegalRepresentative || '');
   }
   
   // Contract fields
