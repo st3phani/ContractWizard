@@ -181,14 +181,14 @@ export default function ContractForm() {
                         </div>
                       </div>
                       
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 items-stretch">
                         <Popover open={beneficiarySearchOpen} onOpenChange={setBeneficiarySearchOpen}>
                           <PopoverTrigger asChild>
                             <Button
                               variant="outline"
                               role="combobox"
                               aria-expanded={beneficiarySearchOpen}
-                              className="flex-1 justify-start"
+                              className="flex-1 justify-start min-w-0"
                             >
                               {selectedBeneficiary ? (
                                 <div className="flex items-center">
@@ -246,11 +246,11 @@ export default function ContractForm() {
                           variant="outline"
                           onClick={handleNewBeneficiary}
                           className={cn(
-                            "shrink-0",
+                            "shrink-0 whitespace-nowrap",
                             showNewBeneficiaryForm && "bg-blue-100 border-blue-300 text-blue-700"
                           )}
                         >
-                          <Plus className="h-4 w-4 mr-2" />
+                          <Plus className="h-4 w-4 mr-1" />
                           Beneficiar Nou
                         </Button>
                       </div>
@@ -277,7 +277,7 @@ export default function ContractForm() {
                               variant="ghost"
                               size="sm"
                               onClick={handleNewBeneficiary}
-                              className="text-blue-600 hover:text-blue-700"
+                              className="text-blue-600 hover:text-blue-700 whitespace-nowrap shrink-0"
                             >
                               <User className="h-4 w-4 mr-1" />
                               Schimbă
