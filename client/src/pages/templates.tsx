@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { formatDate } from "@/lib/utils";
 import Sidebar from "@/components/sidebar";
-import SimpleHtmlEditor from "@/components/simple-html-editor";
+import RichTextEditor from "@/components/rich-text-editor";
 import type { ContractTemplate, InsertContractTemplate } from "@shared/schema";
 
 export default function Templates() {
@@ -82,7 +82,9 @@ export default function Templates() {
   };
 
   const addVariable = (variable: string) => {
-    const newContent = formData.content + ' ' + variable + ' ';
+    // Pentru Rich Text Editor, adaugăm variabila la sfârșitul conținutului curent
+    const currentContent = formData.content || '<p></p>';
+    const newContent = currentContent.replace(/<\/p>$/, ` ${variable}</p>`) || `${currentContent} ${variable}`;
     setFormData({ ...formData, content: newContent });
   };
 
@@ -187,7 +189,7 @@ export default function Templates() {
             
             <div className="space-y-2">
               <Label>Conținut Contract *</Label>
-              <SimpleHtmlEditor
+              <RichTextEditor
                 content={formData.content}
                 onChange={(content) => setFormData({ ...formData, content })}
                 placeholder="Conținutul contractului cu placeholder-uri (ex: {{beneficiary.name}})"
