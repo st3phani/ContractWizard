@@ -96,19 +96,17 @@ export default function Templates() {
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle>Template-uri Contract</CardTitle>
-                <DialogTrigger asChild>
-                  <Button 
-                    onClick={() => {
-                      setSelectedTemplate(null);
-                      setFormData({ name: "", content: "", fields: "[]" });
-                      setIsCreateModalOpen(true);
-                    }}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Template Nou
-                  </Button>
-                </DialogTrigger>
+                <Button 
+                  onClick={() => {
+                    setSelectedTemplate(null);
+                    setFormData({ name: "", content: "", fields: "[]" });
+                    setIsCreateModalOpen(true);
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Template Nou
+                </Button>
               </div>
             </CardHeader>
             <CardContent>
