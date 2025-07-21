@@ -71,16 +71,17 @@ export default function ContractsPage() {
     <div className="flex h-screen bg-gray-50">
       <Sidebar />
       <div className="flex-1 overflow-auto">
-        <div className="p-6">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Contracte
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
-              Gestionează toate contractele din sistem
-            </p>
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold text-gray-900">Contracte</h1>
+              <p className="text-gray-600 mt-1">Gestionează toate contractele din sistem</p>
+            </div>
           </div>
+        </div>
 
+        <div className="p-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
             <ContractTable 
               contracts={contracts}
