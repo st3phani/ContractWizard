@@ -284,6 +284,9 @@ export default function ContractForm() {
         isCompany: false,
       });
       
+      // Clear validation errors
+      setValidationErrors({});
+      
       // Remove success toast as per user preference
     },
     onError: (error) => {
@@ -291,6 +294,9 @@ export default function ContractForm() {
       console.error("Error creating beneficiary:", error);
     },
   });
+
+  // State to track validation errors
+  const [validationErrors, setValidationErrors] = useState<{ [key: string]: boolean }>({});
 
   const handleCreateBeneficiary = () => {
     // Validate required fields manually (same validation as in Beneficiaries page)
@@ -312,6 +318,9 @@ export default function ContractForm() {
       if (!formData.cnp?.trim()) errors.cnp = true;
     }
 
+    // Update validation errors state
+    setValidationErrors(errors);
+
     if (Object.keys(errors).length > 0) {
       // Focus first error field
       const firstErrorField = Object.keys(errors)[0];
@@ -324,6 +333,18 @@ export default function ContractForm() {
     }
 
     createBeneficiaryMutation.mutate(formData);
+  };
+
+  // Clear specific validation error when user starts typing
+  const handleFieldChange = (fieldName: string, value: string, setter: (value: string) => void) => {
+    setter(value);
+    if (validationErrors[fieldName] && value.trim()) {
+      setValidationErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[fieldName];
+        return newErrors;
+      });
+    }
   };
 
   return (
@@ -642,9 +663,9 @@ export default function ContractForm() {
                   <Input
                     id="companyName"
                     value={formData.companyName || ""}
-                    onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                    onChange={(e) => handleFieldChange('companyName', e.target.value, (value) => setFormData({ ...formData, companyName: value }))}
                     placeholder="Denumirea companiei"
-                    className={!formData.companyName?.trim() ? "border-red-500 bg-pink-50" : ""}
+                    className={validationErrors.companyName ? "border-red-500 bg-pink-50" : ""}
                   />
                 </div>
 
@@ -653,10 +674,10 @@ export default function ContractForm() {
                   <Textarea
                     id="companyAddress"
                     value={formData.companyAddress || ""}
-                    onChange={(e) => setFormData({ ...formData, companyAddress: e.target.value })}
+                    onChange={(e) => handleFieldChange('companyAddress', e.target.value, (value) => setFormData({ ...formData, companyAddress: value }))}
                     rows={3}
                     placeholder="Adresa completă a companiei"
-                    className={!formData.companyAddress?.trim() ? "border-red-500 bg-pink-50" : ""}
+                    className={validationErrors.companyAddress ? "border-red-500 bg-pink-50" : ""}
                   />
                 </div>
 
@@ -666,9 +687,9 @@ export default function ContractForm() {
                     <Input
                       id="companyCui"
                       value={formData.companyCui || ""}
-                      onChange={(e) => setFormData({ ...formData, companyCui: e.target.value })}
+                      onChange={(e) => handleFieldChange('companyCui', e.target.value, (value) => setFormData({ ...formData, companyCui: value }))}
                       placeholder="RO12345678"
-                      className={!formData.companyCui?.trim() ? "border-red-500 bg-pink-50" : ""}
+                      className={validationErrors.companyCui ? "border-red-500 bg-pink-50" : ""}
                     />
                   </div>
 
@@ -677,9 +698,9 @@ export default function ContractForm() {
                     <Input
                       id="companyRegistrationNumber"
                       value={formData.companyRegistrationNumber || ""}
-                      onChange={(e) => setFormData({ ...formData, companyRegistrationNumber: e.target.value })}
+                      onChange={(e) => handleFieldChange('companyRegistrationNumber', e.target.value, (value) => setFormData({ ...formData, companyRegistrationNumber: value }))}
                       placeholder="J40/1234/2023"
-                      className={!formData.companyRegistrationNumber?.trim() ? "border-red-500 bg-pink-50" : ""}
+                      className={validationErrors.companyRegistrationNumber ? "border-red-500 bg-pink-50" : ""}
                     />
                   </div>
                 </div>
@@ -690,9 +711,9 @@ export default function ContractForm() {
                     <Input
                       id="companyLegalRepresentative"
                       value={formData.companyLegalRepresentative || ""}
-                      onChange={(e) => setFormData({ ...formData, companyLegalRepresentative: e.target.value })}
+                      onChange={(e) => handleFieldChange('companyLegalRepresentative', e.target.value, (value) => setFormData({ ...formData, companyLegalRepresentative: value }))}
                       placeholder="Numele reprezentantului legal"
-                      className={!formData.companyLegalRepresentative?.trim() ? "border-red-500 bg-pink-50" : ""}
+                      className={validationErrors.companyLegalRepresentative ? "border-red-500 bg-pink-50" : ""}
                     />
                   </div>
 
@@ -701,9 +722,9 @@ export default function ContractForm() {
                     <Input
                       id="cnp"
                       value={formData.cnp || ""}
-                      onChange={(e) => setFormData({ ...formData, cnp: e.target.value })}
+                      onChange={(e) => handleFieldChange('cnp', e.target.value, (value) => setFormData({ ...formData, cnp: value }))}
                       placeholder="CNP reprezentant legal"
-                      className={!formData.cnp?.trim() ? "border-red-500 bg-pink-50" : ""}
+                      className={validationErrors.cnp ? "border-red-500 bg-pink-50" : ""}
                     />
                   </div>
                 </div>
@@ -717,9 +738,9 @@ export default function ContractForm() {
                     <Input
                       id="fullName"
                       value={formData.fullName}
-                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                      onChange={(e) => handleFieldChange('fullName', e.target.value, (value) => setFormData({ ...formData, fullName: value }))}
                       placeholder="Numele complet al beneficiarului"
-                      className={!formData.fullName.trim() ? "border-red-500 bg-pink-50" : ""}
+                      className={validationErrors.fullName ? "border-red-500 bg-pink-50" : ""}
                     />
                   </div>
 
@@ -728,9 +749,9 @@ export default function ContractForm() {
                     <Input
                       id="cnp"
                       value={formData.cnp || ""}
-                      onChange={(e) => setFormData({ ...formData, cnp: e.target.value })}
+                      onChange={(e) => handleFieldChange('cnp', e.target.value, (value) => setFormData({ ...formData, cnp: value }))}
                       placeholder="1234567890123"
-                      className={!formData.cnp?.trim() ? "border-red-500 bg-pink-50" : ""}
+                      className={validationErrors.cnp ? "border-red-500 bg-pink-50" : ""}
                     />
                   </div>
                 </div>
@@ -740,10 +761,10 @@ export default function ContractForm() {
                   <Textarea
                     id="address"
                     value={formData.address || ""}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    onChange={(e) => handleFieldChange('address', e.target.value, (value) => setFormData({ ...formData, address: value }))}
                     rows={3}
                     placeholder="Adresa completă"
-                    className={!formData.address?.trim() ? "border-red-500 bg-pink-50" : ""}
+                    className={validationErrors.address ? "border-red-500 bg-pink-50" : ""}
                   />
                 </div>
               </>
@@ -757,9 +778,9 @@ export default function ContractForm() {
                   id="email"
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) => handleFieldChange('email', e.target.value, (value) => setFormData({ ...formData, email: value }))}
                   placeholder="adresa@email.com"
-                  className={!formData.email.trim() ? "border-red-500 bg-pink-50" : ""}
+                  className={validationErrors.email ? "border-red-500 bg-pink-50" : ""}
                 />
               </div>
 
@@ -768,9 +789,9 @@ export default function ContractForm() {
                 <Input
                   id="phone"
                   value={formData.phone || ""}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={(e) => handleFieldChange('phone', e.target.value, (value) => setFormData({ ...formData, phone: value }))}
                   placeholder="+40 xxx xxx xxx"
-                  className={!formData.phone?.trim() ? "border-red-500 bg-pink-50" : ""}
+                  className={validationErrors.phone ? "border-red-500 bg-pink-50" : ""}
                 />
               </div>
             </div>
