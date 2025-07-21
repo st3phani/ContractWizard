@@ -183,7 +183,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedContract = insertContractSchema.parse({
         ...contractData,
         orderNumber,
-        beneficiaryId: beneficiary.id
+        beneficiaryId: beneficiary.id,
+        value: contractData.value || null,
+        startDate: contractData.startDate ? new Date(contractData.startDate) : null,
+        endDate: contractData.endDate ? new Date(contractData.endDate) : null,
       });
       
       const contract = await storage.createContract(validatedContract);

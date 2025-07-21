@@ -52,6 +52,12 @@ export const insertContractSchema = createInsertSchema(contracts).omit({
   createdAt: true,
   sentAt: true,
   completedAt: true,
+}).extend({
+  templateId: z.number().min(1, "Template-ul este obligatoriu"),
+  beneficiaryId: z.number().min(1, "Beneficiarul este obligatoriu"),
+  value: z.string().optional().nullable(),
+  startDate: z.date().optional().nullable(),
+  endDate: z.date().optional().nullable(),
 });
 
 export type ContractTemplate = typeof contractTemplates.$inferSelect;

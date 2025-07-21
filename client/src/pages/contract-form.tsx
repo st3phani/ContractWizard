@@ -32,7 +32,7 @@ const contractFormSchema = z.object({
   }),
   // Contract data
   contract: z.object({
-    templateId: z.number({ required_error: "Template-ul este obligatoriu" }),
+    templateId: z.number({ required_error: "Template-ul este obligatoriu" }).min(1, "Selectați un template"),
     value: z.string().optional(),
     currency: z.string().default("RON"),
     startDate: z.string().optional(),
@@ -62,7 +62,7 @@ export default function ContractForm() {
         cnp: "",
       },
       contract: {
-        templateId: 0,
+        templateId: undefined as any,
         value: "",
         currency: "RON",
         startDate: "",
