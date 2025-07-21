@@ -113,6 +113,11 @@ Three main entities:
 
 ```
 Changelog:
+- July 21, 2025. Completed full migration from "fullName" to "name" field across entire application
+- July 21, 2025. Fixed database schema - removed old "full_name" column and migrated data to "name" column
+- July 21, 2025. Updated all frontend components to use "name" field: contract-table, beneficiary-form-fields, beneficiary-form-modal, templates
+- July 21, 2025. Fixed backend storage methods and API mutations to return proper objects instead of Response objects
+- July 21, 2025. Updated contract templates in database to use {{beneficiary.name}} instead of {{beneficiary.fullName}}
 - July 21, 2025. Made contract fields mandatory with proper validation: "Valoare Contract", "Data Începerii", "Data Încheierii"
 - July 21, 2025. Started code refactoring - created reusable BeneficiaryFormFields component to eliminate duplicate beneficiary form code
 - July 21, 2025. Created BeneficiaryFormModal component for consistent beneficiary form handling across pages

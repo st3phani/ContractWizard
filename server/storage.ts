@@ -66,7 +66,6 @@ export class MemStorage implements IStorage {
       cui: "RO12345678",
       registrationNumber: "J40/1234/2023",
       legalRepresentative: "Ion Popescu",
-      createdAt: new Date(),
       updatedAt: new Date()
     };
   }
@@ -76,7 +75,6 @@ export class MemStorage implements IStorage {
     return {
       id: 1,
       ...settings,
-      createdAt: new Date(),
       updatedAt: new Date()
     };
   }
@@ -218,6 +216,7 @@ _________________           _________________`,
       companyCui: beneficiary.companyCui ?? null,
       companyRegistrationNumber: beneficiary.companyRegistrationNumber ?? null,
       companyLegalRepresentative: beneficiary.companyLegalRepresentative ?? null,
+      isCompany: beneficiary.isCompany ?? false,
       createdAt: new Date()
     };
     this.beneficiaries.set(id, newBeneficiary);
@@ -303,6 +302,13 @@ _________________           _________________`,
       endDate: contractData.endDate ?? null,
       notes: contractData.notes ?? null,
       status: contractData.status ?? "draft",
+      providerName: null,
+      providerAddress: null,
+      providerPhone: null,
+      providerEmail: null,
+      providerCui: null,
+      providerRegistrationNumber: null,
+      providerLegalRepresentative: null,
       createdAt: new Date(),
       sentAt: null,
       completedAt: null
@@ -467,9 +473,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createContract(contractData: InsertContract): Promise<ContractWithDetails> {
+    const processedData = {
+      ...contractData,
+      value: typeof contractData.value === 'number' ? String(contractData.value) : contractData.value
+    };
+    
     const [newContract] = await db
       .insert(contracts)
-      .values([contractData])
+      .values(processedData)
       .returning();
 
     const contractWithDetails = await this.getContract(newContract.id);
