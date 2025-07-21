@@ -91,7 +91,7 @@ export default function ContractTable({ contracts, onView, onDownload, onEmail, 
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>{contract.template.name}</TableCell>
+                <TableCell>{contract.template?.name || 'Template șters'}</TableCell>
                 <TableCell>{formatDate(contract.createdAt)}</TableCell>
                 <TableCell>
                   <Badge className={getStatusColor(contract.status)}>

@@ -113,6 +113,10 @@ Three main entities:
 
 ```
 Changelog:
+- July 21, 2025. Fixed contract template deletion functionality - added DELETE route and mutation
+- July 21, 2025. Fixed ContractModal to use backend API instead of local function for proper variable population
+- July 21, 2025. Standardized template system to use only {{...}} format for all variables
+- July 21, 2025. Fixed contract table to handle deleted templates gracefully
 - July 03, 2025. Initial setup
 ```
 
