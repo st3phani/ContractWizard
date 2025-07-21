@@ -273,7 +273,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           <TableIcon className="h-4 w-4" />
         </Button>
 
-        {editor.isActive('table') && (
+        {(editor.isActive('table') || editor.isActive('tableRow') || editor.isActive('tableCell') || editor.isActive('tableHeader')) && (
           <>
             <div className="w-px h-6 bg-gray-300 mx-1" />
             
