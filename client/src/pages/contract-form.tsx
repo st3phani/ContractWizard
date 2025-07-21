@@ -381,29 +381,6 @@ export default function ContractForm() {
                     {/* Show form fields only when creating new beneficiary */}
                     {showNewBeneficiaryForm && (
                       <div className="space-y-4">
-                        {/* Toggle between Individual/Company */}
-                        <FormField
-                          control={form.control}
-                          name="beneficiary.isCompany"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Tip Beneficiar</FormLabel>
-                              <FormControl>
-                                <Select onValueChange={(value) => field.onChange(value === "true")} defaultValue={field.value ? "true" : "false"}>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Selectează tipul" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="false">Persoană Fizică</SelectItem>
-                                    <SelectItem value="true">Companie</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
                         <BeneficiaryFormFields
                           control={form.control}
                           watch={form.watch}
