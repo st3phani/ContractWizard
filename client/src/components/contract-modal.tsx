@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Download, Mail, X } from "lucide-react";
@@ -15,23 +15,27 @@ interface ContractModalProps {
 
 export default function ContractModal({ contract, isOpen, onClose, onDownload, onEmail }: ContractModalProps) {
   const [previewContent, setPreviewContent] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Fetch preview from backend API when modal opens
+  useEffect(() => {
+    if (contract && isOpen) {
+      setIsLoading(true);
+      fetch(`/api/contracts/${contract.id}/preview`)
+        .then(res => res.json())
+        .then(data => {
+          setPreviewContent(data.content);
+          setIsLoading(false);
+        })
+        .catch(error => {
+          console.error('Failed to load preview:', error);
+          setPreviewContent("Eroare la încărcarea contractului...");
+          setIsLoading(false);
+        });
+    }
+  }, [contract, isOpen]);
 
   if (!contract) return null;
-
-  // Generate preview content
-  const generatePreview = () => {
-    return contract.template.content
-      .replace(/{{orderNumber}}/g, contract.orderNumber)
-      .replace(/{{currentDate}}/g, formatDate(contract.createdAt))
-      .replace(/{{beneficiary\.fullName}}/g, contract.beneficiary.fullName)
-      .replace(/{{beneficiary\.address}}/g, contract.beneficiary.address || "")
-      .replace(/{{beneficiary\.cnp}}/g, contract.beneficiary.cnp || "")
-      .replace(/{{contract\.value}}/g, contract.value?.toString() || "")
-      .replace(/{{contract\.currency}}/g, contract.currency)
-      .replace(/{{contract\.startDate}}/g, formatDate(contract.startDate))
-      .replace(/{{contract\.endDate}}/g, formatDate(contract.endDate))
-      .replace(/{{contract\.notes}}/g, contract.notes || "");
-  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -76,7 +80,11 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
           </div>
           
           <div className="space-y-6 text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-            {generatePreview()}
+            {isLoading ? (
+              <div className="text-center py-8">Se încarcă contractul...</div>
+            ) : (
+              previewContent
+            )}
           </div>
         </div>
       </DialogContent>

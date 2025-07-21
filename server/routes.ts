@@ -13,10 +13,14 @@ function generateOrderNumber(): string {
 
 // Helper function to populate contract template
 function populateContractTemplate(template: string, data: any): string {
+  console.log('🔧 POPULATE: Template input:', template);
+  console.log('🔧 POPULATE: Data input:', JSON.stringify(data, null, 2));
+  
   let populated = template;
   
   // Provider fields
   if (data.provider) {
+    console.log('🔧 POPULATE: Processing provider data:', data.provider);
     populated = populated.replace(/\{\{provider\.name\}\}/g, data.provider.name || '');
     populated = populated.replace(/\{\{provider\.address\}\}/g, data.provider.address || '');
     populated = populated.replace(/\{\{provider\.cui\}\}/g, data.provider.cui || '');
@@ -28,6 +32,7 @@ function populateContractTemplate(template: string, data: any): string {
   
   // Beneficiary fields
   if (data.beneficiary) {
+    console.log('🔧 POPULATE: Processing beneficiary data:', data.beneficiary);
     populated = populated.replace(/\{\{beneficiary\.fullName\}\}/g, data.beneficiary.fullName || '');
     populated = populated.replace(/\{\{beneficiary\.email\}\}/g, data.beneficiary.email || '');
     populated = populated.replace(/\{\{beneficiary\.phone\}\}/g, data.beneficiary.phone || '');
@@ -47,6 +52,8 @@ function populateContractTemplate(template: string, data: any): string {
   // Order number and current date
   populated = populated.replace(/\{\{orderNumber\}\}/g, data.orderNumber || '');
   populated = populated.replace(/\{\{currentDate\}\}/g, new Date().toLocaleDateString('ro-RO'));
+  
+  console.log('🔧 POPULATE: Final result:', populated);
   
   return populated;
 }
@@ -265,8 +272,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Contract not found" });
       }
       
-      const populatedContent = populateContractTemplate(contract.template.content, {
+      // Get company settings for the latest provider data
+      const companySettings = await storage.getCompanySettings();
+      
+      const populationData = {
         orderNumber: contract.orderNumber,
+        currentDate: new Date().toLocaleDateString('ro-RO'),
         beneficiary: contract.beneficiary,
         contract: {
           startDate: contract.startDate?.toLocaleDateString('ro-RO'),
@@ -276,18 +287,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
           notes: contract.notes
         },
         provider: {
-          name: contract.providerName,
-          address: contract.providerAddress,
-          phone: contract.providerPhone,
-          email: contract.providerEmail,
-          cui: contract.providerCui,
-          registrationNumber: contract.providerRegistrationNumber,
-          legalRepresentative: contract.providerLegalRepresentative,
+          name: companySettings?.name || contract.providerName,
+          address: companySettings?.address || contract.providerAddress,
+          phone: companySettings?.phone || contract.providerPhone,
+          email: companySettings?.email || contract.providerEmail,
+          cui: companySettings?.cui || contract.providerCui,
+          registrationNumber: companySettings?.registrationNumber || contract.providerRegistrationNumber,
+          legalRepresentative: companySettings?.legalRepresentative || contract.providerLegalRepresentative,
         }
-      });
+      };
+      
+      console.log('🔧 Template content:', contract.template.content);
+      console.log('🔧 Population data:', JSON.stringify(populationData, null, 2));
+      
+      const populatedContent = populateContractTemplate(contract.template.content, populationData);
+      
+      console.log('🔧 Populated result:', populatedContent);
       
       res.json({ content: populatedContent });
     } catch (error) {
+      console.error('Preview error:', error);
       res.status(500).json({ message: "Failed to generate contract preview" });
     }
   });
