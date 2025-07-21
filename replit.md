@@ -113,6 +113,8 @@ Three main entities:
 
 ```
 Changelog:
+- July 21, 2025. Uniformized validation across all forms - removed success notifications, error messages under fields, and made labels black
+- July 21, 2025. Implemented consistent field validation with red borders and focus management on all forms
 - July 21, 2025. Fixed contract template deletion functionality - added DELETE route and mutation
 - July 21, 2025. Fixed ContractModal to use backend API instead of local function for proper variable population
 - July 21, 2025. Standardized template system to use only {{...}} format for all variables

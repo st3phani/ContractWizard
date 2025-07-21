@@ -47,10 +47,6 @@ export default function Beneficiaries() {
       apiRequest("POST", "/api/beneficiaries", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
-      toast({
-        title: "Success",
-        description: "Beneficiarul a fost creat cu succes!",
-      });
       setIsCreateModalOpen(false);
       setFormData({ fullName: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", companyLegalRepresentative: "", isCompany: false });
       setSelectedBeneficiary(null);
@@ -69,10 +65,6 @@ export default function Beneficiaries() {
     mutationFn: (id: number) => apiRequest("DELETE", `/api/beneficiaries/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
-      toast({
-        title: "Success",
-        description: "Beneficiarul a fost șters cu succes!",
-      });
     },
     onError: () => {
       toast({
