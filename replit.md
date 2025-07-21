@@ -113,6 +113,12 @@ Three main entities:
 
 ```
 Changelog:
+- July 22, 2025. Implemented system settings with date format configuration that applies to all contract forms
+- July 22, 2025. Added system_settings table to database with support for language, currency, date format, and auto backup settings
+- July 22, 2025. Created dateUtils library for consistent date formatting across application using configurable formats (DD/MM/YYYY, MM/DD/YYYY, YYYY-MM-DD)
+- July 22, 2025. Added API routes for system settings management (/api/system-settings)
+- July 22, 2025. Updated contract form to use date format from system settings instead of hardcoded format
+- July 22, 2025. Fixed contracts page header to match other pages with consistent styling and added "Contract Nou" button
 - July 21, 2025. Created dedicated Contracts page with full CRUD functionality and added to navigation menu
 - July 21, 2025. Completed full migration from "fullName" to "name" field across entire application
 - July 21, 2025. Fixed database schema - removed old "full_name" column and migrated data to "name" column

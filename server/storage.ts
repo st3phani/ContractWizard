@@ -103,7 +103,10 @@ export class MemStorage implements IStorage {
     // Return updated settings for MemStorage
     return {
       id: 1,
-      ...settings,
+      language: settings.language ?? "ro",
+      currency: settings.currency ?? "RON", 
+      dateFormat: settings.dateFormat ?? "dd/mm/yyyy",
+      autoBackup: settings.autoBackup ?? true,
       updatedAt: new Date()
     };
   }
