@@ -72,6 +72,28 @@ export const insertContractTemplateSchema = createInsertSchema(contractTemplates
 export const insertBeneficiarySchema = createInsertSchema(beneficiaries).omit({
   id: true,
   createdAt: true,
+}).extend({
+  fullName: z.string().min(1, "Numele este obligatoriu"),
+  email: z.string().email("Email-ul trebuie să fie valid").min(1, "Email-ul este obligatoriu"),
+  phone: z.string().min(1, "Telefonul este obligatoriu"),
+  address: z.string().optional(),
+  cnp: z.string().optional(),
+  companyName: z.string().optional(),
+  companyAddress: z.string().optional(),
+  companyCui: z.string().optional(),
+  companyRegistrationNumber: z.string().optional(),
+  companyLegalRepresentative: z.string().optional(),
+}).refine((data) => {
+  // If it's a company, require company fields
+  if (data.isCompany) {
+    return !!(data.companyName && data.companyAddress && data.companyCui && 
+             data.companyRegistrationNumber && data.companyLegalRepresentative && data.cnp);
+  }
+  // If it's an individual, require individual fields
+  return !!(data.fullName && data.address && data.cnp);
+}, {
+  message: "Completați toate câmpurile obligatorii",
+  path: ["fullName"],
 });
 
 export const insertCompanySettingsSchema = createInsertSchema(companySettings).omit({

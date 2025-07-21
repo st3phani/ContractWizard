@@ -284,6 +284,13 @@ export default function ContractForm() {
   });
 
   const handleCreateBeneficiary = (data: InsertBeneficiary) => {
+    // Check if form has validation errors
+    const errors = beneficiaryForm.formState.errors;
+    if (Object.keys(errors).length > 0) {
+      // Don't submit if there are validation errors
+      return;
+    }
+    
     createBeneficiaryMutation.mutate(data);
   };
 
