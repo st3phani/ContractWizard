@@ -206,7 +206,7 @@ export default function Templates() {
                 <h4 className="font-semibold text-blue-900 mb-3">📋 Variabile Prestator (Companie)</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-blue-700">[Numele Companiei]</code>
+                    <code className="text-blue-700">{"{{provider.name}}"}</code>
                     <Button 
                       size="sm" 
                       variant="ghost" 
@@ -216,7 +216,7 @@ export default function Templates() {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
                           const textAfter = textarea.value.substring(cursorPos);
-                          const newValue = textBefore + '[Numele Companiei]' + textAfter;
+                          const newValue = textBefore + '{{provider.name}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
                         }
                       }}
@@ -226,7 +226,7 @@ export default function Templates() {
                     </Button>
                   </div>
                   <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-blue-700">[Adresa Companiei]</code>
+                    <code className="text-blue-700">{"{{provider.address}}"}</code>
                     <Button 
                       size="sm" 
                       variant="ghost" 
@@ -236,7 +236,7 @@ export default function Templates() {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
                           const textAfter = textarea.value.substring(cursorPos);
-                          const newValue = textBefore + '[Adresa Companiei]' + textAfter;
+                          const newValue = textBefore + '{{provider.address}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
                         }
                       }}
@@ -246,7 +246,7 @@ export default function Templates() {
                     </Button>
                   </div>
                   <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-blue-700">[CIF Companie]</code>
+                    <code className="text-blue-700">{"{{provider.cui}}"}</code>
                     <Button 
                       size="sm" 
                       variant="ghost" 
@@ -256,7 +256,7 @@ export default function Templates() {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
                           const textAfter = textarea.value.substring(cursorPos);
-                          const newValue = textBefore + '[CIF Companie]' + textAfter;
+                          const newValue = textBefore + '{{provider.cui}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
                         }
                       }}
@@ -266,7 +266,7 @@ export default function Templates() {
                     </Button>
                   </div>
                   <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-blue-700">[Nr. Registrul Comerțului]</code>
+                    <code className="text-blue-700">{"{{provider.registrationNumber}}"}</code>
                     <Button 
                       size="sm" 
                       variant="ghost" 
@@ -276,7 +276,7 @@ export default function Templates() {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
                           const textAfter = textarea.value.substring(cursorPos);
-                          const newValue = textBefore + '[Nr. Registrul Comerțului]' + textAfter;
+                          const newValue = textBefore + '{{provider.registrationNumber}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
                         }
                       }}
@@ -286,7 +286,7 @@ export default function Templates() {
                     </Button>
                   </div>
                   <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-blue-700">[Reprezentant Legal]</code>
+                    <code className="text-blue-700">{"{{provider.legalRepresentative}}"}</code>
                     <Button 
                       size="sm" 
                       variant="ghost" 
@@ -296,7 +296,7 @@ export default function Templates() {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
                           const textAfter = textarea.value.substring(cursorPos);
-                          const newValue = textBefore + '[Reprezentant Legal]' + textAfter;
+                          const newValue = textBefore + '{{provider.legalRepresentative}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
                         }
                       }}
@@ -306,7 +306,7 @@ export default function Templates() {
                     </Button>
                   </div>
                   <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-blue-700">[Telefon Companie]</code>
+                    <code className="text-blue-700">{"{{provider.phone}}"}</code>
                     <Button 
                       size="sm" 
                       variant="ghost" 
@@ -316,7 +316,7 @@ export default function Templates() {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
                           const textAfter = textarea.value.substring(cursorPos);
-                          const newValue = textBefore + '[Telefon Companie]' + textAfter;
+                          const newValue = textBefore + '{{provider.phone}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
                         }
                       }}
@@ -326,7 +326,7 @@ export default function Templates() {
                     </Button>
                   </div>
                   <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-blue-700">[Email Companie]</code>
+                    <code className="text-blue-700">{"{{provider.email}}"}</code>
                     <Button 
                       size="sm" 
                       variant="ghost" 
@@ -336,7 +336,7 @@ export default function Templates() {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
                           const textAfter = textarea.value.substring(cursorPos);
-                          const newValue = textBefore + '[Email Companie]' + textAfter;
+                          const newValue = textBefore + '{{provider.email}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
                         }
                       }}
@@ -498,9 +498,9 @@ export default function Templates() {
             <div className="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
               <h4 className="font-semibold text-yellow-900 mb-2">💡 Exemple de utilizare</h4>
               <div className="text-sm text-yellow-800 space-y-1">
-                <p><strong>Pentru Prestator:</strong> PRESTATOR: [Numele Companiei], cu sediul în [Adresa Companiei], CIF [CIF Companie]</p>
-                <p><strong>Pentru Beneficiar:</strong> BENEFICIAR: [Nume Beneficiar], email: [Email Beneficiar]</p>
-                <p><strong>Pentru Detalii:</strong> Contract nr. [Număr Comandă] din [Data Curentă], valoare: [Valoare Contract] RON</p>
+                <p><strong>Pentru Prestator:</strong> PRESTATOR: {"{{provider.name}}"}, cu sediul în {"{{provider.address}}"}, CIF {"{{provider.cui}}"}</p>
+                <p><strong>Pentru Beneficiar:</strong> BENEFICIAR: {"{{beneficiary.fullName}}"}, email: {"{{beneficiary.email}}"}</p>
+                <p><strong>Pentru Detalii:</strong> Contract nr. {"{{orderNumber}}"} din {"{{currentDate}}"}, valoare: {"{{contract.value}}"} RON</p>
               </div>
             </div>
           </div>
