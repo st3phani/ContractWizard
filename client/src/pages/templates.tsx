@@ -54,6 +54,29 @@ export default function Templates() {
     },
   });
 
+  // Update template mutation
+  const updateTemplateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number, data: Partial<InsertContractTemplate> }) => 
+      apiRequest("PATCH", `/api/contract-templates/${id}`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/contract-templates"] });
+      toast({
+        title: "Success",
+        description: "Template-ul a fost actualizat cu succes!",
+      });
+      setIsCreateModalOpen(false);
+      setSelectedTemplate(null);
+      setFormData({ name: "", content: "", fields: "[]" });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "A apărut o eroare la actualizarea template-ului.",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Delete template mutation
   const deleteTemplateMutation = useMutation({
     mutationFn: (id: number) => 
@@ -74,7 +97,7 @@ export default function Templates() {
     },
   });
 
-  const handleCreateTemplate = () => {
+  const handleSaveTemplate = () => {
     if (!formData.name || !formData.content) {
       toast({
         title: "Error",
@@ -84,7 +107,16 @@ export default function Templates() {
       return;
     }
 
-    createTemplateMutation.mutate(formData);
+    if (selectedTemplate) {
+      // Edit existing template
+      updateTemplateMutation.mutate({ 
+        id: selectedTemplate.id, 
+        data: formData 
+      });
+    } else {
+      // Create new template
+      createTemplateMutation.mutate(formData);
+    }
   };
 
   const handlePreview = (template: ContractTemplate) => {
@@ -111,7 +143,11 @@ export default function Templates() {
               <p className="text-gray-600 mt-1">Gestionați template-urile pentru contracte</p>
             </div>
             <Button 
-              onClick={() => setIsCreateModalOpen(true)}
+              onClick={() => {
+                setSelectedTemplate(null);
+                setFormData({ name: "", content: "", fields: "[]" });
+                setIsCreateModalOpen(true);
+              }}
               className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               <Plus className="h-4 w-4 mr-2" />
@@ -716,11 +752,11 @@ export default function Templates() {
               Anulează
             </Button>
             <Button 
-              onClick={handleCreateTemplate}
-              disabled={createTemplateMutation.isPending}
+              onClick={handleSaveTemplate}
+              disabled={createTemplateMutation.isPending || updateTemplateMutation.isPending}
               className="bg-blue-600 hover:bg-blue-700"
             >
-              {createTemplateMutation.isPending ? "Se salvează..." : "Salvează Template"}
+              {(createTemplateMutation.isPending || updateTemplateMutation.isPending) ? "Se salvează..." : (selectedTemplate ? "Actualizează Template" : "Salvează Template")}
             </Button>
           </div>
         </DialogContent>

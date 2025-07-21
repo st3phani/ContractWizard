@@ -89,6 +89,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/contract-templates/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const templateData = insertContractTemplateSchema.partial().parse(req.body);
+      const updatedTemplate = await storage.updateContractTemplate(id, templateData);
+      if (!updatedTemplate) {
+        return res.status(404).json({ message: "Contract template not found" });
+      }
+      res.json(updatedTemplate);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid template data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update contract template" });
+    }
+  });
+
   app.delete("/api/contract-templates/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -303,12 +320,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       };
       
-      console.log('🔧 Template content:', contract.template.content);
-      console.log('🔧 Population data:', JSON.stringify(populationData, null, 2));
+      console.log('Template content:', contract.template.content);
+      console.log('Population data:', JSON.stringify(populationData, null, 2));
       
       const populatedContent = populateContractTemplate(contract.template.content, populationData);
       
-      console.log('🔧 Populated result:', populatedContent);
+      console.log('Populated result:', populatedContent);
       
       res.json({ content: populatedContent });
     } catch (error) {
