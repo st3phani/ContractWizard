@@ -65,13 +65,6 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
         </DialogHeader>
         
         <div className="bg-white border border-gray-200 rounded-lg p-8 min-h-96">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-900">{contract.template.name.toUpperCase()}</h2>
-            <p className="text-sm text-gray-600 mt-2">
-              Nr. {contract.orderNumber} din {formatDate(contract.createdAt)}
-            </p>
-          </div>
-          
           <div className="space-y-6 text-sm text-gray-700 leading-relaxed">
             {isLoading ? (
               <div className="text-center py-8">Se încarcă contractul...</div>
