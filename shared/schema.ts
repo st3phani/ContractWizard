@@ -55,7 +55,7 @@ export const insertContractSchema = createInsertSchema(contracts).omit({
 }).extend({
   templateId: z.number().min(1, "Template-ul este obligatoriu"),
   beneficiaryId: z.number().min(1, "Beneficiarul este obligatoriu"),
-  value: z.string().optional().nullable(),
+  value: z.union([z.string(), z.number()]).optional().nullable(),
   startDate: z.date().optional().nullable(),
   endDate: z.date().optional().nullable(),
 });
