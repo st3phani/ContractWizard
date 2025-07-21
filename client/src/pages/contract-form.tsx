@@ -89,10 +89,10 @@ const contractFormSchema = z.object({
       required_error: "Template-ul este obligatoriu",
       invalid_type_error: "Template-ul este obligatoriu",
     }).min(1, "Template-ul este obligatoriu"),
-    value: z.string().optional(),
+    value: z.string().min(1, "Valoarea contractului este obligatorie"),
     currency: z.string().default("RON"),
-    startDate: z.string().optional(),
-    endDate: z.string().optional(),
+    startDate: z.string().min(1, "Data începerii este obligatorie"),
+    endDate: z.string().min(1, "Data încheierii este obligatorie"),
     notes: z.string().optional(),
   }),
 });
@@ -614,7 +614,7 @@ export default function ContractForm() {
                       name="contract.value"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Valoare Contract</FormLabel>
+                          <FormLabel>Valoare Contract *</FormLabel>
                           <FormControl>
                             <Input type="number" step="0.01" placeholder="0.00" {...field} />
                           </FormControl>
@@ -651,7 +651,7 @@ export default function ContractForm() {
                       name="contract.startDate"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Data Începerii</FormLabel>
+                          <FormLabel>Data Începerii *</FormLabel>
                           <FormControl>
                             <Input type="date" {...field} />
                           </FormControl>
@@ -665,7 +665,7 @@ export default function ContractForm() {
                       name="contract.endDate"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Data Încheierii</FormLabel>
+                          <FormLabel>Data Încheierii *</FormLabel>
                           <FormControl>
                             <Input type="date" {...field} />
                           </FormControl>
