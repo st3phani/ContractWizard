@@ -5,6 +5,11 @@ import { Color } from '@tiptap/extension-color'
 import { FontFamily } from '@tiptap/extension-font-family'
 import { TextAlign } from '@tiptap/extension-text-align'
 import { Underline } from '@tiptap/extension-underline'
+import Image from '@tiptap/extension-image'
+import { Table } from '@tiptap/extension-table'
+import { TableRow } from '@tiptap/extension-table-row'
+import { TableHeader } from '@tiptap/extension-table-header'
+import { TableCell } from '@tiptap/extension-table-cell'
 import { Button } from '@/components/ui/button'
 import { 
   Bold, 
@@ -14,7 +19,11 @@ import {
   AlignCenter, 
   AlignRight,
   List,
-  ListOrdered
+  ListOrdered,
+  Image as ImageIcon,
+  Table as TableIcon,
+  Plus,
+  Minus
 } from 'lucide-react'
 
 interface RichTextEditorProps {
@@ -35,6 +44,16 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
         types: ['heading', 'paragraph'],
       }),
       Underline,
+      Image.configure({
+        inline: true,
+        allowBase64: true,
+      }),
+      Table.configure({
+        resizable: true,
+      }),
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
     content,
     onUpdate: ({ editor }) => {
@@ -150,6 +169,26 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           <option value="Verdana">Verdana</option>
         </select>
 
+        <select
+          onChange={(e) => {
+            if (e.target.value) {
+              editor.chain().focus().setMark('textStyle', { fontSize: e.target.value }).run()
+            }
+          }}
+          className="text-xs px-2 py-1 border border-gray-300 rounded"
+          defaultValue=""
+        >
+          <option value="">Mărime</option>
+          <option value="10px">10px</option>
+          <option value="12px">12px</option>
+          <option value="14px">14px</option>
+          <option value="16px">16px</option>
+          <option value="18px">18px</option>
+          <option value="20px">20px</option>
+          <option value="24px">24px</option>
+          <option value="32px">32px</option>
+        </select>
+
         <input
           type="color"
           value={editor.getAttributes('textStyle').color || '#000000'}
@@ -157,15 +196,95 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           className="w-8 h-8 border border-gray-300 rounded cursor-pointer"
           title="Culoare text"
         />
+
+        <div className="w-px h-6 bg-gray-300 mx-1" />
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            const url = window.prompt('URL imagine:');
+            if (url) {
+              editor.chain().focus().setImage({ src: url }).run()
+            }
+          }}
+          className="h-8 w-8 p-0"
+          title="Inserare imagine"
+        >
+          <ImageIcon className="h-4 w-4" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          className="h-8 w-8 p-0"
+          title="Inserare tabel"
+        >
+          <TableIcon className="h-4 w-4" />
+        </Button>
+
+        {editor.isActive('table') && (
+          <>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().addRowBefore().run()}
+              className="h-8 w-8 p-0"
+              title="Adaugă rând"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().deleteRow().run()}
+              className="h-8 w-8 p-0"
+              title="Șterge rând"
+            >
+              <Minus className="h-4 w-4" />
+            </Button>
+          </>
+        )}
       </div>
 
       {/* Editor Content */}
       <div className="min-h-[300px]">
         <EditorContent 
           editor={editor} 
-          placeholder={placeholder}
         />
       </div>
+      
+      <style>{`
+        .ProseMirror {
+          outline: none !important;
+        }
+        .ProseMirror table {
+          border-collapse: collapse;
+          table-layout: fixed;
+          width: 100%;
+          margin: 0;
+          overflow: hidden;
+        }
+        .ProseMirror table td, .ProseMirror table th {
+          min-width: 1em;
+          border: 2px solid #ced4da;
+          padding: 3px 5px;
+          vertical-align: top;
+          box-sizing: border-box;
+          position: relative;
+        }
+        .ProseMirror table th {
+          font-weight: bold;
+          text-align: left;
+          background-color: #f1f3f4;
+        }
+        .ProseMirror img {
+          max-width: 100%;
+          height: auto;
+        }
+      `}</style>
     </div>
   )
 }
