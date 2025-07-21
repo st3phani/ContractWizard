@@ -19,7 +19,7 @@ import { useLocation } from "wouter";
 import { Search, Check, Plus, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Sidebar from "@/components/sidebar";
-import { BeneficiaryFormFields } from "@/components/beneficiary-form-fields";
+import { BeneficiaryFormModal } from "@/components/beneficiary-form-modal";
 import type { ContractTemplate, Beneficiary } from "@shared/schema";
 
 const contractFormSchema = z.object({
@@ -106,7 +106,7 @@ export default function ContractForm() {
   const queryClient = useQueryClient();
   const [beneficiarySearchOpen, setBeneficiarySearchOpen] = useState(false);
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
-  const [showNewBeneficiaryForm, setShowNewBeneficiaryForm] = useState(true);
+  const [showNewBeneficiaryModal, setShowNewBeneficiaryModal] = useState(false);
 
   const form = useForm<ContractFormData>({
     resolver: zodResolver(contractFormSchema),
@@ -213,7 +213,7 @@ export default function ContractForm() {
 
   const handleSelectBeneficiary = (beneficiary: Beneficiary) => {
     setSelectedBeneficiary(beneficiary);
-    setShowNewBeneficiaryForm(false);
+    setShowNewBeneficiaryModal(false);
     setBeneficiarySearchOpen(false);
     
     // Update form with selected beneficiary data
@@ -226,15 +226,27 @@ export default function ContractForm() {
 
   const handleNewBeneficiary = () => {
     setSelectedBeneficiary(null);
-    setShowNewBeneficiaryForm(true);
+    setShowNewBeneficiaryModal(true);
     setBeneficiarySearchOpen(false);
+  };
+
+  const handleBeneficiaryCreated = (newBeneficiary: Beneficiary) => {
+    // Auto-select the newly created beneficiary
+    setSelectedBeneficiary(newBeneficiary);
+    setShowNewBeneficiaryModal(false);
     
-    // Clear form
-    form.setValue("beneficiary.fullName", "");
-    form.setValue("beneficiary.email", "");
-    form.setValue("beneficiary.phone", "");
-    form.setValue("beneficiary.address", "");
-    form.setValue("beneficiary.cnp", "");
+    // Update form with new beneficiary data
+    form.setValue("beneficiary.fullName", newBeneficiary.fullName);
+    form.setValue("beneficiary.email", newBeneficiary.email);
+    form.setValue("beneficiary.phone", newBeneficiary.phone || "");
+    form.setValue("beneficiary.address", newBeneficiary.address || "");
+    form.setValue("beneficiary.cnp", newBeneficiary.cnp || "");
+    form.setValue("beneficiary.companyName", newBeneficiary.companyName || "");
+    form.setValue("beneficiary.companyAddress", newBeneficiary.companyAddress || "");
+    form.setValue("beneficiary.companyCui", newBeneficiary.companyCui || "");
+    form.setValue("beneficiary.companyRegistrationNumber", newBeneficiary.companyRegistrationNumber || "");
+    form.setValue("beneficiary.companyLegalRepresentative", newBeneficiary.companyLegalRepresentative || "");
+    form.setValue("beneficiary.isCompany", newBeneficiary.isCompany);
   };
 
   return (
@@ -338,7 +350,7 @@ export default function ContractForm() {
                           onClick={handleNewBeneficiary}
                           className={cn(
                             "shrink-0 whitespace-nowrap",
-                            showNewBeneficiaryForm && "bg-blue-100 border-blue-300 text-blue-700"
+                            false && "bg-blue-100 border-blue-300 text-blue-700"
                           )}
                         >
                           <Plus className="h-4 w-4 mr-1" />
@@ -378,16 +390,7 @@ export default function ContractForm() {
                       )}
                     </div>
 
-                    {/* Show form fields only when creating new beneficiary */}
-                    {showNewBeneficiaryForm && (
-                      <div className="space-y-4">
-                        <BeneficiaryFormFields
-                          control={form.control}
-                          watch={form.watch}
-                          namePrefix="beneficiary"
-                        />
-                      </div>
-                    )}
+
                   </CardContent>
                 </Card>
 
@@ -524,6 +527,13 @@ export default function ContractForm() {
           </Form>
         </div>
       </main>
+
+      {/* Beneficiary Modal */}
+      <BeneficiaryFormModal
+        isOpen={showNewBeneficiaryModal}
+        onClose={() => setShowNewBeneficiaryModal(false)}
+        onSuccess={handleBeneficiaryCreated}
+      />
     </div>
   );
 }
