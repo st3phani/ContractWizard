@@ -275,12 +275,24 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
 
         {editor.isActive('table') && (
           <>
+            <div className="w-px h-6 bg-gray-300 mx-1" />
+            
             <Button
               variant="ghost"
               size="sm"
               onClick={() => editor.chain().focus().addRowBefore().run()}
               className="h-8 w-8 p-0"
-              title="Adaugă rând"
+              title="Adaugă rând înainte"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().addRowAfter().run()}
+              className="h-8 w-8 p-0"
+              title="Adaugă rând după"
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -298,6 +310,38 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
             <Button
               variant="ghost"
               size="sm"
+              onClick={() => editor.chain().focus().addColumnBefore().run()}
+              className="h-8 w-8 p-0"
+              title="Adaugă coloană înainte"
+            >
+              <Plus className="h-4 w-4 rotate-90" />
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().addColumnAfter().run()}
+              className="h-8 w-8 p-0"
+              title="Adaugă coloană după"
+            >
+              <Plus className="h-4 w-4 rotate-90" />
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().deleteColumn().run()}
+              className="h-8 w-8 p-0"
+              title="Șterge coloană"
+            >
+              <Minus className="h-4 w-4 rotate-90" />
+            </Button>
+
+            <div className="w-px h-6 bg-gray-300 mx-1" />
+
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => {
                 const table = editor.getAttributes('table');
                 const newClass = table.class === 'no-border' ? '' : 'no-border';
@@ -307,6 +351,16 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
               title="Toggle border tabel"
             >
               {editor.getAttributes('table').class === 'no-border' ? <Grid3X3 className="h-4 w-4" /> : <Square className="h-4 w-4" />}
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => editor.chain().focus().deleteTable().run()}
+              className="h-8 w-8 p-0"
+              title="Șterge tabel"
+            >
+              <TableIcon className="h-4 w-4 text-red-500" />
             </Button>
           </>
         )}
