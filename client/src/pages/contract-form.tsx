@@ -315,23 +315,29 @@ export default function ContractForm() {
   const handleCreateBeneficiary = () => {
     console.log("handleCreateBeneficiary called with formData:", formData);
     
+    // For companies, set fullName to the legal representative name
+    const dataToSend = { ...formData };
+    if (formData.isCompany && formData.companyLegalRepresentative?.trim()) {
+      dataToSend.fullName = formData.companyLegalRepresentative;
+    }
+    
     // Validate required fields manually (same validation as in Beneficiaries page)
     const errors: { [key: string]: boolean } = {};
 
-    if (!formData.fullName.trim()) errors.fullName = true;
-    if (!formData.email.trim()) errors.email = true;
-    if (!formData.phone?.trim()) errors.phone = true;
+    if (!dataToSend.email.trim()) errors.email = true;
+    if (!dataToSend.phone?.trim()) errors.phone = true;
 
-    if (formData.isCompany) {
-      if (!formData.companyName?.trim()) errors.companyName = true;
-      if (!formData.companyAddress?.trim()) errors.companyAddress = true;
-      if (!formData.companyCui?.trim()) errors.companyCui = true;
-      if (!formData.companyRegistrationNumber?.trim()) errors.companyRegistrationNumber = true;
-      if (!formData.companyLegalRepresentative?.trim()) errors.companyLegalRepresentative = true;
-      if (!formData.cnp?.trim()) errors.cnp = true;
+    if (dataToSend.isCompany) {
+      if (!dataToSend.companyName?.trim()) errors.companyName = true;
+      if (!dataToSend.companyAddress?.trim()) errors.companyAddress = true;
+      if (!dataToSend.companyCui?.trim()) errors.companyCui = true;
+      if (!dataToSend.companyRegistrationNumber?.trim()) errors.companyRegistrationNumber = true;
+      if (!dataToSend.companyLegalRepresentative?.trim()) errors.companyLegalRepresentative = true;
+      if (!dataToSend.cnp?.trim()) errors.cnp = true;
     } else {
-      if (!formData.address?.trim()) errors.address = true;
-      if (!formData.cnp?.trim()) errors.cnp = true;
+      if (!dataToSend.fullName.trim()) errors.fullName = true;
+      if (!dataToSend.address?.trim()) errors.address = true;
+      if (!dataToSend.cnp?.trim()) errors.cnp = true;
     }
 
     console.log("Validation errors:", errors);
@@ -351,8 +357,8 @@ export default function ContractForm() {
       return;
     }
 
-    console.log("Validation passed, calling mutation");
-    createBeneficiaryMutation.mutate(formData);
+    console.log("Validation passed, calling mutation with data:", dataToSend);
+    createBeneficiaryMutation.mutate(dataToSend);
   };
 
   // Clear specific validation error when user starts typing
