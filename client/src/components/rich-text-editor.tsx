@@ -74,6 +74,33 @@ const FontSize = Extension.create({
   },
 })
 
+// Custom extension for table class attribute
+const TableClass = Extension.create({
+  name: 'tableClass',
+  
+  addGlobalAttributes() {
+    return [
+      {
+        types: ['table'],
+        attributes: {
+          class: {
+            default: null,
+            parseHTML: element => element.getAttribute('class'),
+            renderHTML: attributes => {
+              if (!attributes.class) {
+                return {}
+              }
+              return {
+                class: attributes.class,
+              }
+            },
+          },
+        },
+      },
+    ]
+  },
+})
+
 interface RichTextEditorProps {
   content: string;
   onChange: (content: string) => void;
@@ -107,6 +134,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
       TableRow,
       TableHeader,
       TableCell,
+      TableClass,
     ],
     content,
     onUpdate: ({ editor }) => {
@@ -120,10 +148,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
       
       // Check table border state
       if (inTable) {
-        const tableElement = editor.view.dom.querySelector('table');
-        if (tableElement) {
-          setTableHasBorder(!tableElement.classList.contains('no-border'));
-        }
+        const tableAttrs = editor.getAttributes('table');
+        setTableHasBorder(tableAttrs.class !== 'no-border');
       }
     },
     onSelectionUpdate: ({ editor }) => {
@@ -136,10 +162,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
       
       // Check table border state
       if (inTable) {
-        const tableElement = editor.view.dom.querySelector('table');
-        if (tableElement) {
-          setTableHasBorder(!tableElement.classList.contains('no-border'));
-        }
+        const tableAttrs = editor.getAttributes('table');
+        setTableHasBorder(tableAttrs.class !== 'no-border');
       }
     },
     editorProps: {
@@ -391,22 +415,11 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
                 const newBorderState = !tableHasBorder;
                 setTableHasBorder(newBorderState);
                 
-                // Find the table element in DOM and toggle class directly
-                const tableElement = editor.view.dom.querySelector('table');
-                if (tableElement) {
-                  if (newBorderState) {
-                    tableElement.classList.remove('no-border');
-                    tableElement.removeAttribute('class');
-                  } else {
-                    tableElement.classList.add('no-border');
-                    tableElement.setAttribute('class', 'no-border');
-                  }
-                  
-                  // Trigger content update to save changes
-                  setTimeout(() => {
-                    editor.commands.focus();
-                    onChange(editor.getHTML());
-                  }, 10);
+                // Use updateAttributes to update table class
+                if (newBorderState) {
+                  editor.chain().focus().updateAttributes('table', { class: null }).run();
+                } else {
+                  editor.chain().focus().updateAttributes('table', { class: 'no-border' }).run();
                 }
               }}
               className="h-8 w-8 p-0"
