@@ -21,6 +21,18 @@ export const beneficiaries = pgTable("beneficiaries", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const companySettings = pgTable("company_settings", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  address: text("address").notNull(),
+  phone: text("phone").notNull(),
+  email: text("email").notNull(),
+  cui: text("cui").notNull(),
+  registrationNumber: text("registration_number").notNull(),
+  legalRepresentative: text("legal_representative").notNull(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 export const contracts = pgTable("contracts", {
   id: serial("id").primaryKey(),
   orderNumber: text("order_number").notNull().unique(),
@@ -32,6 +44,14 @@ export const contracts = pgTable("contracts", {
   endDate: timestamp("end_date"),
   notes: text("notes"),
   status: text("status").notNull().default("draft"), // draft, sent, completed
+  // Provider/Company details (auto-filled from settings)
+  providerName: text("provider_name"),
+  providerAddress: text("provider_address"),
+  providerPhone: text("provider_phone"),
+  providerEmail: text("provider_email"),
+  providerCui: text("provider_cui"),
+  providerRegistrationNumber: text("provider_registration_number"),
+  providerLegalRepresentative: text("provider_legal_representative"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   sentAt: timestamp("sent_at"),
   completedAt: timestamp("completed_at"),
@@ -45,6 +65,11 @@ export const insertContractTemplateSchema = createInsertSchema(contractTemplates
 export const insertBeneficiarySchema = createInsertSchema(beneficiaries).omit({
   id: true,
   createdAt: true,
+});
+
+export const insertCompanySettingsSchema = createInsertSchema(companySettings).omit({
+  id: true,
+  updatedAt: true,
 });
 
 export const insertContractSchema = createInsertSchema(contracts).omit({
@@ -65,6 +90,9 @@ export type InsertContractTemplate = z.infer<typeof insertContractTemplateSchema
 
 export type Beneficiary = typeof beneficiaries.$inferSelect;
 export type InsertBeneficiary = z.infer<typeof insertBeneficiarySchema>;
+
+export type CompanySettings = typeof companySettings.$inferSelect;
+export type InsertCompanySettings = z.infer<typeof insertCompanySettingsSchema>;
 
 export type Contract = typeof contracts.$inferSelect;
 export type InsertContract = z.infer<typeof insertContractSchema>;

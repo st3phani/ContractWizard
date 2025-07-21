@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema } from "@shared/schema";
+import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema } from "@shared/schema";
 import { z } from "zod";
 
 // Helper function to generate order numbers
@@ -176,10 +176,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         beneficiary = await storage.createBeneficiary(validatedBeneficiary);
       }
       
+      // Get company settings for auto-population
+      const companySettings = await storage.getCompanySettings();
+      
       // Generate order number
       const orderNumber = generateOrderNumber();
       
-      // Validate contract data
+      // Validate contract data with company info
       const validatedContract = insertContractSchema.parse({
         ...contractData,
         orderNumber,
@@ -187,6 +190,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         value: contractData.value || null,
         startDate: contractData.startDate ? new Date(contractData.startDate) : null,
         endDate: contractData.endDate ? new Date(contractData.endDate) : null,
+        // Auto-populate provider/company data
+        providerName: companySettings?.name || "Compania Mea SRL",
+        providerAddress: companySettings?.address || "Str. Principală nr. 123, București, România",
+        providerPhone: companySettings?.phone || "+40 21 123 4567",
+        providerEmail: companySettings?.email || "contact@compania-mea.ro",
+        providerCui: companySettings?.cui || "RO12345678",
+        providerRegistrationNumber: companySettings?.registrationNumber || "J40/1234/2023",
+        providerLegalRepresentative: companySettings?.legalRepresentative || "Ion Popescu",
       });
       
       const contract = await storage.createContract(validatedContract);
@@ -248,6 +259,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           value: contract.value,
           currency: contract.currency,
           notes: contract.notes
+        },
+        provider: {
+          name: contract.providerName,
+          address: contract.providerAddress,
+          phone: contract.providerPhone,
+          email: contract.providerEmail,
+          cui: contract.providerCui,
+          registrationNumber: contract.providerRegistrationNumber,
+          legalRepresentative: contract.providerLegalRepresentative,
         }
       });
       
@@ -275,6 +295,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           value: contract.value,
           currency: contract.currency,
           notes: contract.notes
+        },
+        provider: {
+          name: contract.providerName,
+          address: contract.providerAddress,
+          phone: contract.providerPhone,
+          email: contract.providerEmail,
+          cui: contract.providerCui,
+          registrationNumber: contract.providerRegistrationNumber,
+          legalRepresentative: contract.providerLegalRepresentative,
         }
       });
       
@@ -285,6 +314,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.send(populatedContent);
     } catch (error) {
       res.status(500).json({ message: "Failed to generate PDF" });
+    }
+  });
+
+  // Company Settings
+  app.get("/api/company-settings", async (req, res) => {
+    try {
+      const settings = await storage.getCompanySettings();
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch company settings" });
+    }
+  });
+
+  app.put("/api/company-settings", async (req, res) => {
+    try {
+      const validatedSettings = insertCompanySettingsSchema.parse(req.body);
+      const settings = await storage.updateCompanySettings(validatedSettings);
+      res.json(settings);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid settings data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update company settings" });
     }
   });
 

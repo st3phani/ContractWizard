@@ -2,12 +2,15 @@ import {
   contracts, 
   contractTemplates, 
   beneficiaries,
+  companySettings,
   type Contract, 
   type ContractTemplate, 
   type Beneficiary,
+  type CompanySettings,
   type InsertContract, 
   type InsertContractTemplate, 
   type InsertBeneficiary,
+  type InsertCompanySettings,
   type ContractWithDetails
 } from "@shared/schema";
 import { db } from "./db";
@@ -44,6 +47,10 @@ export interface IStorage {
     sentContracts: number;
     completedContracts: number;
   }>;
+
+  // Company Settings
+  getCompanySettings(): Promise<CompanySettings | undefined>;
+  updateCompanySettings(settings: InsertCompanySettings): Promise<CompanySettings>;
 }
 
 export class MemStorage implements IStorage {
@@ -473,6 +480,33 @@ export class DatabaseStorage implements IStorage {
       sentContracts: allContracts.filter(c => c.status === "sent").length,
       completedContracts: allContracts.filter(c => c.status === "completed").length,
     };
+  }
+
+  async getCompanySettings(): Promise<CompanySettings | undefined> {
+    const [settings] = await db.select().from(companySettings).limit(1);
+    return settings || undefined;
+  }
+
+  async updateCompanySettings(settingsData: InsertCompanySettings): Promise<CompanySettings> {
+    // Check if settings exist
+    const existing = await this.getCompanySettings();
+    
+    if (existing) {
+      // Update existing settings
+      const [updated] = await db
+        .update(companySettings)
+        .set({ ...settingsData, updatedAt: new Date() })
+        .where(eq(companySettings.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      // Create new settings
+      const [created] = await db
+        .insert(companySettings)
+        .values(settingsData)
+        .returning();
+      return created;
+    }
   }
 }
 

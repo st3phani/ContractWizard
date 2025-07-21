@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,10 +10,13 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Building, Mail, Phone, MapPin, Save, Database, Bell, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 import Sidebar from "@/components/sidebar";
+import type { CompanySettings } from "@shared/schema";
 
 export default function Settings() {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   
   // Company Settings
   const [companySettings, setCompanySettings] = useState({
@@ -24,6 +28,26 @@ export default function Settings() {
     registrationNumber: "J40/1234/2023",
     legalRepresentative: "Ion Popescu",
   });
+
+  // Fetch company settings
+  const { data: existingSettings } = useQuery<CompanySettings>({
+    queryKey: ["/api/company-settings"],
+  });
+
+  // Update form when data is loaded
+  useEffect(() => {
+    if (existingSettings) {
+      setCompanySettings({
+        name: existingSettings.name,
+        address: existingSettings.address,
+        phone: existingSettings.phone,
+        email: existingSettings.email,
+        cui: existingSettings.cui,
+        registrationNumber: existingSettings.registrationNumber,
+        legalRepresentative: existingSettings.legalRepresentative,
+      });
+    }
+  }, [existingSettings]);
 
   // Notification Settings
   const [notificationSettings, setNotificationSettings] = useState({
@@ -42,12 +66,29 @@ export default function Settings() {
     autoBackup: true,
   });
 
+  // Save company settings mutation
+  const saveCompanySettingsMutation = useMutation({
+    mutationFn: (data: typeof companySettings) => {
+      return apiRequest("PUT", "/api/company-settings", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/company-settings"] });
+      toast({
+        title: "Success",
+        description: "Setările companiei au fost salvate cu succes!",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "A apărut o eroare la salvarea setărilor.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleSaveCompanySettings = () => {
-    // In a real implementation, this would save to the database
-    toast({
-      title: "Success",
-      description: "Setările companiei au fost salvate cu succes!",
-    });
+    saveCompanySettingsMutation.mutate(companySettings);
   };
 
   const handleSaveNotificationSettings = () => {
@@ -176,9 +217,13 @@ export default function Settings() {
               </div>
 
               <div className="flex justify-end">
-                <Button onClick={handleSaveCompanySettings} className="bg-blue-600 hover:bg-blue-700">
+                <Button 
+                  onClick={handleSaveCompanySettings} 
+                  disabled={saveCompanySettingsMutation.isPending}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
                   <Save className="h-4 w-4 mr-2" />
-                  Salvează Informații Companie
+                  {saveCompanySettingsMutation.isPending ? "Se salvează..." : "Salvează Informații Companie"}
                 </Button>
               </div>
             </CardContent>
