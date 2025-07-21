@@ -203,6 +203,39 @@ export default function ContractForm() {
     },
   });
 
+  const reserveContractMutation = useMutation({
+    mutationFn: (data: ContractFormData) => {
+      return apiRequest("POST", "/api/contracts", {
+        beneficiaryData: data.beneficiary,
+        contractData: {
+          templateId: data.contract.templateId,
+          value: data.contract.value ? parseFloat(data.contract.value) : null,
+          currency: data.contract.currency,
+          startDate: data.contract.startDate ? parseDate(data.contract.startDate, dateFormat) || new Date(data.contract.startDate) : null,
+          endDate: data.contract.endDate ? parseDate(data.contract.endDate, dateFormat) || new Date(data.contract.endDate) : null,
+          notes: data.contract.notes,
+          status: "reserved",
+        },
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/contracts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/contracts/stats"] });
+      toast({
+        title: "Success",
+        description: "Contractul a fost rezervat cu succes!",
+      });
+      setLocation("/");
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "A apărut o eroare la rezervarea contractului.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const onSubmit = (data: ContractFormData) => {
     // Force validation and trigger errors
     form.trigger();
@@ -233,6 +266,38 @@ export default function ContractForm() {
     }
 
     createContractMutation.mutate(data);
+  };
+
+  const onReserve = (data: ContractFormData) => {
+    // Force validation and trigger errors
+    form.trigger();
+    
+    // Check for validation errors
+    const errors = form.formState.errors;
+    if (Object.keys(errors).length > 0) {
+      // Find the first error field
+      let firstErrorField = null;
+      
+      if (errors.beneficiary) {
+        const beneficiaryError = Object.keys(errors.beneficiary)[0];
+        firstErrorField = `beneficiary.${beneficiaryError}`;
+      } else if (errors.contract) {
+        const contractError = Object.keys(errors.contract)[0];
+        firstErrorField = `contract.${contractError}`;
+      }
+
+      if (firstErrorField) {
+        const element = document.querySelector(`[name="${firstErrorField}"]`) as HTMLElement;
+        if (element) {
+          element.focus();
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+      
+      return;
+    }
+
+    reserveContractMutation.mutate(data);
   };
 
   const handleSelectBeneficiary = (beneficiary: Beneficiary) => {
@@ -654,6 +719,15 @@ export default function ContractForm() {
                   onClick={() => setLocation("/")}
                 >
                   Anulează
+                </Button>
+                <Button 
+                  type="button"
+                  variant="outline"
+                  onClick={form.handleSubmit(onReserve)}
+                  disabled={reserveContractMutation.isPending}
+                  className="border-orange-500 text-orange-600 hover:bg-orange-50"
+                >
+                  {reserveContractMutation.isPending ? "Se rezervă..." : "Rezervă Contract"}
                 </Button>
                 <Button 
                   type="submit" 

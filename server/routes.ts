@@ -406,6 +406,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Reserve contract
+  app.post("/api/contracts/reserve", async (req, res) => {
+    try {
+      const companySettings = await storage.getCompanySettings();
+      if (!companySettings) {
+        return res.status(400).json({ message: "Company settings not configured" });
+      }
+
+      const orderNumber = await storage.getNextOrderNumber();
+      const contract = await storage.reserveContract(orderNumber, companySettings);
+      res.json(contract);
+    } catch (error) {
+      console.error("Reserve contract error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Send contract email
   app.post("/api/contracts/:id/email", async (req, res) => {
     try {

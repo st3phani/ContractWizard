@@ -43,6 +43,10 @@ export interface IStorage {
   updateContract(id: number, contract: Partial<InsertContract>): Promise<ContractWithDetails | undefined>;
   deleteContract(id: number): Promise<boolean>;
   
+  // Reserve Contract
+  reserveContract(orderNumber: number, companySettings: CompanySettings): Promise<ContractWithDetails>;
+  getNextOrderNumber(): Promise<number>;
+  
   // Stats
   getContractStats(): Promise<{
     totalContracts: number;
@@ -402,6 +406,70 @@ _________________           _________________`,
     };
   }
 
+  async getNextOrderNumber(): Promise<number> {
+    const contracts = Array.from(this.contracts.values());
+    const maxOrderNumber = contracts.reduce((max, contract) => Math.max(max, contract.orderNumber), 0);
+    return maxOrderNumber + 1;
+  }
+
+  async reserveContract(orderNumber: number, companySettings: CompanySettings): Promise<ContractWithDetails> {
+    const id = this.currentContractId++;
+    const reservedContract: Contract = {
+      id,
+      orderNumber,
+      templateId: null,
+      beneficiaryId: null,
+      value: null,
+      currency: "RON",
+      startDate: null,
+      endDate: null,
+      notes: null,
+      status: "reserved",
+      providerName: companySettings.name,
+      providerAddress: companySettings.address,
+      providerPhone: companySettings.phone,
+      providerEmail: companySettings.email,
+      providerCui: companySettings.cui,
+      providerRegistrationNumber: companySettings.registrationNumber,
+      providerLegalRepresentative: companySettings.legalRepresentative,
+      createdAt: new Date(),
+      sentAt: null,
+      completedAt: null
+    };
+    
+    this.contracts.set(id, reservedContract);
+    
+    // Create mock template and beneficiary for reserved contract
+    const mockTemplate: ContractTemplate = { 
+      id: 0, 
+      name: "Contract Rezervat", 
+      content: "", 
+      fields: "", 
+      createdAt: new Date() 
+    };
+    const mockBeneficiary: Beneficiary = { 
+      id: 0, 
+      name: "Rezervat", 
+      email: "", 
+      phone: null, 
+      address: null, 
+      cnp: null, 
+      companyName: null, 
+      companyAddress: null, 
+      companyCui: null, 
+      companyRegistrationNumber: null, 
+      companyLegalRepresentative: null, 
+      isCompany: false, 
+      createdAt: new Date() 
+    };
+    
+    return {
+      ...reservedContract,
+      template: mockTemplate,
+      beneficiary: mockBeneficiary
+    };
+  }
+
 
 }
 
@@ -557,6 +625,66 @@ export class DatabaseStorage implements IStorage {
       pendingContracts: allContracts.filter(c => c.status === "draft").length,
       sentContracts: allContracts.filter(c => c.status === "sent").length,
       completedContracts: allContracts.filter(c => c.status === "completed").length,
+    };
+  }
+
+  async getNextOrderNumber(): Promise<number> {
+    const allContracts = await db.select().from(contracts);
+    const maxOrderNumber = allContracts.reduce((max, contract) => Math.max(max, contract.orderNumber), 0);
+    return maxOrderNumber + 1;
+  }
+
+  async reserveContract(orderNumber: number, companySettings: CompanySettings): Promise<ContractWithDetails> {
+    const [reservedContract] = await db
+      .insert(contracts)
+      .values({
+        orderNumber,
+        templateId: null,
+        beneficiaryId: null,
+        value: null,
+        currency: "RON",
+        startDate: null,
+        endDate: null,
+        notes: null,
+        status: "reserved",
+        providerName: companySettings.name,
+        providerAddress: companySettings.address,
+        providerPhone: companySettings.phone,
+        providerEmail: companySettings.email,
+        providerCui: companySettings.cui,
+        providerRegistrationNumber: companySettings.registrationNumber,
+        providerLegalRepresentative: companySettings.legalRepresentative,
+      })
+      .returning();
+
+    // Create mock template and beneficiary for display
+    const mockTemplate: ContractTemplate = { 
+      id: 0, 
+      name: "Contract Rezervat", 
+      content: "", 
+      fields: "", 
+      createdAt: new Date() 
+    };
+    const mockBeneficiary: Beneficiary = { 
+      id: 0, 
+      name: "Rezervat", 
+      email: "", 
+      phone: null, 
+      address: null, 
+      cnp: null, 
+      companyName: null, 
+      companyAddress: null, 
+      companyCui: null, 
+      companyRegistrationNumber: null, 
+      companyLegalRepresentative: null, 
+      isCompany: false, 
+      createdAt: new Date() 
+    };
+
+    return {
+      ...reservedContract,
+      template: mockTemplate,
+      beneficiary: mockBeneficiary
     };
   }
 

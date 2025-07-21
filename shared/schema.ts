@@ -54,14 +54,14 @@ export const systemSettings = pgTable("system_settings", {
 export const contracts = pgTable("contracts", {
   id: serial("id").primaryKey(),
   orderNumber: integer("order_number").notNull().unique(),
-  templateId: integer("template_id").notNull(),
-  beneficiaryId: integer("beneficiary_id").notNull(),
+  templateId: integer("template_id"),
+  beneficiaryId: integer("beneficiary_id"),
   value: decimal("value", { precision: 10, scale: 2 }),
   currency: text("currency").notNull().default("RON"),
   startDate: timestamp("start_date"),
   endDate: timestamp("end_date"),
   notes: text("notes"),
-  status: text("status").notNull().default("draft"), // draft, sent, completed
+  status: text("status").notNull().default("draft"), // draft, reserved, sent, completed
   // Provider/Company details (auto-filled from settings)
   providerName: text("provider_name"),
   providerAddress: text("provider_address"),
