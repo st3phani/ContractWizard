@@ -148,8 +148,10 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
       
       // Check table border state
       if (inTable) {
-        const tableAttrs = editor.getAttributes('table');
-        setTableHasBorder(tableAttrs.class !== 'no-border');
+        const tableElement = editor.view.dom.querySelector('table');
+        if (tableElement) {
+          setTableHasBorder(!tableElement.classList.contains('no-border'));
+        }
       }
     },
     onSelectionUpdate: ({ editor }) => {
@@ -162,8 +164,10 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
       
       // Check table border state
       if (inTable) {
-        const tableAttrs = editor.getAttributes('table');
-        setTableHasBorder(tableAttrs.class !== 'no-border');
+        const tableElement = editor.view.dom.querySelector('table');
+        if (tableElement) {
+          setTableHasBorder(!tableElement.classList.contains('no-border'));
+        }
       }
     },
     editorProps: {
@@ -415,11 +419,26 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
                 const newBorderState = !tableHasBorder;
                 setTableHasBorder(newBorderState);
                 
-                // Use updateAttributes to update table class
-                if (newBorderState) {
-                  editor.chain().focus().updateAttributes('table', { class: null }).run();
-                } else {
-                  editor.chain().focus().updateAttributes('table', { class: 'no-border' }).run();
+                // Find the table element in DOM and toggle class directly
+                const tableElement = editor.view.dom.querySelector('table');
+                if (tableElement) {
+                  if (newBorderState) {
+                    tableElement.classList.remove('no-border');
+                    if (tableElement.className === '') {
+                      tableElement.removeAttribute('class');
+                    }
+                  } else {
+                    tableElement.classList.add('no-border');
+                  }
+                  
+                  // Force editor to recognize the change by dispatching a transaction
+                  const { tr } = editor.state;
+                  editor.view.dispatch(tr);
+                  
+                  // Trigger content update
+                  setTimeout(() => {
+                    onChange(editor.getHTML());
+                  }, 50);
                 }
               }}
               className="h-8 w-8 p-0"
