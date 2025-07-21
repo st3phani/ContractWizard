@@ -313,6 +313,8 @@ export default function ContractForm() {
   const [validationErrors, setValidationErrors] = useState<{ [key: string]: boolean }>({});
 
   const handleCreateBeneficiary = () => {
+    console.log("handleCreateBeneficiary called with formData:", formData);
+    
     // Validate required fields manually (same validation as in Beneficiaries page)
     const errors: { [key: string]: boolean } = {};
 
@@ -332,10 +334,13 @@ export default function ContractForm() {
       if (!formData.cnp?.trim()) errors.cnp = true;
     }
 
+    console.log("Validation errors:", errors);
+    
     // Update validation errors state
     setValidationErrors(errors);
 
     if (Object.keys(errors).length > 0) {
+      console.log("Validation failed, focusing on first error field");
       // Focus first error field
       const firstErrorField = Object.keys(errors)[0];
       const element = document.querySelector(`[id="${firstErrorField}"]`) as HTMLElement;
@@ -346,6 +351,7 @@ export default function ContractForm() {
       return;
     }
 
+    console.log("Validation passed, calling mutation");
     createBeneficiaryMutation.mutate(formData);
   };
 
