@@ -54,6 +54,26 @@ export default function Templates() {
     },
   });
 
+  // Delete template mutation
+  const deleteTemplateMutation = useMutation({
+    mutationFn: (id: number) => 
+      apiRequest("DELETE", `/api/contract-templates/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/contract-templates"] });
+      toast({
+        title: "Success",
+        description: "Template-ul a fost șters cu succes!",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "A apărut o eroare la ștergerea template-ului.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleCreateTemplate = () => {
     if (!formData.name || !formData.content) {
       toast({
@@ -70,6 +90,12 @@ export default function Templates() {
   const handlePreview = (template: ContractTemplate) => {
     setSelectedTemplate(template);
     setIsPreviewModalOpen(true);
+  };
+
+  const handleDeleteTemplate = (templateId: number) => {
+    if (window.confirm("Sunteți sigur că doriți să ștergeți acest template?")) {
+      deleteTemplateMutation.mutate(templateId);
+    }
   };
 
   return (
@@ -144,11 +170,7 @@ export default function Templates() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => {
-                                if (window.confirm("Sunteți sigur că doriți să ștergeți acest template?")) {
-                                  // Delete functionality would go here
-                                }
-                              }}
+                              onClick={() => handleDeleteTemplate(template.id)}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
