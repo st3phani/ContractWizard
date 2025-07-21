@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Dashboard from "@/pages/dashboard";
 import ContractForm from "@/pages/contract-form";
+import Contracts from "@/pages/contracts";
 import Templates from "@/pages/templates";
 import Beneficiaries from "@/pages/beneficiaries";
 import Settings from "@/pages/settings";
@@ -15,6 +16,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/contract-form" component={ContractForm} />
+      <Route path="/contracts" component={Contracts} />
       <Route path="/templates" component={Templates} />
       <Route path="/beneficiaries" component={Beneficiaries} />
       <Route path="/settings" component={Settings} />

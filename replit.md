@@ -113,6 +113,7 @@ Three main entities:
 
 ```
 Changelog:
+- July 21, 2025. Created dedicated Contracts page with full CRUD functionality and added to navigation menu
 - July 21, 2025. Completed full migration from "fullName" to "name" field across entire application
 - July 21, 2025. Fixed database schema - removed old "full_name" column and migrated data to "name" column
 - July 21, 2025. Updated all frontend components to use "name" field: contract-table, beneficiary-form-fields, beneficiary-form-modal, templates
