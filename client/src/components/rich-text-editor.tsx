@@ -106,7 +106,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[300px] p-4',
+        class: 'focus:outline-none min-h-[300px] p-4',
       },
     },
   })
@@ -306,21 +306,40 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
       <style>{`
         .ProseMirror {
           outline: none !important;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-size: 14px;
+          line-height: 1.4;
+        }
+        .ProseMirror p {
+          margin: 0.5em 0;
+          line-height: 1.4;
+        }
+        .ProseMirror h1, .ProseMirror h2, .ProseMirror h3 {
+          margin: 0.8em 0 0.5em 0;
+          line-height: 1.3;
+        }
+        .ProseMirror ul, .ProseMirror ol {
+          margin: 0.5em 0;
+          padding-left: 1.5em;
+        }
+        .ProseMirror li {
+          margin: 0.2em 0;
         }
         .ProseMirror table {
           border-collapse: collapse;
           table-layout: fixed;
           width: 100%;
-          margin: 0;
+          margin: 0.5em 0;
           overflow: hidden;
         }
         .ProseMirror table td, .ProseMirror table th {
           min-width: 1em;
           border: 2px solid #ced4da;
-          padding: 3px 5px;
+          padding: 8px 12px;
           vertical-align: top;
           box-sizing: border-box;
           position: relative;
+          line-height: 1.4;
         }
         .ProseMirror table th {
           font-weight: bold;
@@ -330,9 +349,10 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
         .ProseMirror img {
           max-width: 100%;
           height: auto;
+          margin: 0.5em 0;
         }
         .ProseMirror [style*="font-size"] {
-          line-height: 1.2;
+          line-height: 1.3;
         }
       `}</style>
     </div>
