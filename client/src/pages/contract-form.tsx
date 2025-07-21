@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import Sidebar from "@/components/sidebar";
 import { BeneficiaryFormFields } from "@/components/beneficiary-form-fields";
 import type { ContractTemplate, Beneficiary, InsertBeneficiary } from "@shared/schema";
+import { insertBeneficiarySchema } from "@shared/schema";
 
 const contractFormSchema = z.object({
   // Beneficiary data
@@ -110,6 +111,7 @@ export default function ContractForm() {
 
   // Beneficiary form for modal
   const beneficiaryForm = useForm<InsertBeneficiary>({
+    resolver: zodResolver(insertBeneficiarySchema),
     defaultValues: {
       fullName: "",
       email: "",
@@ -273,42 +275,15 @@ export default function ContractForm() {
       // Reset modal form
       beneficiaryForm.reset();
       
-      toast({
-        title: "Success",
-        description: "Beneficiarul a fost creat cu succes!",
-      });
+      // Remove success toast as per user preference
     },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "A apărut o eroare la crearea beneficiarului.",
-        variant: "destructive",
-      });
+    onError: (error) => {
+      // Only handle validation errors in form, no toast notifications as per user preference
+      console.error("Error creating beneficiary:", error);
     },
   });
 
   const handleCreateBeneficiary = (data: InsertBeneficiary) => {
-    // Validation for required fields
-    const errors = beneficiaryForm.formState.errors;
-    if (Object.keys(errors).length > 0) {
-      // Find the first error field and focus it
-      let firstErrorField = null;
-      const errorKeys = Object.keys(errors);
-      if (errorKeys.length > 0) {
-        firstErrorField = errorKeys[0];
-      }
-
-      if (firstErrorField) {
-        const element = document.querySelector(`[name="${firstErrorField}"]`) as HTMLElement;
-        if (element) {
-          element.focus();
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }
-      
-      return;
-    }
-
     createBeneficiaryMutation.mutate(data);
   };
 
