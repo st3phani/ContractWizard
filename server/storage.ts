@@ -3,14 +3,17 @@ import {
   contractTemplates, 
   beneficiaries,
   companySettings,
+  systemSettings,
   type Contract, 
   type ContractTemplate, 
   type Beneficiary,
   type CompanySettings,
+  type SystemSettings,
   type InsertContract, 
   type InsertContractTemplate, 
   type InsertBeneficiary,
   type InsertCompanySettings,
+  type InsertSystemSettings,
   type ContractWithDetails
 } from "@shared/schema";
 import { db } from "./db";
@@ -51,6 +54,10 @@ export interface IStorage {
   // Company Settings
   getCompanySettings(): Promise<CompanySettings | undefined>;
   updateCompanySettings(settings: InsertCompanySettings): Promise<CompanySettings>;
+
+  // System Settings
+  getSystemSettings(): Promise<SystemSettings | undefined>;
+  updateSystemSettings(settings: InsertSystemSettings): Promise<SystemSettings>;
 }
 
 export class MemStorage implements IStorage {
@@ -71,6 +78,28 @@ export class MemStorage implements IStorage {
   }
 
   async updateCompanySettings(settings: InsertCompanySettings): Promise<CompanySettings> {
+    // Return updated settings for MemStorage
+    return {
+      id: 1,
+      ...settings,
+      updatedAt: new Date()
+    };
+  }
+
+  // System Settings
+  async getSystemSettings(): Promise<SystemSettings | undefined> {
+    // Return default system settings for MemStorage
+    return {
+      id: 1,
+      language: "ro",
+      currency: "RON",
+      dateFormat: "dd/mm/yyyy",
+      autoBackup: true,
+      updatedAt: new Date()
+    };
+  }
+
+  async updateSystemSettings(settings: InsertSystemSettings): Promise<SystemSettings> {
     // Return updated settings for MemStorage
     return {
       id: 1,
@@ -545,6 +574,50 @@ export class DatabaseStorage implements IStorage {
       // Create new settings
       const [created] = await db
         .insert(companySettings)
+        .values(settingsData)
+        .returning();
+      return created;
+    }
+  }
+
+  // System Settings
+  async getSystemSettings(): Promise<SystemSettings | undefined> {
+    const [settings] = await db.select().from(systemSettings).limit(1);
+    
+    if (!settings) {
+      // Create default settings if none exist
+      const [created] = await db
+        .insert(systemSettings)
+        .values({
+          language: "ro",
+          currency: "RON",
+          dateFormat: "dd/mm/yyyy",
+          autoBackup: true,
+          updatedAt: new Date()
+        })
+        .returning();
+      return created;
+    }
+    
+    return settings;
+  }
+
+  async updateSystemSettings(settingsData: InsertSystemSettings): Promise<SystemSettings> {
+    // Check if settings exist
+    const existing = await this.getSystemSettings();
+    
+    if (existing) {
+      // Update existing settings
+      const [updated] = await db
+        .update(systemSettings)
+        .set({ ...settingsData, updatedAt: new Date() })
+        .where(eq(systemSettings.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      // Create new settings
+      const [created] = await db
+        .insert(systemSettings)
         .values(settingsData)
         .returning();
       return created;

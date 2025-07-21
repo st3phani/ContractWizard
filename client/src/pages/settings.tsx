@@ -158,6 +158,27 @@ export default function Settings() {
     saveCompanySettingsMutation.mutate(companySettings);
   };
 
+  // Save system settings mutation
+  const saveSystemSettingsMutation = useMutation({
+    mutationFn: (data: typeof systemSettings) => {
+      return apiRequest("PUT", "/api/system-settings", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/system-settings"] });
+      toast({
+        title: "Success",
+        description: "Setările de sistem au fost salvate cu succes!",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "A apărut o eroare la salvarea setărilor de sistem.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleSaveNotificationSettings = () => {
     toast({
       title: "Success", 
@@ -166,10 +187,7 @@ export default function Settings() {
   };
 
   const handleSaveSystemSettings = () => {
-    toast({
-      title: "Success",
-      description: "Setările de sistem au fost salvate cu succes!",
-    });
+    saveSystemSettingsMutation.mutate(systemSettings);
   };
 
   const handleExportData = () => {
@@ -485,9 +503,13 @@ export default function Settings() {
               </div>
 
               <div className="flex justify-end">
-                <Button onClick={handleSaveSystemSettings} className="bg-blue-600 hover:bg-blue-700">
+                <Button 
+                  onClick={handleSaveSystemSettings} 
+                  disabled={saveSystemSettingsMutation.isPending}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
                   <Save className="h-4 w-4 mr-2" />
-                  Salvează Setări Sistem
+                  {saveSystemSettingsMutation.isPending ? "Se salvează..." : "Salvează Setări Sistem"}
                 </Button>
               </div>
             </CardContent>

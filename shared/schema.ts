@@ -40,6 +40,15 @@ export const companySettings = pgTable("company_settings", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const systemSettings = pgTable("system_settings", {
+  id: serial("id").primaryKey(),
+  language: text("language").notNull().default("ro"),
+  currency: text("currency").notNull().default("RON"),
+  dateFormat: text("date_format").notNull().default("dd/mm/yyyy"),
+  autoBackup: boolean("auto_backup").notNull().default(true),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 export const contracts = pgTable("contracts", {
   id: serial("id").primaryKey(),
   orderNumber: text("order_number").notNull().unique(),
@@ -67,6 +76,11 @@ export const contracts = pgTable("contracts", {
 export const insertContractTemplateSchema = createInsertSchema(contractTemplates).omit({
   id: true,
   createdAt: true,
+});
+
+export const insertSystemSettingsSchema = createInsertSchema(systemSettings).omit({
+  id: true,
+  updatedAt: true,
 });
 
 export const insertBeneficiarySchema = createInsertSchema(beneficiaries).omit({
@@ -122,6 +136,8 @@ export type InsertBeneficiary = z.infer<typeof insertBeneficiarySchema>;
 
 export type CompanySettings = typeof companySettings.$inferSelect;
 export type InsertCompanySettings = z.infer<typeof insertCompanySettingsSchema>;
+export type SystemSettings = typeof systemSettings.$inferSelect;
+export type InsertSystemSettings = z.infer<typeof insertSystemSettingsSchema>;
 
 export type Contract = typeof contracts.$inferSelect;
 export type InsertContract = z.infer<typeof insertContractSchema>;

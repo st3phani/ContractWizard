@@ -18,6 +18,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useLocation } from "wouter";
 import { Search, Check, Plus, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatDate, parseDate, getDateInputFormat, type DateFormat } from "@/lib/dateUtils";
 import Sidebar from "@/components/sidebar";
 import type { ContractTemplate, Beneficiary, InsertBeneficiary } from "@shared/schema";
 import { insertBeneficiarySchema } from "@shared/schema";
@@ -109,6 +110,13 @@ export default function ContractForm() {
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
   const [showNewBeneficiaryModal, setShowNewBeneficiaryModal] = useState(false);
 
+  // Fetch system settings for date format
+  const { data: systemSettings } = useQuery({
+    queryKey: ["/api/system-settings"],
+  });
+
+  const dateFormat: DateFormat = systemSettings?.dateFormat || "dd/mm/yyyy";
+
   // Beneficiary form data for modal (same as in Beneficiaries page)
   const [formData, setFormData] = useState<InsertBeneficiary>({
     name: "",
@@ -170,8 +178,8 @@ export default function ContractForm() {
           templateId: data.contract.templateId,
           value: data.contract.value ? parseFloat(data.contract.value) : null,
           currency: data.contract.currency,
-          startDate: data.contract.startDate ? new Date(data.contract.startDate) : null,
-          endDate: data.contract.endDate ? new Date(data.contract.endDate) : null,
+          startDate: data.contract.startDate ? parseDate(data.contract.startDate, dateFormat) || new Date(data.contract.startDate) : null,
+          endDate: data.contract.endDate ? parseDate(data.contract.endDate, dateFormat) || new Date(data.contract.endDate) : null,
           notes: data.contract.notes,
           status: "draft",
         },
@@ -593,7 +601,11 @@ export default function ContractForm() {
                         <FormItem>
                           <FormLabel>Data Începerii *</FormLabel>
                           <FormControl>
-                            <Input type="date" {...field} />
+                            <Input 
+                              type="date" 
+                              {...field}
+                              placeholder={getDateInputFormat(dateFormat)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -607,7 +619,11 @@ export default function ContractForm() {
                         <FormItem>
                           <FormLabel>Data Încheierii *</FormLabel>
                           <FormControl>
-                            <Input type="date" {...field} />
+                            <Input 
+                              type="date" 
+                              {...field}
+                              placeholder={getDateInputFormat(dateFormat)}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

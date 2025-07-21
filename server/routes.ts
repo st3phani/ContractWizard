@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema } from "@shared/schema";
+import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema, insertSystemSettingsSchema } from "@shared/schema";
 import { z } from "zod";
 
 // Helper function to generate order numbers
@@ -424,6 +424,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Email sent successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to send email" });
+    }
+  });
+
+  // System settings routes
+  app.get("/api/system-settings", async (req, res) => {
+    try {
+      const settings = await storage.getSystemSettings();
+      res.json(settings);
+    } catch (error) {
+      console.error("Error fetching system settings:", error);
+      res.status(500).json({ error: "Failed to fetch system settings" });
+    }
+  });
+
+  app.put("/api/system-settings", async (req, res) => {
+    try {
+      const validatedData = insertSystemSettingsSchema.parse(req.body);
+      const updatedSettings = await storage.updateSystemSettings(validatedData);
+      res.json(updatedSettings);
+    } catch (error) {
+      console.error("Error updating system settings:", error);
+      res.status(500).json({ error: "Failed to update system settings" });
     }
   });
 
