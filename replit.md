@@ -114,6 +114,9 @@ Three main entities:
 ```
 Changelog:
 
+- July 22, 2025. Enhanced Rich Text Editor (TipTap) with advanced table functionality: insert/delete rows/columns, toggle border, and real-time table detection
+- July 22, 2025. Fixed table toolbar visibility issues with state management for accurate cursor position tracking in table elements
+- July 22, 2025. Implemented comprehensive table editing capabilities with border removal option for cleaner document formatting
 - July 22, 2025. Modified contract order numbering to use sequential integers (1, 2, 3...) instead of complex format strings
 - July 22, 2025. Updated database schema to change order_number column from text to integer type
 - July 22, 2025. Fixed contract table component to handle integer order numbers and null values gracefully

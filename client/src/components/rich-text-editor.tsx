@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { TextStyle } from '@tiptap/extension-text-style'
@@ -80,6 +81,8 @@ interface RichTextEditorProps {
 }
 
 export default function RichTextEditor({ content, onChange, placeholder, className }: RichTextEditorProps) {
+  const [isInTable, setIsInTable] = useState(false)
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -105,6 +108,20 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
     content,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
+      // Check if cursor is in table
+      const inTable = editor.isActive('table') || 
+                     editor.isActive('tableRow') || 
+                     editor.isActive('tableCell') || 
+                     editor.isActive('tableHeader')
+      setIsInTable(inTable)
+    },
+    onSelectionUpdate: ({ editor }) => {
+      // Check if cursor is in table on selection change
+      const inTable = editor.isActive('table') || 
+                     editor.isActive('tableRow') || 
+                     editor.isActive('tableCell') || 
+                     editor.isActive('tableHeader')
+      setIsInTable(inTable)
     },
     editorProps: {
       attributes: {
@@ -273,7 +290,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           <TableIcon className="h-4 w-4" />
         </Button>
 
-        {(editor.isActive('table') || editor.isActive('tableRow') || editor.isActive('tableCell') || editor.isActive('tableHeader')) && (
+        {isInTable && (
           <>
             <div className="w-px h-6 bg-gray-300 mx-1" />
             
