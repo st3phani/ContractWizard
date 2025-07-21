@@ -201,21 +201,307 @@ export default function Templates() {
               />
             </div>
             
-            <div className="text-sm text-gray-500">
-              <p><strong>Placeholder-uri disponibile:</strong></p>
-              <ul className="list-disc list-inside mt-2 space-y-1">
-                <li>{"{{orderNumber}}"} - Numărul de ordine</li>
-                <li>{"{{currentDate}}"} - Data curentă</li>
-                <li>{"{{beneficiary.fullName}}"} - Numele beneficiarului</li>
-                <li>{"{{beneficiary.email}}"} - Email-ul beneficiarului</li>
-                <li>{"{{beneficiary.address}}"} - Adresa beneficiarului</li>
-                <li>{"{{beneficiary.cnp}}"} - CNP/CUI beneficiarului</li>
-                <li>{"{{contract.value}}"} - Valoarea contractului</li>
-                <li>{"{{contract.currency}}"} - Moneda</li>
-                <li>{"{{contract.startDate}}"} - Data începerii</li>
-                <li>{"{{contract.endDate}}"} - Data încheierii</li>
-                <li>{"{{contract.notes}}"} - Observații</li>
-              </ul>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-blue-900 mb-3">📋 Variabile Prestator (Companie)</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-blue-700">[Numele Companiei]</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '[Numele Companiei]' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-blue-700">[Adresa Companiei]</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '[Adresa Companiei]' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-blue-700">[CIF Companie]</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '[CIF Companie]' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-blue-700">[Nr. Registrul Comerțului]</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '[Nr. Registrul Comerțului]' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-blue-700">[Reprezentant Legal]</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '[Reprezentant Legal]' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-blue-700">[Telefon Companie]</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '[Telefon Companie]' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-blue-700">[Email Companie]</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '[Email Companie]' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-green-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-green-900 mb-3">👤 Variabile Beneficiar & Contract</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-green-700">[Nume Beneficiar]</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '[Nume Beneficiar]' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-green-700">[Email Beneficiar]</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '[Email Beneficiar]' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-green-700">[Telefon Beneficiar]</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '[Telefon Beneficiar]' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-green-700">[Adresa Beneficiar]</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '[Adresa Beneficiar]' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-green-700">[Valoare Contract]</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '[Valoare Contract]' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-green-700">[Număr Comandă]</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '[Număr Comandă]' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between bg-white p-2 rounded border">
+                    <code className="text-green-700">[Data Curentă]</code>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => {
+                        const textarea = document.getElementById('content') as HTMLTextAreaElement;
+                        if (textarea) {
+                          const cursorPos = textarea.selectionStart;
+                          const textBefore = textarea.value.substring(0, cursorPos);
+                          const textAfter = textarea.value.substring(cursorPos);
+                          const newValue = textBefore + '[Data Curentă]' + textAfter;
+                          setFormData({ ...formData, content: newValue });
+                        }
+                      }}
+                      className="text-xs"
+                    >
+                      Adaugă
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+              <h4 className="font-semibold text-yellow-900 mb-2">💡 Exemple de utilizare</h4>
+              <div className="text-sm text-yellow-800 space-y-1">
+                <p><strong>Pentru Prestator:</strong> PRESTATOR: [Numele Companiei], cu sediul în [Adresa Companiei], CIF [CIF Companie]</p>
+                <p><strong>Pentru Beneficiar:</strong> BENEFICIAR: [Nume Beneficiar], email: [Email Beneficiar]</p>
+                <p><strong>Pentru Detalii:</strong> Contract nr. [Număr Comandă] din [Data Curentă], valoare: [Valoare Contract] RON</p>
+              </div>
             </div>
           </div>
           
