@@ -54,6 +54,32 @@ export interface IStorage {
 }
 
 export class MemStorage implements IStorage {
+  // Company Settings
+  async getCompanySettings(): Promise<CompanySettings | undefined> {
+    // Return default company settings for MemStorage
+    return {
+      id: 1,
+      name: "Compania Mea SRL",
+      address: "Str. Principală nr. 123, București, România",
+      phone: "+40 21 123 4567",
+      email: "contact@compania-mea.ro",
+      cui: "RO12345678",
+      registrationNumber: "J40/1234/2023",
+      legalRepresentative: "Ion Popescu",
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+  }
+
+  async updateCompanySettings(settings: InsertCompanySettings): Promise<CompanySettings> {
+    // Return updated settings for MemStorage
+    return {
+      id: 1,
+      ...settings,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+  }
   private contractTemplates: Map<number, ContractTemplate>;
   private beneficiaries: Map<number, Beneficiary>;
   private contracts: Map<number, Contract>;
@@ -184,10 +210,15 @@ _________________           _________________`,
     const newBeneficiary: Beneficiary = {
       ...beneficiary,
       id,
-      createdAt: new Date(),
-      address: beneficiary.address ?? null,
       phone: beneficiary.phone ?? null,
-      cnp: beneficiary.cnp ?? null
+      address: beneficiary.address ?? null,
+      cnp: beneficiary.cnp ?? null,
+      companyName: beneficiary.companyName ?? null,
+      companyAddress: beneficiary.companyAddress ?? null,
+      companyCui: beneficiary.companyCui ?? null,
+      companyRegistrationNumber: beneficiary.companyRegistrationNumber ?? null,
+      companyLegalRepresentative: beneficiary.companyLegalRepresentative ?? null,
+      createdAt: new Date()
     };
     this.beneficiaries.set(id, newBeneficiary);
     return newBeneficiary;
@@ -266,7 +297,7 @@ _________________           _________________`,
       orderNumber: contractData.orderNumber,
       templateId: contractData.templateId,
       beneficiaryId: contractData.beneficiaryId,
-      value: contractData.value ?? null,
+      value: contractData.value ? String(contractData.value) : null,
       currency: contractData.currency ?? "RON",
       startDate: contractData.startDate ?? null,
       endDate: contractData.endDate ?? null,
@@ -438,7 +469,7 @@ export class DatabaseStorage implements IStorage {
   async createContract(contractData: InsertContract): Promise<ContractWithDetails> {
     const [newContract] = await db
       .insert(contracts)
-      .values(contractData)
+      .values([contractData])
       .returning();
 
     const contractWithDetails = await this.getContract(newContract.id);
