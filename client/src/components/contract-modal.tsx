@@ -72,11 +72,14 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
             </p>
           </div>
           
-          <div className="space-y-6 text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+          <div className="space-y-6 text-sm text-gray-700 leading-relaxed">
             {isLoading ? (
               <div className="text-center py-8">Se încarcă contractul...</div>
             ) : (
-              previewContent
+              <div 
+                dangerouslySetInnerHTML={{ __html: previewContent }}
+                className="prose prose-sm max-w-none"
+              />
             )}
           </div>
         </div>
