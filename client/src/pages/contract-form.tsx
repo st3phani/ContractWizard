@@ -36,14 +36,52 @@ const contractFormSchema = z.object({
     companyRegistrationNumber: z.string().optional(),
     companyLegalRepresentative: z.string().optional(),
     isCompany: z.boolean().default(false),
-  }).refine((data) => {
+  }).superRefine((data, ctx) => {
     if (data.isCompany) {
-      return data.companyName && data.companyAddress && data.companyCui && data.companyRegistrationNumber && data.companyLegalRepresentative;
+      if (!data.companyName) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Numele companiei este obligatoriu",
+          path: ["companyName"]
+        });
+      }
+      if (!data.companyAddress) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Adresa companiei este obligatorie",
+          path: ["companyAddress"]
+        });
+      }
+      if (!data.companyCui) {
+        ctx.addIssue({
+          code: "custom",
+          message: "CUI-ul companiei este obligatoriu",
+          path: ["companyCui"]
+        });
+      }
+      if (!data.companyRegistrationNumber) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Numărul de înregistrare este obligatoriu",
+          path: ["companyRegistrationNumber"]
+        });
+      }
+      if (!data.companyLegalRepresentative) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Reprezentantul legal este obligatoriu",
+          path: ["companyLegalRepresentative"]
+        });
+      }
     } else {
-      return data.address;
+      if (!data.address) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Adresa este obligatorie",
+          path: ["address"]
+        });
+      }
     }
-  }, {
-    message: "Toate câmpurile sunt obligatorii",
   }),
   // Contract data
   contract: z.object({
@@ -138,6 +176,20 @@ export default function ContractForm() {
   });
 
   const onSubmit = (data: ContractFormData) => {
+    // Check for validation errors
+    const errors = form.formState.errors;
+    if (errors.beneficiary) {
+      const firstErrorField = Object.keys(errors.beneficiary)[0];
+      const element = document.querySelector(`[name="beneficiary.${firstErrorField}"]`) as HTMLElement;
+      if (element) {
+        element.focus();
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Add red border
+        element.classList.add('field-error');
+      }
+      return;
+    }
+
     createContractMutation.mutate(data);
   };
 

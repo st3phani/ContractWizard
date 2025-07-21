@@ -85,29 +85,79 @@ export default function Beneficiaries() {
 
   const handleCreateBeneficiary = () => {
     // Validation for required fields
-    const requiredFields = ['fullName', 'email', 'phone', 'address'];
     const missingFields = [];
+    const fieldsToFocus = [];
 
     if (formData.isCompany) {
       // Additional required fields for companies
-      if (!formData.companyName) missingFields.push('Nume Companie');
-      if (!formData.companyAddress) missingFields.push('Adresa Companiei');
-      if (!formData.companyCui) missingFields.push('CUI Companie');
-      if (!formData.companyRegistrationNumber) missingFields.push('Nr. Înregistrare');
-      if (!formData.companyLegalRepresentative) missingFields.push('Reprezentant Legal');
-      if (!formData.cnp) missingFields.push('CNP Reprezentant');
+      if (!formData.companyName) {
+        missingFields.push('Nume Companie');
+        fieldsToFocus.push('companyName');
+      }
+      if (!formData.companyAddress) {
+        missingFields.push('Adresa Companiei');
+        fieldsToFocus.push('companyAddress');
+      }
+      if (!formData.companyCui) {
+        missingFields.push('CUI Companie');
+        fieldsToFocus.push('companyCui');
+      }
+      if (!formData.companyRegistrationNumber) {
+        missingFields.push('Nr. Înregistrare');
+        fieldsToFocus.push('companyRegistrationNumber');
+      }
+      if (!formData.companyLegalRepresentative) {
+        missingFields.push('Reprezentant Legal');
+        fieldsToFocus.push('companyLegalRepresentative');
+      }
+      if (!formData.cnp) {
+        missingFields.push('CNP Reprezentant');
+        fieldsToFocus.push('cnp');
+      }
     } else {
       // Required fields for individuals
-      if (!formData.cnp) missingFields.push('CNP');
+      if (!formData.cnp) {
+        missingFields.push('CNP');
+        fieldsToFocus.push('cnp');
+      }
+      if (!formData.address) {
+        missingFields.push('Adresa');
+        fieldsToFocus.push('address');
+      }
     }
 
     // Check common required fields
-    if (!formData.fullName) missingFields.push(formData.isCompany ? 'Persoană Contact' : 'Nume Complet');
-    if (!formData.email) missingFields.push('Email');
-    if (!formData.phone) missingFields.push('Telefon');
-    if (!formData.address && !formData.isCompany) missingFields.push('Adresa');
+    if (!formData.fullName) {
+      missingFields.push('Nume Complet');
+      fieldsToFocus.push('fullName');
+    }
+    if (!formData.email) {
+      missingFields.push('Email');
+      fieldsToFocus.push('email');
+    }
+    if (!formData.phone) {
+      missingFields.push('Telefon');
+      fieldsToFocus.push('phone');
+    }
 
     if (missingFields.length > 0) {
+      // Add red border to missing fields
+      fieldsToFocus.forEach(fieldId => {
+        const element = document.getElementById(fieldId);
+        if (element) {
+          element.classList.add('field-error');
+        }
+      });
+
+      // Focus on first missing field
+      if (fieldsToFocus.length > 0) {
+        const firstField = document.getElementById(fieldsToFocus[0]);
+        if (firstField) {
+          firstField.focus();
+          firstField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+
       toast({
         title: "Error",
         description: `Următoarele câmpuri sunt obligatorii: ${missingFields.join(', ')}`,
@@ -115,6 +165,15 @@ export default function Beneficiaries() {
       });
       return;
     }
+
+    // Remove red borders on successful validation
+    const allFields = ['fullName', 'email', 'phone', 'address', 'cnp', 'companyName', 'companyAddress', 'companyCui', 'companyRegistrationNumber', 'companyLegalRepresentative'];
+    allFields.forEach(fieldId => {
+      const element = document.getElementById(fieldId);
+      if (element) {
+        element.classList.remove('field-error');
+      }
+    });
 
     createBeneficiaryMutation.mutate(formData);
   };

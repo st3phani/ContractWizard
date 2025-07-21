@@ -86,4 +86,22 @@
   .custom-shadow-lg {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   }
+
+  /* Error field styling */
+  .field-error {
+    border-color: #ef4444 !important;
+    border-width: 2px !important;
+    box-shadow: 0 0 0 1px #ef4444 !important;
+  }
+
+  /* Focus enhancement for required fields */
+  .required-field:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 1px #3b82f6 !important;
+  }
+
+  /* Smooth transitions for field states */
+  input, textarea, select {
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
 }
