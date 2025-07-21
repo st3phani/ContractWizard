@@ -25,7 +25,12 @@ export default function Dashboard() {
   });
 
   // Fetch stats
-  const { data: stats = { totalContracts: 0, pendingContracts: 0, sentContracts: 0, completedContracts: 0 } } = useQuery({
+  const { data: stats = { totalContracts: 0, pendingContracts: 0, sentContracts: 0, completedContracts: 0 } } = useQuery<{
+    totalContracts: number;
+    pendingContracts: number;
+    sentContracts: number;
+    completedContracts: number;
+  }>({
     queryKey: ["/api/contracts/stats"],
   });
 

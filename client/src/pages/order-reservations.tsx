@@ -25,23 +25,28 @@ export default function OrderReservations() {
   const [orderNumber, setOrderNumber] = useState<string>("");
 
   // Fetch reserved order numbers
-  const { data: reservedNumbers = [], isLoading } = useQuery({
+  const { data: reservedNumbers = [], isLoading } = useQuery<ReservedOrderNumber[]>({
     queryKey: ["/api/reserved-order-numbers"],
   });
 
   // Fetch next available order number
-  const { data: nextAvailable } = useQuery({
+  const { data: nextAvailable } = useQuery<{ orderNumber: number }>({
     queryKey: ["/api/next-available-order-number"],
   });
 
   // Reserve order number mutation
   const reserveNumberMutation = useMutation({
-    mutationFn: (data: { orderNumber: number }) =>
-      apiRequest("/api/reserved-order-numbers", {
+    mutationFn: async (data: { orderNumber: number }) => {
+      const response = await fetch("/api/reserved-order-numbers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-      }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to reserve order number');
+      }
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/reserved-order-numbers"] });
       queryClient.invalidateQueries({ queryKey: ["/api/next-available-order-number"] });

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +26,7 @@ export default function EmailModal({ contract, isOpen, onClose, onSent }: EmailM
   const { toast } = useToast();
 
   // Initialize form when contract changes
-  useState(() => {
+  useEffect(() => {
     if (contract) {
       setRecipient(contract.beneficiary.email);
       setSubject(`Contract ${contract.template.name} - ${contract.orderNumber}`);
@@ -39,7 +39,7 @@ Vă rugăm să îl semnați și să ni-l returnați.
 Mulțumim,
 Echipa Contract Manager`);
     }
-  }, [contract]);
+  }, [contract?.id]);
 
   const handleSend = async () => {
     if (!contract) return;

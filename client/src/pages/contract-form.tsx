@@ -111,7 +111,7 @@ export default function ContractForm() {
   const [showNewBeneficiaryModal, setShowNewBeneficiaryModal] = useState(false);
 
   // Fetch system settings for date format
-  const { data: systemSettings } = useQuery({
+  const { data: systemSettings } = useQuery<{ dateFormat: DateFormat }>({
     queryKey: ["/api/system-settings"],
   });
 
