@@ -25,10 +25,10 @@ const contractFormSchema = z.object({
   // Beneficiary data
   beneficiary: z.object({
     fullName: z.string().min(1, "Numele este obligatoriu"),
-    email: z.string().email("Email invalid"),
-    phone: z.string().optional(),
+    email: z.string().email("Email invalid").min(1, "Email-ul este obligatoriu"),
+    phone: z.string().min(1, "Telefonul este obligatoriu"),
     address: z.string().optional(),
-    cnp: z.string().optional(),
+    cnp: z.string().min(1, "CNP este obligatoriu"),
     // Company fields
     companyName: z.string().optional(),
     companyAddress: z.string().optional(),
@@ -36,6 +36,14 @@ const contractFormSchema = z.object({
     companyRegistrationNumber: z.string().optional(),
     companyLegalRepresentative: z.string().optional(),
     isCompany: z.boolean().default(false),
+  }).refine((data) => {
+    if (data.isCompany) {
+      return data.companyName && data.companyAddress && data.companyCui && data.companyRegistrationNumber && data.companyLegalRepresentative;
+    } else {
+      return data.address;
+    }
+  }, {
+    message: "Toate câmpurile sunt obligatorii",
   }),
   // Contract data
   contract: z.object({
@@ -348,7 +356,7 @@ export default function ContractForm() {
                               name="beneficiary.companyAddress"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Adresa Companiei</FormLabel>
+                                  <FormLabel>Adresa Companiei *</FormLabel>
                                   <FormControl>
                                     <Textarea placeholder="Adresa completă a companiei" rows={3} {...field} />
                                   </FormControl>
@@ -363,7 +371,7 @@ export default function ContractForm() {
                                 name="beneficiary.companyCui"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>CUI Companie</FormLabel>
+                                    <FormLabel>CUI Companie *</FormLabel>
                                     <FormControl>
                                       <Input placeholder="RO12345678" {...field} />
                                     </FormControl>
@@ -377,7 +385,7 @@ export default function ContractForm() {
                                 name="beneficiary.companyRegistrationNumber"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>Nr. Înregistrare</FormLabel>
+                                    <FormLabel>Nr. Înregistrare *</FormLabel>
                                     <FormControl>
                                       <Input placeholder="J40/1234/2023" {...field} />
                                     </FormControl>
@@ -393,7 +401,7 @@ export default function ContractForm() {
                                 name="beneficiary.companyLegalRepresentative"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>Reprezentant Legal</FormLabel>
+                                    <FormLabel>Reprezentant Legal *</FormLabel>
                                     <FormControl>
                                       <Input placeholder="Numele reprezentantului legal" {...field} />
                                     </FormControl>
@@ -407,7 +415,7 @@ export default function ContractForm() {
                                 name="beneficiary.cnp"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>CNP Reprezentant</FormLabel>
+                                    <FormLabel>CNP Reprezentant *</FormLabel>
                                     <FormControl>
                                       <Input placeholder="CNP reprezentant legal" {...field} />
                                     </FormControl>
@@ -440,7 +448,7 @@ export default function ContractForm() {
                                 name="beneficiary.cnp"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>CNP</FormLabel>
+                                    <FormLabel>CNP *</FormLabel>
                                     <FormControl>
                                       <Input placeholder="1234567890123" {...field} />
                                     </FormControl>
@@ -455,7 +463,7 @@ export default function ContractForm() {
                               name="beneficiary.address"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Adresa</FormLabel>
+                                  <FormLabel>Adresa *</FormLabel>
                                   <FormControl>
                                     <Textarea placeholder="Adresa completă" rows={3} {...field} />
                                   </FormControl>
@@ -487,7 +495,7 @@ export default function ContractForm() {
                             name="beneficiary.phone"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Telefon</FormLabel>
+                                <FormLabel>Telefon *</FormLabel>
                                 <FormControl>
                                   <Input placeholder="+40 xxx xxx xxx" {...field} />
                                 </FormControl>

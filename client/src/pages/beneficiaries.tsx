@@ -84,10 +84,33 @@ export default function Beneficiaries() {
   });
 
   const handleCreateBeneficiary = () => {
-    if (!formData.fullName || !formData.email) {
+    // Validation for required fields
+    const requiredFields = ['fullName', 'email', 'phone', 'address'];
+    const missingFields = [];
+
+    if (formData.isCompany) {
+      // Additional required fields for companies
+      if (!formData.companyName) missingFields.push('Nume Companie');
+      if (!formData.companyAddress) missingFields.push('Adresa Companiei');
+      if (!formData.companyCui) missingFields.push('CUI Companie');
+      if (!formData.companyRegistrationNumber) missingFields.push('Nr. Înregistrare');
+      if (!formData.companyLegalRepresentative) missingFields.push('Reprezentant Legal');
+      if (!formData.cnp) missingFields.push('CNP Reprezentant');
+    } else {
+      // Required fields for individuals
+      if (!formData.cnp) missingFields.push('CNP');
+    }
+
+    // Check common required fields
+    if (!formData.fullName) missingFields.push(formData.isCompany ? 'Persoană Contact' : 'Nume Complet');
+    if (!formData.email) missingFields.push('Email');
+    if (!formData.phone) missingFields.push('Telefon');
+    if (!formData.address && !formData.isCompany) missingFields.push('Adresa');
+
+    if (missingFields.length > 0) {
       toast({
         title: "Error",
-        description: "Numele și email-ul sunt obligatorii.",
+        description: `Următoarele câmpuri sunt obligatorii: ${missingFields.join(', ')}`,
         variant: "destructive",
       });
       return;
@@ -280,7 +303,7 @@ export default function Beneficiaries() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="companyAddress">Adresa Companiei</Label>
+                  <Label htmlFor="companyAddress">Adresa Companiei *</Label>
                   <Textarea
                     id="companyAddress"
                     value={formData.companyAddress || ""}
@@ -292,7 +315,7 @@ export default function Beneficiaries() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="companyCui">CUI Companie</Label>
+                    <Label htmlFor="companyCui">CUI Companie *</Label>
                     <Input
                       id="companyCui"
                       value={formData.companyCui || ""}
@@ -302,7 +325,7 @@ export default function Beneficiaries() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="companyRegistrationNumber">Nr. Înregistrare</Label>
+                    <Label htmlFor="companyRegistrationNumber">Nr. Înregistrare *</Label>
                     <Input
                       id="companyRegistrationNumber"
                       value={formData.companyRegistrationNumber || ""}
@@ -314,7 +337,7 @@ export default function Beneficiaries() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="companyLegalRepresentative">Reprezentant Legal</Label>
+                    <Label htmlFor="companyLegalRepresentative">Reprezentant Legal *</Label>
                     <Input
                       id="companyLegalRepresentative"
                       value={formData.companyLegalRepresentative || ""}
@@ -324,7 +347,7 @@ export default function Beneficiaries() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="cnp">CNP Reprezentant</Label>
+                    <Label htmlFor="cnp">CNP Reprezentant *</Label>
                     <Input
                       id="cnp"
                       value={formData.cnp || ""}
@@ -349,7 +372,7 @@ export default function Beneficiaries() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="cnp">CNP</Label>
+                    <Label htmlFor="cnp">CNP *</Label>
                     <Input
                       id="cnp"
                       value={formData.cnp || ""}
@@ -360,7 +383,7 @@ export default function Beneficiaries() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="address">Adresa</Label>
+                  <Label htmlFor="address">Adresa *</Label>
                   <Textarea
                     id="address"
                     value={formData.address || ""}
@@ -386,7 +409,7 @@ export default function Beneficiaries() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Telefon</Label>
+                <Label htmlFor="phone">Telefon *</Label>
                 <Input
                   id="phone"
                   value={formData.phone || ""}
