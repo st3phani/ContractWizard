@@ -24,7 +24,9 @@ import {
   Image as ImageIcon,
   Table as TableIcon,
   Plus,
-  Minus
+  Minus,
+  Square,
+  Grid3X3
 } from 'lucide-react'
 
 // Custom extension for font size
@@ -292,6 +294,20 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
             >
               <Minus className="h-4 w-4" />
             </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                const table = editor.getAttributes('table');
+                const newClass = table.class === 'no-border' ? '' : 'no-border';
+                editor.chain().focus().updateAttributes('table', { class: newClass }).run();
+              }}
+              className="h-8 w-8 p-0"
+              title="Toggle border tabel"
+            >
+              {editor.getAttributes('table').class === 'no-border' ? <Grid3X3 className="h-4 w-4" /> : <Square className="h-4 w-4" />}
+            </Button>
           </>
         )}
       </div>
@@ -345,6 +361,12 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           font-weight: bold;
           text-align: left;
           background-color: #f1f3f4;
+        }
+        .ProseMirror table.no-border td, .ProseMirror table.no-border th {
+          border: none;
+        }
+        .ProseMirror table.no-border th {
+          background-color: transparent;
         }
         .ProseMirror img {
           max-width: 100%;
