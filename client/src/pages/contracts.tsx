@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { Plus } from "lucide-react";
 import { queryClient } from "@/lib/queryClient";
+import { Button } from "@/components/ui/button";
 import ContractTable from "@/components/contract-table";
 import ContractModal from "@/components/contract-modal";
 import EmailModal from "@/components/email-modal";
 import Sidebar from "@/components/sidebar";
+import { Link } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
 import type { ContractWithDetails } from "@shared/schema";
 
@@ -78,6 +81,12 @@ export default function ContractsPage() {
               <h1 className="text-2xl font-semibold text-gray-900">Contracte</h1>
               <p className="text-gray-600 mt-1">Gestionează toate contractele din sistem</p>
             </div>
+            <Link href="/contract-form">
+              <Button className="bg-blue-600 hover:bg-blue-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Contract Nou
+              </Button>
+            </Link>
           </div>
         </div>
 
