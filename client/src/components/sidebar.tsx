@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
-import { FileText, Plus, Users, Settings, BarChart3, File, FolderOpen, Hash } from "lucide-react";
+import { FileText, Plus, Users, Settings, BarChart3, File, FolderOpen } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: BarChart3 },
@@ -8,7 +8,6 @@ const navigation = [
   { name: "Contracte", href: "/contracts", icon: FolderOpen },
   { name: "Template-uri", href: "/templates", icon: FileText },
   { name: "Beneficiari", href: "/beneficiaries", icon: Users },
-  { name: "Rezervări Numere", href: "/order-reservations", icon: Hash },
   { name: "Setări", href: "/settings", icon: Settings },
 ];
 
