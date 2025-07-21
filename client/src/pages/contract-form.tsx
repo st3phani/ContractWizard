@@ -19,8 +19,8 @@ import { useLocation } from "wouter";
 import { Search, Check, Plus, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Sidebar from "@/components/sidebar";
-import { BeneficiaryFormModal } from "@/components/beneficiary-form-modal";
-import type { ContractTemplate, Beneficiary } from "@shared/schema";
+import { BeneficiaryFormFields } from "@/components/beneficiary-form-fields";
+import type { ContractTemplate, Beneficiary, InsertBeneficiary } from "@shared/schema";
 
 const contractFormSchema = z.object({
   // Beneficiary data
@@ -107,6 +107,23 @@ export default function ContractForm() {
   const [beneficiarySearchOpen, setBeneficiarySearchOpen] = useState(false);
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
   const [showNewBeneficiaryModal, setShowNewBeneficiaryModal] = useState(false);
+
+  // Beneficiary form for modal
+  const beneficiaryForm = useForm<InsertBeneficiary>({
+    defaultValues: {
+      fullName: "",
+      email: "",
+      phone: "",
+      address: "",
+      cnp: "",
+      companyName: "",
+      companyAddress: "",
+      companyCui: "",
+      companyRegistrationNumber: "",
+      companyLegalRepresentative: "",
+      isCompany: false,
+    },
+  });
 
   const form = useForm<ContractFormData>({
     resolver: zodResolver(contractFormSchema),
@@ -230,23 +247,69 @@ export default function ContractForm() {
     setBeneficiarySearchOpen(false);
   };
 
-  const handleBeneficiaryCreated = (newBeneficiary: Beneficiary) => {
-    // Auto-select the newly created beneficiary
-    setSelectedBeneficiary(newBeneficiary);
-    setShowNewBeneficiaryModal(false);
-    
-    // Update form with new beneficiary data
-    form.setValue("beneficiary.fullName", newBeneficiary.fullName);
-    form.setValue("beneficiary.email", newBeneficiary.email);
-    form.setValue("beneficiary.phone", newBeneficiary.phone || "");
-    form.setValue("beneficiary.address", newBeneficiary.address || "");
-    form.setValue("beneficiary.cnp", newBeneficiary.cnp || "");
-    form.setValue("beneficiary.companyName", newBeneficiary.companyName || "");
-    form.setValue("beneficiary.companyAddress", newBeneficiary.companyAddress || "");
-    form.setValue("beneficiary.companyCui", newBeneficiary.companyCui || "");
-    form.setValue("beneficiary.companyRegistrationNumber", newBeneficiary.companyRegistrationNumber || "");
-    form.setValue("beneficiary.companyLegalRepresentative", newBeneficiary.companyLegalRepresentative || "");
-    form.setValue("beneficiary.isCompany", newBeneficiary.isCompany);
+  // Create beneficiary mutation for modal
+  const createBeneficiaryMutation = useMutation({
+    mutationFn: (data: InsertBeneficiary) => apiRequest("POST", "/api/beneficiaries", data),
+    onSuccess: (newBeneficiary: Beneficiary) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
+      
+      // Auto-select the newly created beneficiary
+      setSelectedBeneficiary(newBeneficiary);
+      setShowNewBeneficiaryModal(false);
+      
+      // Update contract form with new beneficiary data
+      form.setValue("beneficiary.fullName", newBeneficiary.fullName);
+      form.setValue("beneficiary.email", newBeneficiary.email);
+      form.setValue("beneficiary.phone", newBeneficiary.phone || "");
+      form.setValue("beneficiary.address", newBeneficiary.address || "");
+      form.setValue("beneficiary.cnp", newBeneficiary.cnp || "");
+      form.setValue("beneficiary.companyName", newBeneficiary.companyName || "");
+      form.setValue("beneficiary.companyAddress", newBeneficiary.companyAddress || "");
+      form.setValue("beneficiary.companyCui", newBeneficiary.companyCui || "");
+      form.setValue("beneficiary.companyRegistrationNumber", newBeneficiary.companyRegistrationNumber || "");
+      form.setValue("beneficiary.companyLegalRepresentative", newBeneficiary.companyLegalRepresentative || "");
+      form.setValue("beneficiary.isCompany", newBeneficiary.isCompany);
+      
+      // Reset modal form
+      beneficiaryForm.reset();
+      
+      toast({
+        title: "Success",
+        description: "Beneficiarul a fost creat cu succes!",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "A apărut o eroare la crearea beneficiarului.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleCreateBeneficiary = (data: InsertBeneficiary) => {
+    // Validation for required fields
+    const errors = beneficiaryForm.formState.errors;
+    if (Object.keys(errors).length > 0) {
+      // Find the first error field and focus it
+      let firstErrorField = null;
+      const errorKeys = Object.keys(errors);
+      if (errorKeys.length > 0) {
+        firstErrorField = errorKeys[0];
+      }
+
+      if (firstErrorField) {
+        const element = document.querySelector(`[name="${firstErrorField}"]`) as HTMLElement;
+        if (element) {
+          element.focus();
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+      
+      return;
+    }
+
+    createBeneficiaryMutation.mutate(data);
   };
 
   return (
@@ -528,12 +591,44 @@ export default function ContractForm() {
         </div>
       </main>
 
-      {/* Beneficiary Modal */}
-      <BeneficiaryFormModal
-        isOpen={showNewBeneficiaryModal}
-        onClose={() => setShowNewBeneficiaryModal(false)}
-        onSuccess={handleBeneficiaryCreated}
-      />
+      {/* Beneficiary Modal - Same as in Beneficiaries page */}
+      <Dialog open={showNewBeneficiaryModal} onOpenChange={(open) => {
+        if (!open) {
+          setShowNewBeneficiaryModal(false);
+        }
+      }}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Adaugă Beneficiar Nou</DialogTitle>
+          </DialogHeader>
+
+          <Form {...beneficiaryForm}>
+            <form onSubmit={beneficiaryForm.handleSubmit(handleCreateBeneficiary)} className="space-y-4">
+              <BeneficiaryFormFields
+                control={beneficiaryForm.control}
+                watch={beneficiaryForm.watch}
+              />
+
+              <div className="flex justify-end space-x-2 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowNewBeneficiaryModal(false)}
+                >
+                  Anulează
+                </Button>
+                <Button 
+                  type="submit" 
+                  disabled={createBeneficiaryMutation.isPending}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {createBeneficiaryMutation.isPending ? "Se salvează..." : "Adaugă Beneficiar"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
