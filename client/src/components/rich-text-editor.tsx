@@ -82,6 +82,7 @@ interface RichTextEditorProps {
 
 export default function RichTextEditor({ content, onChange, placeholder, className }: RichTextEditorProps) {
   const [isInTable, setIsInTable] = useState(false)
+  const [tableHasBorder, setTableHasBorder] = useState(true)
 
   const editor = useEditor({
     extensions: [
@@ -114,6 +115,14 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
                      editor.isActive('tableCell') || 
                      editor.isActive('tableHeader')
       setIsInTable(inTable)
+      
+      // Check table border state
+      if (inTable) {
+        const tableElement = editor.view.dom.querySelector('table');
+        if (tableElement) {
+          setTableHasBorder(!tableElement.classList.contains('no-border'));
+        }
+      }
     },
     onSelectionUpdate: ({ editor }) => {
       // Check if cursor is in table on selection change
@@ -122,6 +131,14 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
                      editor.isActive('tableCell') || 
                      editor.isActive('tableHeader')
       setIsInTable(inTable)
+      
+      // Check table border state
+      if (inTable) {
+        const tableElement = editor.view.dom.querySelector('table');
+        if (tableElement) {
+          setTableHasBorder(!tableElement.classList.contains('no-border'));
+        }
+      }
     },
     editorProps: {
       attributes: {
@@ -360,14 +377,23 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
               variant="ghost"
               size="sm"
               onClick={() => {
-                const table = editor.getAttributes('table');
-                const newClass = table.class === 'no-border' ? '' : 'no-border';
-                editor.chain().focus().updateAttributes('table', { class: newClass }).run();
+                const newBorderState = !tableHasBorder;
+                setTableHasBorder(newBorderState);
+                
+                // Find the table element in DOM and toggle class
+                const tableElement = editor.view.dom.querySelector('table');
+                if (tableElement) {
+                  if (newBorderState) {
+                    tableElement.classList.remove('no-border');
+                  } else {
+                    tableElement.classList.add('no-border');
+                  }
+                }
               }}
               className="h-8 w-8 p-0"
               title="Toggle border tabel"
             >
-              {editor.getAttributes('table').class === 'no-border' ? <Grid3X3 className="h-4 w-4" /> : <Square className="h-4 w-4" />}
+              {tableHasBorder ? <Square className="h-4 w-4" /> : <Grid3X3 className="h-4 w-4" />}
             </Button>
 
             <Button
