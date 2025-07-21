@@ -26,7 +26,7 @@ import { Label } from "@/components/ui/label";
 const contractFormSchema = z.object({
   // Beneficiary data
   beneficiary: z.object({
-    fullName: z.string().min(1, "Numele este obligatoriu"),
+    name: z.string().min(1, "Numele este obligatoriu"),
     email: z.string().email("Email invalid").min(1, "Email-ul este obligatoriu"),
     phone: z.string().min(1, "Telefonul este obligatoriu"),
     address: z.string().optional(),
@@ -111,7 +111,7 @@ export default function ContractForm() {
 
   // Beneficiary form data for modal (same as in Beneficiaries page)
   const [formData, setFormData] = useState<InsertBeneficiary>({
-    fullName: "",
+    name: "",
     email: "",
     phone: "",
     address: "",
@@ -128,7 +128,7 @@ export default function ContractForm() {
     resolver: zodResolver(contractFormSchema),
     defaultValues: {
       beneficiary: {
-        fullName: "",
+        name: "",
         email: "",
         phone: "",
         address: "",
@@ -233,7 +233,7 @@ export default function ContractForm() {
     setBeneficiarySearchOpen(false);
     
     // Update form with selected beneficiary data
-    form.setValue("beneficiary.fullName", beneficiary.fullName);
+    form.setValue("beneficiary.name", beneficiary.name);
     form.setValue("beneficiary.email", beneficiary.email);
     form.setValue("beneficiary.phone", beneficiary.phone || "");
     form.setValue("beneficiary.address", beneficiary.address || "");
@@ -271,7 +271,7 @@ export default function ContractForm() {
       setShowNewBeneficiaryModal(false);
       
       // Update contract form with new beneficiary data
-      form.setValue("beneficiary.fullName", newBeneficiary.fullName);
+      form.setValue("beneficiary.name", newBeneficiary.name);
       form.setValue("beneficiary.email", newBeneficiary.email);
       form.setValue("beneficiary.phone", newBeneficiary.phone || "");
       form.setValue("beneficiary.address", newBeneficiary.address || "");
@@ -285,7 +285,7 @@ export default function ContractForm() {
       
       // Reset modal form
       setFormData({
-        fullName: "",
+        name: "",
         email: "",
         phone: "",
         address: "",
@@ -315,10 +315,10 @@ export default function ContractForm() {
   const handleCreateBeneficiary = () => {
     console.log("handleCreateBeneficiary called with formData:", formData);
     
-    // For companies, set fullName to the legal representative name
+    // For companies, set name to the legal representative name
     const dataToSend = { ...formData };
     if (formData.isCompany && formData.companyLegalRepresentative?.trim()) {
-      dataToSend.fullName = formData.companyLegalRepresentative;
+      dataToSend.name = formData.companyLegalRepresentative;
     }
     
     // Validate required fields manually (same validation as in Beneficiaries page)
@@ -335,7 +335,7 @@ export default function ContractForm() {
       if (!dataToSend.companyLegalRepresentative?.trim()) errors.companyLegalRepresentative = true;
       if (!dataToSend.cnp?.trim()) errors.cnp = true;
     } else {
-      if (!dataToSend.fullName.trim()) errors.fullName = true;
+      if (!dataToSend.name.trim()) errors.name = true;
       if (!dataToSend.address?.trim()) errors.address = true;
       if (!dataToSend.cnp?.trim()) errors.cnp = true;
     }
@@ -421,10 +421,10 @@ export default function ContractForm() {
                                 <div className="flex items-center">
                                   <Avatar className="h-6 w-6 mr-2">
                                     <AvatarFallback className="text-xs">
-                                      {selectedBeneficiary?.fullName ? selectedBeneficiary.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : "B"}
+                                      {selectedBeneficiary?.name ? selectedBeneficiary.name.split(' ').map(n => n[0]).join('').toUpperCase() : "B"}
                                     </AvatarFallback>
                                   </Avatar>
-                                  {selectedBeneficiary?.fullName || "Beneficiar fără nume"}
+                                  {selectedBeneficiary?.name || "Beneficiar fără nume"}
                                 </div>
                               ) : (
                                 <>
@@ -443,17 +443,17 @@ export default function ContractForm() {
                                   {beneficiaries.map((beneficiary) => (
                                     <CommandItem
                                       key={beneficiary.id}
-                                      value={`${beneficiary.fullName} ${beneficiary.email}`}
+                                      value={`${beneficiary.name} ${beneficiary.email}`}
                                       onSelect={() => handleSelectBeneficiary(beneficiary)}
                                     >
                                       <div className="flex items-center w-full">
                                         <Avatar className="h-8 w-8 mr-3">
                                           <AvatarFallback className="text-xs">
-                                            {beneficiary.fullName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                            {beneficiary.name.split(' ').map(n => n[0]).join('').toUpperCase()}
                                           </AvatarFallback>
                                         </Avatar>
                                         <div className="flex-1">
-                                          <div className="font-medium">{beneficiary.fullName}</div>
+                                          <div className="font-medium">{beneficiary.name}</div>
                                           <div className="text-sm text-gray-500">{beneficiary.email}</div>
                                         </div>
                                         {selectedBeneficiary?.id === beneficiary.id && (
@@ -488,11 +488,11 @@ export default function ContractForm() {
                             <div className="flex items-center">
                               <Avatar className="h-10 w-10 mr-3">
                                 <AvatarFallback>
-                                  {selectedBeneficiary?.fullName ? selectedBeneficiary.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : "B"}
+                                  {selectedBeneficiary?.name ? selectedBeneficiary.name.split(' ').map(n => n[0]).join('').toUpperCase() : "B"}
                                 </AvatarFallback>
                               </Avatar>
                               <div>
-                                <div className="font-medium">{selectedBeneficiary?.fullName || "Beneficiar fără nume"}</div>
+                                <div className="font-medium">{selectedBeneficiary?.name || "Beneficiar fără nume"}</div>
                                 <div className="text-sm text-gray-500">{selectedBeneficiary?.email}</div>
                                 {selectedBeneficiary?.phone && (
                                   <div className="text-sm text-gray-500">{selectedBeneficiary.phone}</div>
@@ -760,13 +760,13 @@ export default function ContractForm() {
                 {/* Individual Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="fullName">Nume Complet *</Label>
+                    <Label htmlFor="name">Nume Complet *</Label>
                     <Input
-                      id="fullName"
-                      value={formData.fullName}
-                      onChange={(e) => handleFieldChange('fullName', e.target.value, (value) => setFormData({ ...formData, fullName: value }))}
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => handleFieldChange('name', e.target.value, (value) => setFormData({ ...formData, name: value }))}
                       placeholder="Numele complet al beneficiarului"
-                      className={validationErrors.fullName ? "border-red-500 bg-pink-50" : ""}
+                      className={validationErrors.name ? "border-red-500 bg-pink-50" : ""}
                     />
                   </div>
 

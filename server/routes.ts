@@ -28,7 +28,7 @@ function populateContractTemplate(template: string, data: any): string {
   
   // Beneficiary fields
   if (data.beneficiary) {
-    populated = populated.replace(/\{\{beneficiary\.fullName\}\}/g, data.beneficiary.fullName || '');
+    populated = populated.replace(/\{\{beneficiary\.name\}\}/g, data.beneficiary.name || '');
     populated = populated.replace(/\{\{beneficiary\.email\}\}/g, data.beneficiary.email || '');
     populated = populated.replace(/\{\{beneficiary\.phone\}\}/g, data.beneficiary.phone || '');
     populated = populated.replace(/\{\{beneficiary\.address\}\}/g, data.beneficiary.address || '');

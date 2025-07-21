@@ -305,7 +305,7 @@ export default function Templates() {
                   }
                 }}
                 rows={15}
-                placeholder="Conținutul contractului cu placeholder-uri (ex: {{beneficiary.fullName}})"
+                placeholder="Conținutul contractului cu placeholder-uri (ex: {{beneficiary.name}})"
               />
             </div>
             
@@ -488,7 +488,7 @@ export default function Templates() {
                 <h4 className="font-semibold text-green-900 mb-3">👤 Variabile Beneficiar & Contract</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center justify-between bg-white p-2 rounded border">
-                    <code className="text-green-700">{"{{beneficiary.fullName}}"}</code>
+                    <code className="text-green-700">{"{{beneficiary.name}}"}</code>
                     <Button 
                       size="sm" 
                       variant="ghost" 
@@ -498,7 +498,7 @@ export default function Templates() {
                           const cursorPos = textarea.selectionStart;
                           const textBefore = textarea.value.substring(0, cursorPos);
                           const textAfter = textarea.value.substring(cursorPos);
-                          const newValue = textBefore + '{{beneficiary.fullName}}' + textAfter;
+                          const newValue = textBefore + '{{beneficiary.name}}' + textAfter;
                           setFormData({ ...formData, content: newValue });
                           // Update cursor position after insertion
                           setTimeout(() => {
@@ -784,7 +784,7 @@ export default function Templates() {
               <h4 className="font-semibold text-yellow-900 mb-2">💡 Exemple de utilizare</h4>
               <div className="text-sm text-yellow-800 space-y-1">
                 <p><strong>Pentru Prestator:</strong> PRESTATOR: {"{{provider.name}}"}, cu sediul în {"{{provider.address}}"}, CIF {"{{provider.cui}}"}</p>
-                <p><strong>Pentru Beneficiar:</strong> BENEFICIAR: {"{{beneficiary.fullName}}"}, email: {"{{beneficiary.email}}"}</p>
+                <p><strong>Pentru Beneficiar:</strong> BENEFICIAR: {"{{beneficiary.name}}"}, email: {"{{beneficiary.email}}"}</p>
                 <p><strong>Pentru Detalii:</strong> Contract nr. {"{{orderNumber}}"} din {"{{currentDate}}"}, valoare: {"{{contract.value}}"} RON</p>
               </div>
             </div>

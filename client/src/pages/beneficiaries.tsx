@@ -21,7 +21,7 @@ export default function Beneficiaries() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
   const [formData, setFormData] = useState<InsertBeneficiary>({
-    fullName: "",
+    name: "",
     email: "",
     phone: "",
     address: "",
@@ -49,7 +49,7 @@ export default function Beneficiaries() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
       setIsCreateModalOpen(false);
-      setFormData({ fullName: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", companyLegalRepresentative: "", isCompany: false });
+      setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", companyLegalRepresentative: "", isCompany: false });
       setSelectedBeneficiary(null);
     },
     onError: () => {
@@ -120,9 +120,9 @@ export default function Beneficiaries() {
     }
 
     // Check common required fields
-    if (!formData.fullName) {
+    if (!formData.name) {
       missingFields.push('Nume Complet');
-      fieldsToFocus.push('fullName');
+      fieldsToFocus.push('name');
     }
     if (!formData.email) {
       missingFields.push('Email');
@@ -155,7 +155,7 @@ export default function Beneficiaries() {
     }
 
     // Remove red borders on successful validation
-    const allFields = ['fullName', 'email', 'phone', 'address', 'cnp', 'companyName', 'companyAddress', 'companyCui', 'companyRegistrationNumber', 'companyLegalRepresentative'];
+    const allFields = ['name', 'email', 'phone', 'address', 'cnp', 'companyName', 'companyAddress', 'companyCui', 'companyRegistrationNumber', 'companyLegalRepresentative'];
     allFields.forEach(fieldId => {
       const element = document.getElementById(fieldId);
       if (element) {
@@ -169,7 +169,7 @@ export default function Beneficiaries() {
   const handleEdit = (beneficiary: Beneficiary) => {
     setSelectedBeneficiary(beneficiary);
     setFormData({
-      fullName: beneficiary.fullName,
+      name: beneficiary.name,
       email: beneficiary.email,
       phone: beneficiary.phone ?? "",
       address: beneficiary.address ?? "",
@@ -193,7 +193,7 @@ export default function Beneficiaries() {
   const resetForm = () => {
     setIsCreateModalOpen(false);
     setSelectedBeneficiary(null);
-    setFormData({ fullName: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", companyLegalRepresentative: "", isCompany: false });
+    setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", companyLegalRepresentative: "", isCompany: false });
   };
 
   return (
@@ -245,11 +245,11 @@ export default function Beneficiaries() {
                           <div className="flex items-center space-x-3">
                             <Avatar>
                               <AvatarFallback>
-                                {beneficiary.fullName.substring(0, 2).toUpperCase()}
+                                {beneficiary.name.substring(0, 2).toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
                             <div>
-                              <div className="font-medium">{beneficiary.fullName}</div>
+                              <div className="font-medium">{beneficiary.name}</div>
                               {beneficiary.address && (
                                 <div className="text-sm text-gray-500 flex items-center">
                                   <MapPin className="h-3 w-3 mr-1" />
@@ -409,11 +409,11 @@ export default function Beneficiaries() {
                 {/* Individual Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="fullName">Nume Complet *</Label>
+                    <Label htmlFor="name">Nume Complet *</Label>
                     <Input
-                      id="fullName"
-                      value={formData.fullName}
-                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="Numele complet al beneficiarului"
                     />
                   </div>

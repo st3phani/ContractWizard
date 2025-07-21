@@ -13,7 +13,7 @@ export const contractTemplates = pgTable("contract_templates", {
 
 export const beneficiaries = pgTable("beneficiaries", {
   id: serial("id").primaryKey(),
-  fullName: text("full_name").notNull(),
+  name: text("name").notNull(),
   email: text("email").notNull(),
   phone: text("phone"),
   address: text("address"),
@@ -73,7 +73,7 @@ export const insertBeneficiarySchema = createInsertSchema(beneficiaries).omit({
   id: true,
   createdAt: true,
 }).extend({
-  fullName: z.string().min(1, "Numele este obligatoriu"),
+  name: z.string().min(1, "Numele este obligatoriu"),
   email: z.string().email("Email-ul trebuie să fie valid").min(1, "Email-ul este obligatoriu"),
   phone: z.string().min(1, "Telefonul este obligatoriu"),
   address: z.string().optional(),
@@ -90,10 +90,10 @@ export const insertBeneficiarySchema = createInsertSchema(beneficiaries).omit({
              data.companyRegistrationNumber && data.companyLegalRepresentative && data.cnp);
   }
   // If it's an individual, require individual fields
-  return !!(data.fullName && data.address && data.cnp);
+  return !!(data.name && data.address && data.cnp);
 }, {
   message: "Completați toate câmpurile obligatorii",
-  path: ["fullName"],
+  path: ["name"],
 });
 
 export const insertCompanySettingsSchema = createInsertSchema(companySettings).omit({

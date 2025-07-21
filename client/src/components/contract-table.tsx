@@ -25,7 +25,7 @@ export default function ContractTable({ contracts, onView, onDownload, onEmail, 
   const filteredContracts = contracts.filter((contract) => {
     const matchesSearch = 
       contract.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contract.beneficiary.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contract.beneficiary.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contract.template.name.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === "all" || contract.status === statusFilter;
@@ -82,11 +82,11 @@ export default function ContractTable({ contracts, onView, onDownload, onEmail, 
                   <div className="flex items-center space-x-3">
                     <Avatar>
                       <AvatarFallback>
-                        {contract.beneficiary.fullName.substring(0, 2).toUpperCase()}
+                        {contract.beneficiary.name?.substring(0, 2).toUpperCase() || "B"}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <div className="font-medium">{contract.beneficiary.fullName}</div>
+                      <div className="font-medium">{contract.beneficiary.name}</div>
                       <div className="text-sm text-gray-500">{contract.beneficiary.email}</div>
                     </div>
                   </div>

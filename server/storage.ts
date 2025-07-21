@@ -90,7 +90,7 @@ CIF [CIF Companie], reprezentată legal prin [Reprezentant Legal],
 
 și
 
-BENEFICIAR: {{beneficiary.fullName}}, 
+BENEFICIAR: {{beneficiary.name}}, 
 domiciliat în {{beneficiary.address}}, 
 CNP/CUI: {{beneficiary.cnp}}, 
 în calitate de beneficiar,
@@ -114,7 +114,7 @@ Părțile își asumă obligațiile prevăzute în legislația în vigoare și �
 PRESTATOR                    BENEFICIAR
 _________________           _________________`,
         fields: JSON.stringify([
-          { name: "beneficiary.fullName", type: "text", required: true },
+          { name: "beneficiary.name", type: "text", required: true },
           { name: "beneficiary.address", type: "textarea", required: true },
           { name: "beneficiary.cnp", type: "text", required: true },
           { name: "contract.value", type: "number", required: true },
@@ -533,7 +533,7 @@ CIF [CIF Companie], reprezentată legal prin [Reprezentant Legal],
 
 și
 
-BENEFICIAR: {{beneficiary.fullName}}, 
+BENEFICIAR: {{beneficiary.name}}, 
 domiciliat în {{beneficiary.address}}, 
 CNP/CUI: {{beneficiary.cnp}}, 
 în calitate de beneficiar,
@@ -557,7 +557,7 @@ Părțile își asumă obligațiile prevăzute în legislația în vigoare și �
 PRESTATOR                    BENEFICIAR
 _________________           _________________`,
         fields: JSON.stringify([
-          { name: "beneficiary.fullName", type: "text", required: true },
+          { name: "beneficiary.name", type: "text", required: true },
           { name: "beneficiary.address", type: "textarea", required: true },
           { name: "beneficiary.cnp", type: "text", required: true },
           { name: "contract.value", type: "number", required: true },

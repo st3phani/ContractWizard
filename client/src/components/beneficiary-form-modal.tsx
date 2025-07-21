@@ -23,7 +23,7 @@ export function BeneficiaryFormModal({ isOpen, onClose, beneficiary, onSuccess }
 
   const form = useForm<InsertBeneficiary>({
     defaultValues: {
-      fullName: beneficiary?.fullName || "",
+      name: beneficiary?.name || "",
       email: beneficiary?.email || "",
       phone: beneficiary?.phone || "",
       address: beneficiary?.address || "",
@@ -38,13 +38,16 @@ export function BeneficiaryFormModal({ isOpen, onClose, beneficiary, onSuccess }
   });
 
   const createBeneficiaryMutation = useMutation({
-    mutationFn: (data: InsertBeneficiary) => apiRequest("POST", "/api/beneficiaries", data),
-    onSuccess: (response) => {
+    mutationFn: async (data: InsertBeneficiary) => {
+      const response = await apiRequest("POST", "/api/beneficiaries", data);
+      return response.json();
+    },
+    onSuccess: (newBeneficiary: Beneficiary) => {
       queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
       onClose();
       form.reset();
-      if (onSuccess && response) {
-        onSuccess(response as Beneficiary);
+      if (onSuccess) {
+        onSuccess(newBeneficiary);
       }
     },
     onError: () => {
@@ -57,14 +60,16 @@ export function BeneficiaryFormModal({ isOpen, onClose, beneficiary, onSuccess }
   });
 
   const updateBeneficiaryMutation = useMutation({
-    mutationFn: (data: InsertBeneficiary) => 
-      apiRequest("PATCH", `/api/beneficiaries/${beneficiary!.id}`, data),
-    onSuccess: (response) => {
+    mutationFn: async (data: InsertBeneficiary) => {
+      const response = await apiRequest("PATCH", `/api/beneficiaries/${beneficiary!.id}`, data);
+      return response.json();
+    },
+    onSuccess: (updatedBeneficiary: Beneficiary) => {
       queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
       onClose();
       form.reset();
-      if (onSuccess && response) {
-        onSuccess(response as Beneficiary);
+      if (onSuccess) {
+        onSuccess(updatedBeneficiary);
       }
     },
     onError: () => {
