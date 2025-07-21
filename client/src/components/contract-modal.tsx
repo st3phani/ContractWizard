@@ -60,13 +60,6 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
                 <Mail className="h-4 w-4 mr-1" />
                 Trimite Email
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onClose}
-              >
-                <X className="h-4 w-4" />
-              </Button>
             </div>
           </div>
         </DialogHeader>

@@ -402,38 +402,7 @@ _________________           _________________`,
     };
   }
 
-  // Reserved Order Numbers
-  async getReservedOrderNumbers(): Promise<ReservedOrderNumber[]> {
-    return [];
-  }
 
-  async reserveOrderNumber(orderNumber: number): Promise<ReservedOrderNumber> {
-    return {
-      id: 1,
-      orderNumber,
-      reservedAt: new Date(),
-      isUsed: false,
-      contractId: null
-    };
-  }
-
-  async getNextAvailableOrderNumber(): Promise<number> {
-    const contracts = await this.getContracts();
-    const maxOrderNumber = contracts.reduce((max, contract) => {
-      const orderNum = contract.orderNumber || 0;
-      return Math.max(max, orderNum);
-    }, 0);
-    
-    return maxOrderNumber + 1;
-  }
-
-  async isOrderNumberReserved(orderNumber: number): Promise<boolean> {
-    return false;
-  }
-
-  async markOrderNumberAsUsed(orderNumber: number, contractId: number): Promise<void> {
-    // No-op for MemStorage
-  }
 }
 
 export class DatabaseStorage implements IStorage {
