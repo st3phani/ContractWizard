@@ -113,6 +113,9 @@ Three main entities:
 
 ```
 Changelog:
+- July 22, 2025. Implemented order number reservation system that prevents automatic assignment of manually reserved numbers
+- July 22, 2025. Added reserved_order_numbers table to database with reservation tracking and usage status
+- July 22, 2025. Created API endpoints for order number reservation (/api/reserved-order-numbers, /api/next-available-order-number)
 - July 22, 2025. Modified contract order numbering to use sequential integers (1, 2, 3...) instead of complex format strings
 - July 22, 2025. Updated database schema to change order_number column from text to integer type
 - July 22, 2025. Fixed contract table component to handle integer order numbers and null values gracefully

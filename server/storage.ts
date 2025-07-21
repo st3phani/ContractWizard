@@ -4,16 +4,19 @@ import {
   beneficiaries,
   companySettings,
   systemSettings,
+  reservedOrderNumbers,
   type Contract, 
   type ContractTemplate, 
   type Beneficiary,
   type CompanySettings,
   type SystemSettings,
+  type ReservedOrderNumber,
   type InsertContract, 
   type InsertContractTemplate, 
   type InsertBeneficiary,
   type InsertCompanySettings,
   type InsertSystemSettings,
+  type InsertReservedOrderNumber,
   type ContractWithDetails
 } from "@shared/schema";
 import { db } from "./db";
@@ -58,6 +61,13 @@ export interface IStorage {
   // System Settings
   getSystemSettings(): Promise<SystemSettings | undefined>;
   updateSystemSettings(settings: InsertSystemSettings): Promise<SystemSettings>;
+
+  // Reserved Order Numbers
+  getReservedOrderNumbers(): Promise<ReservedOrderNumber[]>;
+  reserveOrderNumber(orderNumber: number): Promise<ReservedOrderNumber>;
+  getNextAvailableOrderNumber(): Promise<number>;
+  isOrderNumberReserved(orderNumber: number): Promise<boolean>;
+  markOrderNumberAsUsed(orderNumber: number, contractId: number): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -399,6 +409,39 @@ _________________           _________________`,
       completedContracts: contracts.filter(c => c.status === "completed").length
     };
   }
+
+  // Reserved Order Numbers
+  async getReservedOrderNumbers(): Promise<ReservedOrderNumber[]> {
+    return [];
+  }
+
+  async reserveOrderNumber(orderNumber: number): Promise<ReservedOrderNumber> {
+    return {
+      id: 1,
+      orderNumber,
+      reservedAt: new Date(),
+      isUsed: false,
+      contractId: null
+    };
+  }
+
+  async getNextAvailableOrderNumber(): Promise<number> {
+    const contracts = await this.getContracts();
+    const maxOrderNumber = contracts.reduce((max, contract) => {
+      const orderNum = contract.orderNumber || 0;
+      return Math.max(max, orderNum);
+    }, 0);
+    
+    return maxOrderNumber + 1;
+  }
+
+  async isOrderNumberReserved(orderNumber: number): Promise<boolean> {
+    return false;
+  }
+
+  async markOrderNumberAsUsed(orderNumber: number, contractId: number): Promise<void> {
+    // No-op for MemStorage
+  }
 }
 
 export class DatabaseStorage implements IStorage {
@@ -625,6 +668,58 @@ export class DatabaseStorage implements IStorage {
         .returning();
       return created;
     }
+  }
+
+  // Reserved Order Numbers
+  async getReservedOrderNumbers(): Promise<ReservedOrderNumber[]> {
+    const reserved = await db.select().from(reservedOrderNumbers);
+    return reserved;
+  }
+
+  async reserveOrderNumber(orderNumber: number): Promise<ReservedOrderNumber> {
+    const [reserved] = await db
+      .insert(reservedOrderNumbers)
+      .values({
+        orderNumber,
+        isUsed: false,
+        contractId: null
+      })
+      .returning();
+    return reserved;
+  }
+
+  async getNextAvailableOrderNumber(): Promise<number> {
+    // Get highest contract order number
+    const contracts = await this.getContracts();
+    const maxContractOrder = contracts.reduce((max, contract) => {
+      const orderNum = contract.orderNumber || 0;
+      return Math.max(max, orderNum);
+    }, 0);
+
+    // Get highest reserved order number
+    const reserved = await db.select().from(reservedOrderNumbers);
+    const maxReservedOrder = reserved.reduce((max, res) => {
+      return Math.max(max, res.orderNumber);
+    }, 0);
+
+    // Return next available number
+    return Math.max(maxContractOrder, maxReservedOrder) + 1;
+  }
+
+  async isOrderNumberReserved(orderNumber: number): Promise<boolean> {
+    const [reserved] = await db
+      .select()
+      .from(reservedOrderNumbers)
+      .where(eq(reservedOrderNumbers.orderNumber, orderNumber));
+    
+    return !!reserved && !reserved.isUsed;
+  }
+
+  async markOrderNumberAsUsed(orderNumber: number, contractId: number): Promise<void> {
+    await db
+      .update(reservedOrderNumbers)
+      .set({ isUsed: true, contractId })
+      .where(eq(reservedOrderNumbers.orderNumber, orderNumber));
   }
 }
 

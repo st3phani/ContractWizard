@@ -49,6 +49,14 @@ export const systemSettings = pgTable("system_settings", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const reservedOrderNumbers = pgTable("reserved_order_numbers", {
+  id: serial("id").primaryKey(),
+  orderNumber: integer("order_number").notNull().unique(),
+  reservedAt: timestamp("reserved_at").notNull().defaultNow(),
+  isUsed: boolean("is_used").notNull().default(false),
+  contractId: integer("contract_id"),
+});
+
 export const contracts = pgTable("contracts", {
   id: serial("id").primaryKey(),
   orderNumber: integer("order_number").notNull().unique(),
@@ -81,6 +89,11 @@ export const insertContractTemplateSchema = createInsertSchema(contractTemplates
 export const insertSystemSettingsSchema = createInsertSchema(systemSettings).omit({
   id: true,
   updatedAt: true,
+});
+
+export const insertReservedOrderNumberSchema = createInsertSchema(reservedOrderNumbers).omit({
+  id: true,
+  reservedAt: true,
 });
 
 export const insertBeneficiarySchema = createInsertSchema(beneficiaries).omit({
@@ -138,6 +151,9 @@ export type CompanySettings = typeof companySettings.$inferSelect;
 export type InsertCompanySettings = z.infer<typeof insertCompanySettingsSchema>;
 export type SystemSettings = typeof systemSettings.$inferSelect;
 export type InsertSystemSettings = z.infer<typeof insertSystemSettingsSchema>;
+
+export type ReservedOrderNumber = typeof reservedOrderNumbers.$inferSelect;
+export type InsertReservedOrderNumber = z.infer<typeof insertReservedOrderNumberSchema>;
 
 export type Contract = typeof contracts.$inferSelect;
 export type InsertContract = z.infer<typeof insertContractSchema>;

@@ -6,14 +6,7 @@ import { z } from "zod";
 
 // Helper function to generate sequential order numbers
 async function generateOrderNumber(): Promise<number> {
-  // Get the highest existing order number
-  const contracts = await storage.getContracts();
-  const maxOrderNumber = contracts.reduce((max, contract) => {
-    const orderNum = contract.orderNumber || 0;
-    return Math.max(max, orderNum);
-  }, 0);
-  
-  return maxOrderNumber + 1;
+  return await storage.getNextAvailableOrderNumber();
 }
 
 // Helper function to populate contract template
@@ -451,6 +444,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating system settings:", error);
       res.status(500).json({ error: "Failed to update system settings" });
+    }
+  });
+
+  // Reserved Order Numbers
+  app.get("/api/reserved-order-numbers", async (req, res) => {
+    try {
+      const reserved = await storage.getReservedOrderNumbers();
+      res.json(reserved);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch reserved order numbers" });
+    }
+  });
+
+  app.post("/api/reserved-order-numbers", async (req, res) => {
+    try {
+      const { orderNumber } = req.body;
+      
+      if (!orderNumber || typeof orderNumber !== 'number') {
+        return res.status(400).json({ message: "Order number is required and must be a number" });
+      }
+
+      // Check if order number is already used in contracts
+      const existingContract = await storage.getContractByOrderNumber(orderNumber);
+      if (existingContract) {
+        return res.status(400).json({ message: "Numărul de ordine este deja folosit de un contract existent" });
+      }
+
+      // Check if order number is already reserved
+      const isReserved = await storage.isOrderNumberReserved(orderNumber);
+      if (isReserved) {
+        return res.status(400).json({ message: "Numărul de ordine este deja rezervat" });
+      }
+
+      const reserved = await storage.reserveOrderNumber(orderNumber);
+      res.json(reserved);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to reserve order number" });
+    }
+  });
+
+  app.get("/api/next-available-order-number", async (req, res) => {
+    try {
+      const nextNumber = await storage.getNextAvailableOrderNumber();
+      res.json({ orderNumber: nextNumber });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get next available order number" });
     }
   });
 
