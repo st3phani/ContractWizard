@@ -150,11 +150,6 @@ export default function Beneficiaries() {
         }
       }
 
-      toast({
-        title: "Error",
-        description: `Următoarele câmpuri sunt obligatorii: ${missingFields.join(', ')}`,
-        variant: "destructive",
-      });
       return;
     }
 
