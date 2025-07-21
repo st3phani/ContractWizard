@@ -193,8 +193,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(contract);
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.log("Contract validation errors:", error.errors);
+        console.log("Contract data received:", { beneficiaryData, contractData });
         return res.status(400).json({ message: "Invalid contract data", errors: error.errors });
       }
+      console.log("Contract creation error:", error);
       res.status(500).json({ message: "Failed to create contract" });
     }
   });
