@@ -21,17 +21,51 @@ function populateContractTemplate(template: string, data: any): string {
     if (typeof value === 'object' && value !== null) {
       // Handle nested objects
       Object.keys(value).forEach(subKey => {
-        const placeholder = `{{${key}.${subKey}}}`;
-        populated = populated.replace(new RegExp(placeholder, 'g'), value[subKey] || '');
+        // Support both {{key.subKey}} and [Key SubKey] formats
+        const curlyPlaceholder = `{{${key}.${subKey}}}`;
+        populated = populated.replace(new RegExp(curlyPlaceholder, 'g'), value[subKey] || '');
       });
     } else {
-      const placeholder = `{{${key}}}`;
-      populated = populated.replace(new RegExp(placeholder, 'g'), value || '');
+      // Support both {{key}} and [Key] formats
+      const curlyPlaceholder = `{{${key}}}`;
+      populated = populated.replace(new RegExp(curlyPlaceholder, 'g'), value || '');
     }
   });
   
-  // Replace current date
+  // Replace specific Romanian placeholder formats
+  if (data.provider) {
+    populated = populated.replace(/\[Numele Companiei\]/g, data.provider.name || '');
+    populated = populated.replace(/\[Adresa Companiei\]/g, data.provider.address || '');
+    populated = populated.replace(/\[CIF Companie\]/g, data.provider.cui || '');
+    populated = populated.replace(/\[Nr\. Registrul Comerțului\]/g, data.provider.registrationNumber || '');
+    populated = populated.replace(/\[Reprezentant Legal\]/g, data.provider.legalRepresentative || '');
+    populated = populated.replace(/\[Telefon Companie\]/g, data.provider.phone || '');
+    populated = populated.replace(/\[Email Companie\]/g, data.provider.email || '');
+  }
+  
+  // Replace beneficiary placeholders
+  if (data.beneficiary) {
+    populated = populated.replace(/\[Nume Beneficiar\]/g, data.beneficiary.fullName || '');
+    populated = populated.replace(/\[Email Beneficiar\]/g, data.beneficiary.email || '');
+    populated = populated.replace(/\[Telefon Beneficiar\]/g, data.beneficiary.phone || '');
+    populated = populated.replace(/\[Adresa Beneficiar\]/g, data.beneficiary.address || '');
+    populated = populated.replace(/\[CNP Beneficiar\]/g, data.beneficiary.cnp || '');
+  }
+  
+  // Replace contract data placeholders
+  if (data.contract) {
+    populated = populated.replace(/\[Valoare Contract\]/g, data.contract.value || '');
+    populated = populated.replace(/\[Moneda\]/g, data.contract.currency || 'RON');
+    populated = populated.replace(/\[Data Start\]/g, data.contract.startDate || '');
+    populated = populated.replace(/\[Data Sfârșit\]/g, data.contract.endDate || '');
+    populated = populated.replace(/\[Note\]/g, data.contract.notes || '');
+  }
+  
+  // Replace order number and current date
+  populated = populated.replace(/\[Număr Comandă\]/g, data.orderNumber || '');
+  populated = populated.replace(/\[Data Curentă\]/g, new Date().toLocaleDateString('ro-RO'));
   populated = populated.replace(/{{currentDate}}/g, new Date().toLocaleDateString('ro-RO'));
+  populated = populated.replace(/{{orderNumber}}/g, data.orderNumber || '');
   
   return populated;
 }
