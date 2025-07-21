@@ -248,7 +248,21 @@ export default function ContractForm() {
 
   // Create beneficiary mutation for modal
   const createBeneficiaryMutation = useMutation({
-    mutationFn: (data: InsertBeneficiary) => apiRequest("POST", "/api/beneficiaries", data),
+    mutationFn: async (data: InsertBeneficiary) => {
+      const response = await fetch("/api/beneficiaries", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to create beneficiary");
+      }
+      
+      return response.json();
+    },
     onSuccess: (newBeneficiary: Beneficiary) => {
       queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
       
