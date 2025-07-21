@@ -269,26 +269,14 @@ export default function Beneficiaries() {
             {formData.isCompany ? (
               <>
                 {/* Company Fields */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="companyName">Nume Companie *</Label>
-                    <Input
-                      id="companyName"
-                      value={formData.companyName || ""}
-                      onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                      placeholder="Denumirea companiei"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="companyCui">CUI Companie</Label>
-                    <Input
-                      id="companyCui"
-                      value={formData.companyCui || ""}
-                      onChange={(e) => setFormData({ ...formData, companyCui: e.target.value })}
-                      placeholder="RO12345678"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="companyName">Nume Companie *</Label>
+                  <Input
+                    id="companyName"
+                    value={formData.companyName || ""}
+                    onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                    placeholder="Denumirea companiei"
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -304,6 +292,16 @@ export default function Beneficiaries() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
+                    <Label htmlFor="companyCui">CUI Companie</Label>
+                    <Input
+                      id="companyCui"
+                      value={formData.companyCui || ""}
+                      onChange={(e) => setFormData({ ...formData, companyCui: e.target.value })}
+                      placeholder="RO12345678"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
                     <Label htmlFor="companyRegistrationNumber">Nr. Înregistrare</Label>
                     <Input
                       id="companyRegistrationNumber"
@@ -312,7 +310,9 @@ export default function Beneficiaries() {
                       placeholder="J40/1234/2023"
                     />
                   </div>
+                </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="companyLegalRepresentative">Reprezentant Legal</Label>
                     <Input
@@ -322,9 +322,17 @@ export default function Beneficiaries() {
                       placeholder="Numele reprezentantului legal"
                     />
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="cnp">CNP Reprezentant</Label>
+                    <Input
+                      id="cnp"
+                      value={formData.cnp || ""}
+                      onChange={(e) => setFormData({ ...formData, cnp: e.target.value })}
+                      placeholder="CNP reprezentant legal"
+                    />
+                  </div>
                 </div>
-
-
               </>
             ) : (
               <>

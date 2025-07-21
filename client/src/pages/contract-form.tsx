@@ -329,35 +329,19 @@ export default function ContractForm() {
                         {form.watch("beneficiary.isCompany") ? (
                           <>
                             {/* Company Fields */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <FormField
-                                control={form.control}
-                                name="beneficiary.companyName"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Nume Companie *</FormLabel>
-                                    <FormControl>
-                                      <Input placeholder="Denumirea companiei" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-
-                              <FormField
-                                control={form.control}
-                                name="beneficiary.companyCui"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>CUI Companie</FormLabel>
-                                    <FormControl>
-                                      <Input placeholder="RO12345678" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                            </div>
+                            <FormField
+                              control={form.control}
+                              name="beneficiary.companyName"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Nume Companie *</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Denumirea companiei" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
 
                             <FormField
                               control={form.control}
@@ -376,6 +360,20 @@ export default function ContractForm() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <FormField
                                 control={form.control}
+                                name="beneficiary.companyCui"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>CUI Companie</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="RO12345678" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
+                              <FormField
+                                control={form.control}
                                 name="beneficiary.companyRegistrationNumber"
                                 render={({ field }) => (
                                   <FormItem>
@@ -387,7 +385,9 @@ export default function ContractForm() {
                                   </FormItem>
                                 )}
                               />
+                            </div>
 
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <FormField
                                 control={form.control}
                                 name="beneficiary.companyLegalRepresentative"
@@ -401,9 +401,21 @@ export default function ContractForm() {
                                   </FormItem>
                                 )}
                               />
+
+                              <FormField
+                                control={form.control}
+                                name="beneficiary.cnp"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>CNP Reprezentant</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="CNP reprezentant legal" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
                             </div>
-
-
                           </>
                         ) : (
                           <>
