@@ -324,15 +324,7 @@ export default function Beneficiaries() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">Persoană de Contact *</Label>
-                  <Input
-                    id="fullName"
-                    value={formData.fullName}
-                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                    placeholder="Numele persoanei de contact"
-                  />
-                </div>
+
               </>
             ) : (
               <>

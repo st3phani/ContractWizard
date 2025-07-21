@@ -403,19 +403,7 @@ export default function ContractForm() {
                               />
                             </div>
 
-                            <FormField
-                              control={form.control}
-                              name="beneficiary.fullName"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Persoană de Contact *</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="Numele persoanei de contact" {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
+
                           </>
                         ) : (
                           <>
