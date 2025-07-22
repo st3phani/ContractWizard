@@ -166,7 +166,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const beneficiary = await storage.createBeneficiary(beneficiaryData);
       res.json(beneficiary);
     } catch (error) {
+      console.error("Error creating beneficiary:", error);
       if (error instanceof z.ZodError) {
+        console.error("Zod validation errors:", error.errors);
         return res.status(400).json({ message: "Invalid beneficiary data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to create beneficiary" });

@@ -182,6 +182,8 @@ export default function Beneficiaries() {
     }
 
     if (missingFields.length > 0) {
+      console.log("Missing fields:", missingFields);
+      console.log("Current form data:", formData);
       // Add red border to missing fields
       fieldsToFocus.forEach(fieldId => {
         const element = document.getElementById(fieldId);
