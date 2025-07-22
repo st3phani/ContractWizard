@@ -188,6 +188,8 @@ export default function ContractForm() {
   React.useEffect(() => {
     if (editContract && isEditing) {
       const contractData = editContract;
+      console.log("Setting form with contract data:", contractData);
+      console.log("Template ID from contract:", contractData.templateId);
       setSelectedBeneficiary(contractData.beneficiary);
       
       // Format dates for form inputs
@@ -195,7 +197,7 @@ export default function ContractForm() {
       const startDate = contractData.startDate ? new Date(contractData.startDate).toISOString().split('T')[0] : '';
       const endDate = contractData.endDate ? new Date(contractData.endDate).toISOString().split('T')[0] : '';
       
-      form.reset({
+      const formValues = {
         beneficiary: {
           name: contractData.beneficiary.name || "",
           email: contractData.beneficiary.email || "",
@@ -210,7 +212,7 @@ export default function ContractForm() {
           isCompany: contractData.beneficiary.isCompany || false,
         },
         contract: {
-          templateId: contractData.templateId || undefined,
+          templateId: contractData.templateId,
           value: contractData.value?.toString() || "",
           currency: contractData.currency || "RON",
           createdDate,
@@ -218,7 +220,10 @@ export default function ContractForm() {
           endDate,
           notes: contractData.notes || "",
         },
-      });
+      };
+      
+      console.log("Form values being set:", formValues);
+      form.reset(formValues);
     }
   }, [editContract, isEditing, form]);
 
