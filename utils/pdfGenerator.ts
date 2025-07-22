@@ -92,6 +92,17 @@ export function htmlToText(htmlContent: string): string {
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
+    // Fix Romanian diacritics and encoding issues
+    .replace(/ă/g, 'ă')
+    .replace(/â/g, 'â')
+    .replace(/î/g, 'î')
+    .replace(/ș/g, 'ș')
+    .replace(/ț/g, 'ț')
+    .replace(/Ă/g, 'Ă')
+    .replace(/Â/g, 'Â')
+    .replace(/Î/g, 'Î')
+    .replace(/Ș/g, 'Ș')
+    .replace(/Ț/g, 'Ț')
     // Clean up whitespace but preserve structure
     .replace(/[ \t]+/g, ' ') // Multiple spaces to single
     .replace(/\n[ \t]+/g, '\n') // Remove leading spaces on lines
@@ -99,6 +110,21 @@ export function htmlToText(htmlContent: string): string {
     .trim();
 
   return cleanText;
+}
+
+function fixRomanianChars(text: string): string {
+  // Replace problematic Romanian characters with proper ones for PDF
+  return text
+    .replace(/ă/g, 'a')
+    .replace(/â/g, 'a')
+    .replace(/î/g, 'i')
+    .replace(/ș/g, 's')
+    .replace(/ț/g, 't')
+    .replace(/Ă/g, 'A')
+    .replace(/Â/g, 'A')
+    .replace(/Î/g, 'I')
+    .replace(/Ș/g, 'S')
+    .replace(/Ț/g, 'T');
 }
 
 export function generatePDF(populatedContent: string, contract: ContractWithDetails): Buffer {
@@ -140,7 +166,7 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     
       // Handle centered content
       if (trimmedLine.includes('**CENTER**')) {
-        const centerText = trimmedLine.replace('**CENTER**', '').trim();
+        const centerText = fixRomanianChars(trimmedLine.replace('**CENTER**', '').trim());
         if (centerText) {
           pdf.setFontSize(16);
           pdf.setFont('helvetica', 'bold');
@@ -169,7 +195,7 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
             const words = parts[i].split(' ');
             
             for (const word of words) {
-              const testPart = { text: word, bold: isBold };
+              const testPart = { text: fixRomanianChars(word), bold: isBold };
               const testLine = currentLineParts.concat([testPart]);
               
               // Calculate width of test line
@@ -220,13 +246,14 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
         let currentLine = '';
         
         for (const word of words) {
-          const testLine = currentLine + (currentLine ? ' ' : '') + word;
+          const cleanWord = fixRomanianChars(word);
+          const testLine = currentLine + (currentLine ? ' ' : '') + cleanWord;
           const textWidth = pdf.getTextWidth(testLine);
           
           if (textWidth > usableWidth && currentLine) {
             pdf.text(currentLine, margin, y);
             y += lineHeight;
-            currentLine = word;
+            currentLine = cleanWord;
             
             if (y > pageHeight - 30) {
               pdf.addPage();
