@@ -107,6 +107,9 @@ export function htmlToText(htmlContent: string): string {
     .replace(/Î/g, 'Î')
     .replace(/Ș/g, 'Ș')
     .replace(/Ț/g, 'Ț')
+    // Fix duplicate bold markers that create issues like **CONTRACT**** 
+    .replace(/\*{3,}/g, '**') // Replace 3 or more asterisks with just 2
+    .replace(/\*\*\*\*/g, '**') // Replace quadruple asterisks with double
     // Clean up whitespace but preserve structure
     .replace(/[ \t]+/g, ' ') // Multiple spaces to single
     .replace(/\n[ \t]+/g, '\n') // Remove leading spaces on lines
