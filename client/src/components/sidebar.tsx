@@ -2,6 +2,7 @@ import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { FileText, Plus, Users, Settings, BarChart3, File, FolderOpen, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -11,6 +12,7 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import type { UserProfile } from "@shared/schema";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: BarChart3 },
@@ -22,6 +24,26 @@ const navigation = [
 
 export default function Sidebar() {
   const [location] = useLocation();
+  
+  // Fetch user profile
+  const { data: userProfile, isLoading } = useQuery<UserProfile>({
+    queryKey: ["/api/user-profile"],
+  });
+
+  // Generate initials from first and last name
+  const getInitials = (firstName?: string, lastName?: string) => {
+    if (!firstName && !lastName) return "AD";
+    const first = firstName?.charAt(0).toUpperCase() || "";
+    const last = lastName?.charAt(0).toUpperCase() || "";
+    return first + last;
+  };
+
+  const displayName = userProfile 
+    ? `${userProfile.firstName} ${userProfile.lastName}` 
+    : "Administrator";
+  
+  const displayEmail = userProfile?.email || "admin@contractmanager.ro";
+  const initials = getInitials(userProfile?.firstName, userProfile?.lastName);
 
   return (
     <aside className="w-64 bg-white shadow-lg flex flex-col h-screen">
@@ -63,14 +85,15 @@ export default function Sidebar() {
           <DropdownMenuTrigger asChild>
             <div className="flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors cursor-pointer hover:bg-gray-50">
               <Avatar className="w-8 h-8">
-                <AvatarFallback className="bg-blue-600 text-white text-sm">
-                  AD
+                <AvatarFallback className="bg-blue-600 text-white text-sm font-medium">
+                  {initials}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">Administrator</p>
-                <p className="text-xs text-gray-500">admin@contractmanager.ro</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">{displayName}</p>
+                <p className="text-xs text-gray-500 truncate">{displayEmail}</p>
               </div>
+              <User className="w-4 h-4 text-gray-400" />
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56">
