@@ -457,61 +457,92 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
       
-      // Generate PDF using jsPDF - more reliable without browser dependencies
+      // Generate PDF using jsPDF with better formatting
       const { jsPDF } = await import('jspdf');
       const pdf = new jsPDF('p', 'mm', 'a4');
       
-      // Clean HTML content and convert to plain text for PDF
-      const cleanContent = populatedContent
-        .replace(/<[^>]*>/g, '')  // Remove HTML tags
+      // Better HTML parsing that preserves structure
+      let cleanContent = populatedContent
+        .replace(/<\/p>/g, '\n\n')  // Add double line breaks after paragraphs
+        .replace(/<br\s*\/?>/g, '\n')  // Convert <br> to line breaks
+        .replace(/<table[^>]*>/g, '\n\n')  // Add space before tables
+        .replace(/<\/table>/g, '\n\n')  // Add space after tables
+        .replace(/<tr[^>]*>/g, '\n')  // New line for table rows
+        .replace(/<\/tr>/g, '')
+        .replace(/<td[^>]*>/g, '  ')  // Add spacing for table cells
+        .replace(/<\/td>/g, '    ')  // More spacing after cells
+        .replace(/<[^>]*>/g, '')  // Remove all remaining HTML tags
         .replace(/&nbsp;/g, ' ')  // Replace non-breaking spaces
         .replace(/&amp;/g, '&')   // Replace HTML entities
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
         .replace(/&quot;/g, '"')
-        .split('\n')
-        .filter(line => line.trim().length > 0);
+        .replace(/\s+/g, ' ')  // Replace multiple spaces with single space
+        .replace(/\n\s+/g, '\n')  // Remove spaces at beginning of lines
+        .trim();
+      
+      // Split into paragraphs and clean them
+      const paragraphs = cleanContent.split('\n\n').filter(p => p.trim().length > 0);
       
       // Set font and margins
-      pdf.setFont('times', 'normal');
+      pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(12);
       
       let yPosition = 30;
-      const lineHeight = 6;
-      const pageHeight = 297; // A4 height in mm
+      const lineHeight = 7;
+      const pageHeight = 280; // A4 height in mm minus bottom margin
       const margin = 20;
       const maxWidth = 170; // Page width minus margins
       
       // Add title
       pdf.setFontSize(16);
-      pdf.setFont('times', 'bold');
+      pdf.setFont('helvetica', 'bold');
       pdf.text(`CONTRACT Nr. ${contract.orderNumber} din ${new Date().toLocaleDateString('ro-RO')}`, 105, yPosition, { align: 'center' });
-      yPosition += 15;
+      yPosition += 20;
       
       pdf.setFontSize(12);
-      pdf.setFont('times', 'normal');
+      pdf.setFont('helvetica', 'normal');
       
-      // Add content line by line
-      for (const line of cleanContent) {
-        if (line.trim()) {
+      // Add content paragraph by paragraph
+      for (const paragraph of paragraphs) {
+        if (paragraph.trim()) {
           // Check if we need a new page
-          if (yPosition > pageHeight - margin) {
+          if (yPosition > pageHeight - 20) {
             pdf.addPage();
             yPosition = margin;
           }
           
-          // Split long lines to fit page width
-          const splitLines = pdf.splitTextToSize(line.trim(), maxWidth);
+          // Split long paragraphs to fit page width
+          const splitLines = pdf.splitTextToSize(paragraph.trim(), maxWidth);
           for (const splitLine of splitLines) {
-            if (yPosition > pageHeight - margin) {
+            if (yPosition > pageHeight - 20) {
               pdf.addPage();
               yPosition = margin;
             }
             pdf.text(splitLine, margin, yPosition);
             yPosition += lineHeight;
           }
+          
+          // Add extra spacing after paragraphs
+          yPosition += 3;
         }
       }
+      
+      // Add signature section at the bottom
+      if (yPosition > pageHeight - 40) {
+        pdf.addPage();
+        yPosition = margin;
+      }
+      
+      yPosition = Math.max(yPosition + 20, pageHeight - 40);
+      
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('PRESTATOR', margin, yPosition);
+      pdf.text('BENEFICIAR', 105 + margin, yPosition);
+      
+      yPosition += 20;
+      pdf.text('_________________', margin, yPosition);
+      pdf.text('_________________', 105 + margin, yPosition);
       
       const pdfBuffer = Buffer.from(pdf.output('arraybuffer'));
       
