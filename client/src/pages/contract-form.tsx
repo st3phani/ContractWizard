@@ -268,36 +268,36 @@ export default function ContractForm() {
     createContractMutation.mutate(data);
   };
 
-  const onReserve = (data: ContractFormData) => {
-    // Force validation and trigger errors
-    form.trigger();
+  const onReserve = () => {
+    // Get current form data without validation
+    const formData = form.getValues();
     
-    // Check for validation errors
-    const errors = form.formState.errors;
-    if (Object.keys(errors).length > 0) {
-      // Find the first error field
-      let firstErrorField = null;
-      
-      if (errors.beneficiary) {
-        const beneficiaryError = Object.keys(errors.beneficiary)[0];
-        firstErrorField = `beneficiary.${beneficiaryError}`;
-      } else if (errors.contract) {
-        const contractError = Object.keys(errors.contract)[0];
-        firstErrorField = `contract.${contractError}`;
+    // Create minimal contract data for reservation
+    const reservationData: ContractFormData = {
+      beneficiary: {
+        name: formData.beneficiary?.name || "Rezervat",
+        email: formData.beneficiary?.email || "rezervat@temp.com",
+        phone: formData.beneficiary?.phone || "000000000",
+        address: formData.beneficiary?.address || "",
+        cnp: formData.beneficiary?.cnp || "0000000000000",
+        companyName: formData.beneficiary?.companyName || null,
+        companyAddress: formData.beneficiary?.companyAddress || null,
+        companyCui: formData.beneficiary?.companyCui || null,
+        companyRegistrationNumber: formData.beneficiary?.companyRegistrationNumber || null,
+        companyLegalRepresentative: formData.beneficiary?.companyLegalRepresentative || null,
+        isCompany: formData.beneficiary?.isCompany || false,
+      },
+      contract: {
+        templateId: formData.contract?.templateId || null,
+        value: formData.contract?.value || "",
+        currency: formData.contract?.currency || "RON",
+        startDate: formData.contract?.startDate || "",
+        endDate: formData.contract?.endDate || "",
+        notes: formData.contract?.notes || "",
       }
+    };
 
-      if (firstErrorField) {
-        const element = document.querySelector(`[name="${firstErrorField}"]`) as HTMLElement;
-        if (element) {
-          element.focus();
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }
-      
-      return;
-    }
-
-    reserveContractMutation.mutate(data);
+    reserveContractMutation.mutate(reservationData);
   };
 
   const handleSelectBeneficiary = (beneficiary: Beneficiary) => {
@@ -723,7 +723,7 @@ export default function ContractForm() {
                 <Button 
                   type="button"
                   variant="outline"
-                  onClick={form.handleSubmit(onReserve)}
+                  onClick={onReserve}
                   disabled={reserveContractMutation.isPending}
                   className="border-orange-500 text-orange-600 hover:bg-orange-50"
                 >
