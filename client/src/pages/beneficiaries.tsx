@@ -16,6 +16,7 @@ import { formatDate, getInitials, getAvatarColor } from "@/lib/utils";
 import Sidebar from "@/components/sidebar";
 import { BeneficiaryFormFields } from "@/components/beneficiary-form-fields";
 import type { Beneficiary, InsertBeneficiary } from "@shared/schema";
+import { paginateItems, type PaginationConfig } from "@/utils/paginationUtils";
 
 export default function Beneficiaries() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -55,12 +56,17 @@ export default function Beneficiaries() {
     )
     .sort((a, b) => b.id - a.id); // Sort by ID descending
 
-  // Pagination logic
-  const totalItems = filteredBeneficiaries.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedBeneficiaries = filteredBeneficiaries.slice(startIndex, endIndex);
+  // Apply pagination using utils
+  const paginationConfig: PaginationConfig = { currentPage, itemsPerPage };
+  const paginationResult = paginateItems(filteredBeneficiaries, paginationConfig);
+  
+  const {
+    items: paginatedBeneficiaries,
+    totalItems,
+    totalPages,
+    hasNextPage,
+    hasPreviousPage
+  } = paginationResult;
 
   // Reset to page 1 when search query changes
   const handleSearchChange = (value: string) => {
@@ -383,7 +389,7 @@ export default function Beneficiaries() {
                 </Table>
               )}
               
-              {filteredBeneficiaries.length === 0 && !isLoading && (
+              {totalItems === 0 && !isLoading && (
                 <div className="text-center py-8 text-gray-500">
                   {searchQuery ? "Nu au fost găsiți beneficiari care să corespundă căutării" : "Nu au fost găsiți beneficiari"}
                 </div>
@@ -421,7 +427,7 @@ export default function Beneficiaries() {
                       variant="outline"
                       size="sm"
                       onClick={() => setCurrentPage(currentPage - 1)}
-                      disabled={currentPage === 1}
+                      disabled={!hasPreviousPage}
                     >
                       <ChevronLeft className="h-4 w-4" />
                       Anterior
@@ -445,7 +451,7 @@ export default function Beneficiaries() {
                       variant="outline"
                       size="sm"
                       onClick={() => setCurrentPage(currentPage + 1)}
-                      disabled={currentPage === totalPages}
+                      disabled={!hasNextPage}
                     >
                       Următor
                       <ChevronRight className="h-4 w-4" />
