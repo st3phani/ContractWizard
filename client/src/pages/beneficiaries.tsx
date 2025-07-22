@@ -12,21 +12,10 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { formatDate } from "@/lib/utils";
+import { formatDate, getInitials, getAvatarColor } from "@/lib/utils";
 import Sidebar from "@/components/sidebar";
 import { BeneficiaryFormFields } from "@/components/beneficiary-form-fields";
 import type { Beneficiary, InsertBeneficiary } from "@shared/schema";
-import { 
-  processBeneficiaries, 
-  validateBeneficiaryData, 
-  applyFieldValidation, 
-  clearFieldValidation,
-  beneficiaryToFormData,
-  createEmptyFormData,
-  formatBeneficiaryDisplay,
-  getInitials,
-  getAvatarColor
-} from "@/utils/beneficiaryUtils";
 
 export default function Beneficiaries() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -34,7 +23,18 @@ export default function Beneficiaries() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [formData, setFormData] = useState<InsertBeneficiary>(createEmptyFormData());
+  const [formData, setFormData] = useState<InsertBeneficiary>({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    cnp: "",
+    companyName: "",
+    companyAddress: "",
+    companyCui: "",
+    companyRegistrationNumber: "",
+    isCompany: false,
+  });
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -44,20 +44,23 @@ export default function Beneficiaries() {
     queryKey: ["/api/beneficiaries"],
   });
 
-  // Process beneficiaries with filtering, sorting and pagination using utils
-  const processedData = processBeneficiaries(
-    beneficiaries,
-    { searchQuery, sortOrder: 'desc' },
-    { currentPage, itemsPerPage }
-  );
-  
-  const { 
-    items: paginatedBeneficiaries, 
-    totalItems, 
-    totalPages, 
-    hasNextPage, 
-    hasPreviousPage 
-  } = processedData;
+  // Filter and sort beneficiaries based on search query and ID descending
+  const filteredBeneficiaries = beneficiaries
+    .filter(beneficiary =>
+      beneficiary.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      beneficiary.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      beneficiary.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      beneficiary.cnp?.includes(searchQuery) ||
+      beneficiary.companyCui?.includes(searchQuery)
+    )
+    .sort((a, b) => b.id - a.id); // Sort by ID descending
+
+  // Pagination logic
+  const totalItems = filteredBeneficiaries.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedBeneficiaries = filteredBeneficiaries.slice(startIndex, endIndex);
 
   // Reset to page 1 when search query changes
   const handleSearchChange = (value: string) => {
@@ -75,7 +78,7 @@ export default function Beneficiaries() {
       console.log("API Response:", result);
       queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
       setIsCreateModalOpen(false);
-      setFormData(createEmptyFormData());
+      setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
       setSelectedBeneficiary(null);
     },
     onError: (error) => {
@@ -95,7 +98,7 @@ export default function Beneficiaries() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
       setIsCreateModalOpen(false);
-      setFormData(createEmptyFormData());
+      setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
       setSelectedBeneficiary(null);
     },
     onError: () => {
@@ -123,20 +126,90 @@ export default function Beneficiaries() {
   });
 
   const handleCreateBeneficiary = () => {
-    // Validate form data using utils
-    const validation = validateBeneficiaryData(formData);
-    
-    if (!validation.isValid) {
-      console.log("Missing fields:", validation.missingFields);
+    // Validation for required fields
+    const missingFields = [];
+    const fieldsToFocus = [];
+
+    if (formData.isCompany) {
+      // Additional required fields for companies
+      if (!formData.companyName) {
+        missingFields.push('Nume Companie');
+        fieldsToFocus.push('companyName');
+      }
+      if (!formData.companyAddress) {
+        missingFields.push('Adresa Companiei');
+        fieldsToFocus.push('companyAddress');
+      }
+      if (!formData.companyCui) {
+        missingFields.push('CUI Companie');
+        fieldsToFocus.push('companyCui');
+      }
+      if (!formData.companyRegistrationNumber) {
+        missingFields.push('Nr. Înregistrare');
+        fieldsToFocus.push('companyRegistrationNumber');
+      }
+
+      if (!formData.cnp) {
+        missingFields.push('CNP Reprezentant');
+        fieldsToFocus.push('cnp');
+      }
+    } else {
+      // Required fields for individuals
+      if (!formData.cnp) {
+        missingFields.push('CNP');
+        fieldsToFocus.push('cnp');
+      }
+      if (!formData.address) {
+        missingFields.push('Adresa');
+        fieldsToFocus.push('address');
+      }
+    }
+
+    // Check common required fields
+    if (!formData.name) {
+      missingFields.push('Nume Complet');
+      fieldsToFocus.push('name');
+    }
+    if (!formData.email) {
+      missingFields.push('Email');
+      fieldsToFocus.push('email');
+    }
+    if (!formData.phone) {
+      missingFields.push('Telefon');
+      fieldsToFocus.push('phone');
+    }
+
+    if (missingFields.length > 0) {
+      console.log("Missing fields:", missingFields);
       console.log("Current form data:", formData);
-      
-      // Apply field validation styling
-      applyFieldValidation(validation.fieldsToFocus);
+      // Add red border to missing fields
+      fieldsToFocus.forEach(fieldId => {
+        const element = document.getElementById(fieldId);
+        if (element) {
+          element.classList.add('field-error');
+        }
+      });
+
+      // Focus on first missing field
+      if (fieldsToFocus.length > 0) {
+        const firstField = document.getElementById(fieldsToFocus[0]);
+        if (firstField) {
+          firstField.focus();
+          firstField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+
       return;
     }
 
-    // Clear validation styling on success
-    clearFieldValidation();
+    // Remove red borders on successful validation
+    const allFields = ['name', 'email', 'phone', 'address', 'cnp', 'companyName', 'companyAddress', 'companyCui', 'companyRegistrationNumber'];
+    allFields.forEach(fieldId => {
+      const element = document.getElementById(fieldId);
+      if (element) {
+        element.classList.remove('field-error');
+      }
+    });
 
     console.log("Form data before mutation:", JSON.stringify(formData, null, 2));
     
@@ -151,7 +224,18 @@ export default function Beneficiaries() {
 
   const handleEdit = (beneficiary: Beneficiary) => {
     setSelectedBeneficiary(beneficiary);
-    setFormData(beneficiaryToFormData(beneficiary));
+    setFormData({
+      name: beneficiary.name,
+      email: beneficiary.email,
+      phone: beneficiary.phone ?? "",
+      address: beneficiary.address ?? "",
+      cnp: beneficiary.cnp ?? "",
+      companyName: beneficiary.companyName ?? "",
+      companyAddress: beneficiary.companyAddress ?? "",
+      companyCui: beneficiary.companyCui ?? "",
+      companyRegistrationNumber: beneficiary.companyRegistrationNumber ?? "",
+      isCompany: beneficiary.isCompany ?? false,
+    });
     setIsCreateModalOpen(true);
   };
 
@@ -164,7 +248,7 @@ export default function Beneficiaries() {
   const resetForm = () => {
     setIsCreateModalOpen(false);
     setSelectedBeneficiary(null);
-    setFormData(createEmptyFormData());
+    setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
   };
 
   return (
@@ -299,7 +383,7 @@ export default function Beneficiaries() {
                 </Table>
               )}
               
-              {paginatedBeneficiaries.length === 0 && !isLoading && (
+              {filteredBeneficiaries.length === 0 && !isLoading && (
                 <div className="text-center py-8 text-gray-500">
                   {searchQuery ? "Nu au fost găsiți beneficiari care să corespundă căutării" : "Nu au fost găsiți beneficiari"}
                 </div>
