@@ -305,6 +305,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         endDate: contractData.endDate ? new Date(contractData.endDate) : null,
         notes: contractData.notes || null,
         createdAt: contractData.createdDate ? new Date(contractData.createdDate) : existingContract.createdAt,
+        // Change status from "reserved" to "draft" (In Așteptare) when updating
+        status: existingContract.status === "reserved" ? "draft" : existingContract.status,
         // Auto-populate provider/company data
         providerName: companySettings?.name || existingContract.providerName,
         providerAddress: companySettings?.address || existingContract.providerAddress,
