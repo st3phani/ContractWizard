@@ -314,12 +314,18 @@ export default function ContractForm() {
   });
 
   const onSubmit = (data: ContractFormData) => {
+    console.log("onSubmit called with data:", JSON.stringify(data, null, 2));
+    console.log("Form errors before submit:", JSON.stringify(form.formState.errors, null, 2));
+    
     // Force validation and trigger errors
     form.trigger();
     
     // Check for validation errors
     const errors = form.formState.errors;
+    console.log("Form errors after trigger:", JSON.stringify(errors, null, 2));
+    
     if (Object.keys(errors).length > 0) {
+      console.log("Form has validation errors, not submitting");
       // Find the first error field
       let firstErrorField = null;
       
@@ -342,6 +348,7 @@ export default function ContractForm() {
       return;
     }
 
+    console.log("No validation errors, proceeding with mutation");
     contractMutation.mutate(data);
   };
 
