@@ -33,22 +33,25 @@ Contract Manager v1.0.0 is a production-ready full-stack web application for man
 ## Key Components
 
 ### Database Schema
-Three main entities:
+Four main entities:
 1. **Contract Templates** - Reusable contract templates with placeholder fields
 2. **Beneficiaries** - Contract recipients with contact information
 3. **Contracts** - Contract instances linking templates and beneficiaries
+4. **User Profiles** - Administrator profile information with personal details
 
 ### API Endpoints
 - `/api/contract-templates` - CRUD operations for contract templates
 - `/api/beneficiaries` - CRUD operations for beneficiaries
 - `/api/contracts` - CRUD operations for contracts
 - `/api/contracts/stats` - Contract statistics dashboard
+- `/api/user-profile` - GET/PUT operations for administrator profile management
 
 ### Frontend Pages
 - **Dashboard** - Overview with statistics and recent contracts
 - **Contract Form** - Create new contracts with beneficiary information
 - **Templates** - Manage contract templates
 - **Beneficiaries** - Manage beneficiary database with CRUD operations
+- **Profile** - Administrator profile management with form validation and database persistence
 - **Settings** - Application configuration and company information
 - **Not Found** - 404 error page
 
@@ -119,6 +122,7 @@ Three main entities:
 ```
 Changelog:
 
+- July 22, 2025. **USER PROFILE MANAGEMENT SYSTEM COMPLETED** - Implemented complete user profile management with PostgreSQL database storage. Added user_profiles table, API routes (/api/user-profile GET/PUT), and fully functional profile page with form validation, loading states, and success/error messaging. Administrator profile data now persists in database and can be updated through the profile page accessible via sidebar dropdown menu.
 - July 22, 2025. **ADMINISTRATOR PROFILE MOVED TO SIDEBAR** - Moved administrator profile from header to left sidebar bottom section in same format as menu items. Profile includes avatar with "AD" initials, name, email, and dropdown with Profil/Setări/Deconectare options. Removed profile from dashboard and settings headers for cleaner UI. Settings accessible only through profile dropdown, removed from main navigation menu.
 - July 22, 2025. **CONTRACTS PAGE PAGINATION CLEANUP** - Removed items-per-page dropdown from header, keeping only search and status filter. Pagination controls (including items-per-page) now exclusively in footer using paginationUtils.ts for consistency with beneficiaries page.
 - July 22, 2025. **CONTRACTS PAGE PAGINATION REFACTOR** - Updated contract-table.tsx to use paginationUtils.ts for consistent pagination across the application. Replaced manual pagination calculations with standardized utility functions, improving code reusability and maintainability.
