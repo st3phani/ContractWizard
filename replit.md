@@ -114,6 +114,10 @@ Three main entities:
 ```
 Changelog:
 
+- July 22, 2025. Added ID column to beneficiaries table and implemented descending ID sorting for newest-first display
+- July 22, 2025. Fixed beneficiary creation for companies by correcting form field mapping and removing duplicate representative fields
+- July 22, 2025. Resolved backend API route missing for beneficiary updates (PUT /api/beneficiaries/:id) 
+- July 22, 2025. Removed restrictive schema validation that was blocking company beneficiary creation
 - July 22, 2025. Added pagination system to Beneficiaries page with configurable items per page (5, 10, 20, 50) and navigation controls
 - July 22, 2025. Enhanced Beneficiaries page with search functionality across name, email, company, CNP and CUI fields
 - July 22, 2025. Modified Beneficiaries display to show company name instead of address, and both CNP/CUI in single column

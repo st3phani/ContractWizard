@@ -44,14 +44,16 @@ export default function Beneficiaries() {
     queryKey: ["/api/beneficiaries"],
   });
 
-  // Filter beneficiaries based on search query
-  const filteredBeneficiaries = beneficiaries.filter(beneficiary =>
-    beneficiary.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    beneficiary.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    beneficiary.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    beneficiary.cnp?.includes(searchQuery) ||
-    beneficiary.companyCui?.includes(searchQuery)
-  );
+  // Filter and sort beneficiaries based on search query and ID descending
+  const filteredBeneficiaries = beneficiaries
+    .filter(beneficiary =>
+      beneficiary.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      beneficiary.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      beneficiary.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      beneficiary.cnp?.includes(searchQuery) ||
+      beneficiary.companyCui?.includes(searchQuery)
+    )
+    .sort((a, b) => b.id - a.id); // Sort by ID descending
 
   // Pagination logic
   const totalItems = filteredBeneficiaries.length;
@@ -210,8 +212,6 @@ export default function Beneficiaries() {
     });
 
     console.log("Form data before mutation:", JSON.stringify(formData, null, 2));
-    console.log("Is company?", formData.isCompany);
-    console.log("Company name:", formData.companyName);
     
     if (selectedBeneficiary) {
       // Update existing beneficiary
@@ -298,6 +298,7 @@ export default function Beneficiaries() {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead>ID</TableHead>
                       <TableHead>Beneficiar</TableHead>
                       <TableHead>Contact</TableHead>
                       <TableHead>CNP/CUI</TableHead>
@@ -308,6 +309,9 @@ export default function Beneficiaries() {
                   <TableBody>
                     {paginatedBeneficiaries.map((beneficiary) => (
                       <TableRow key={beneficiary.id}>
+                        <TableCell className="font-mono text-sm text-gray-500">
+                          #{beneficiary.id}
+                        </TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-3">
                             <Avatar>
@@ -470,10 +474,7 @@ export default function Beneficiaries() {
               <Label>Tip Beneficiar</Label>
               <Select 
                 value={formData.isCompany ? "true" : "false"}
-                onValueChange={(value) => {
-                  console.log("Setting isCompany to:", value === "true");
-                  setFormData({ ...formData, isCompany: value === "true" });
-                }}
+                onValueChange={(value) => setFormData({ ...formData, isCompany: value === "true" })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selectează tipul" />
@@ -493,10 +494,7 @@ export default function Beneficiaries() {
                   <Input
                     id="companyName"
                     value={formData.companyName || ""}
-                    onChange={(e) => {
-                      console.log("Setting companyName to:", e.target.value);
-                      setFormData({ ...formData, companyName: e.target.value });
-                    }}
+                    onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                     placeholder="Denumirea companiei"
                   />
                 </div>
