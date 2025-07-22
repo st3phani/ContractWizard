@@ -3,7 +3,7 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
-import { FontFamily } from '@tiptap/extension-font-family'
+
 import { TextAlign } from '@tiptap/extension-text-align'
 import { Underline } from '@tiptap/extension-underline'
 import Image from '@tiptap/extension-image'
@@ -118,7 +118,6 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
       TextStyle,
       FontSize,
       Color,
-      FontFamily,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
@@ -270,24 +269,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           <ListOrdered className="h-4 w-4" />
         </Button>
 
-        <div className="w-px h-6 bg-gray-300 mx-1" />
 
-        <select
-          value=""
-          onChange={(e) => {
-            if (e.target.value) {
-              editor.chain().focus().setFontFamily(e.target.value).run()
-            }
-          }}
-          className="text-xs px-2 py-1 border border-gray-300 rounded"
-        >
-          <option value="">Font</option>
-          <option value="Arial">Arial</option>
-          <option value="Times New Roman">Times New Roman</option>
-          <option value="Courier New">Courier New</option>
-          <option value="Georgia">Georgia</option>
-          <option value="Verdana">Verdana</option>
-        </select>
 
         <select
           onChange={(e) => {
