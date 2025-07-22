@@ -256,7 +256,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Pass custom created date if provided
       const customCreatedDate = contractData.createdDate;
-      const contract = await storage.createContract(validatedContract, customCreatedDate);
+      const contract = await storage.createContract(validatedContract);
       res.json(contract);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -272,14 +272,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/contracts/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const contractData = req.body;
+      const { beneficiaryData, contractData } = req.body;
       
-      const contract = await storage.updateContract(id, contractData);
+      // Validate beneficiary data
+      const validatedBeneficiary = insertBeneficiarySchema.parse(beneficiaryData);
+      
+      // Update or create beneficiary
+      let beneficiary = await storage.getBeneficiaryByEmail(validatedBeneficiary.email);
+      if (!beneficiary) {
+        beneficiary = await storage.createBeneficiary(validatedBeneficiary);
+      } else {
+        // Update existing beneficiary
+        beneficiary = await storage.updateBeneficiary(beneficiary.id, validatedBeneficiary) || beneficiary;
+      }
+      
+      // Get company settings for auto-population
+      const companySettings = await storage.getCompanySettings();
+      
+      // Validate contract data
+      const validatedContract = insertContractSchema.parse({
+        ...contractData,
+        beneficiaryId: beneficiary.id,
+        value: contractData.value || null,
+        startDate: contractData.startDate ? new Date(contractData.startDate) : null,
+        endDate: contractData.endDate ? new Date(contractData.endDate) : null,
+        // Auto-populate provider/company data
+        providerName: companySettings?.name || "Compania Mea SRL",
+        providerAddress: companySettings?.address || "Str. Principală nr. 123, București, România",
+        providerPhone: companySettings?.phone || "+40 21 123 4567",
+        providerEmail: companySettings?.email || "contact@compania-mea.ro",
+        providerCui: companySettings?.cui || "RO12345678",
+        providerRegistrationNumber: companySettings?.registrationNumber || "J40/1234/2023",
+        providerLegalRepresentative: companySettings?.legalRepresentative || "Ion Popescu",
+      });
+      
+      // Update the contract
+      const contract = await storage.updateContract(id, validatedContract);
       if (!contract) {
         return res.status(404).json({ message: "Contract not found" });
       }
       res.json(contract);
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        console.log("Contract update validation errors:", error.errors);
+        console.log("Contract data received:", req.body);
+        return res.status(400).json({ message: "Invalid contract data", errors: error.errors });
+      }
+      console.log("Contract update error:", error);
       res.status(500).json({ message: "Failed to update contract" });
     }
   });

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, Download, Mail, Trash2, Search } from "lucide-react";
+import { Eye, Download, Mail, Trash2, Search, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -13,12 +13,13 @@ import type { ContractWithDetails } from "@shared/schema";
 interface ContractTableProps {
   contracts: ContractWithDetails[];
   onView: (contract: ContractWithDetails) => void;
+  onEdit: (contract: ContractWithDetails) => void;
   onDownload: (contract: ContractWithDetails) => void;
   onEmail: (contract: ContractWithDetails) => void;
   onDelete: (contract: ContractWithDetails) => void;
 }
 
-export default function ContractTable({ contracts, onView, onDownload, onEmail, onDelete }: ContractTableProps) {
+export default function ContractTable({ contracts, onView, onEdit, onDownload, onEmail, onDelete }: ContractTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
@@ -107,6 +108,13 @@ export default function ContractTable({ contracts, onView, onDownload, onEmail, 
                       onClick={() => onView(contract)}
                     >
                       <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onEdit(contract)}
+                    >
+                      <Edit className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="ghost"

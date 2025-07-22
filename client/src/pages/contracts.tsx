@@ -7,11 +7,12 @@ import ContractTable from "@/components/contract-table";
 import ContractModal from "@/components/contract-modal";
 import EmailModal from "@/components/email-modal";
 import Sidebar from "@/components/sidebar";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
 import type { ContractWithDetails } from "@shared/schema";
 
 export default function ContractsPage() {
+  const [, setLocation] = useLocation();
   const [selectedContract, setSelectedContract] = useState<ContractWithDetails | null>(null);
   const [contractToEmail, setContractToEmail] = useState<ContractWithDetails | null>(null);
 
@@ -37,6 +38,10 @@ export default function ContractsPage() {
 
   const handleView = (contract: ContractWithDetails) => {
     setSelectedContract(contract);
+  };
+
+  const handleEdit = (contract: ContractWithDetails) => {
+    setLocation(`/contract-form?edit=${contract.id}`);
   };
 
   const handleDownload = (contract: ContractWithDetails) => {
@@ -95,6 +100,7 @@ export default function ContractsPage() {
             <ContractTable 
               contracts={contracts}
               onView={handleView}
+              onEdit={handleEdit}
               onDownload={handleDownload}
               onEmail={handleEmail}
               onDelete={handleDelete}

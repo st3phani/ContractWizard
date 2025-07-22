@@ -9,10 +9,11 @@ import StatsCards from "@/components/stats-cards";
 import ContractTable from "@/components/contract-table";
 import ContractModal from "@/components/contract-modal";
 import EmailModal from "@/components/email-modal";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import type { ContractWithDetails } from "@shared/schema";
 
 export default function Dashboard() {
+  const [, setLocation] = useLocation();
   const [selectedContract, setSelectedContract] = useState<ContractWithDetails | null>(null);
   const [isContractModalOpen, setIsContractModalOpen] = useState(false);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
@@ -57,6 +58,10 @@ export default function Dashboard() {
   const handleView = (contract: ContractWithDetails) => {
     setSelectedContract(contract);
     setIsContractModalOpen(true);
+  };
+
+  const handleEdit = (contract: ContractWithDetails) => {
+    setLocation(`/contract-form?edit=${contract.id}`);
   };
 
   const handleDownload = async (contract: ContractWithDetails) => {
@@ -133,6 +138,7 @@ export default function Dashboard() {
             <ContractTable
               contracts={contracts}
               onView={handleView}
+              onEdit={handleEdit}
               onDownload={handleDownload}
               onEmail={handleEmail}
               onDelete={handleDelete}

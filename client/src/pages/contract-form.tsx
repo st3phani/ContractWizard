@@ -1,4 +1,5 @@
 import { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -110,6 +111,11 @@ export default function ContractForm() {
   const [beneficiarySearchOpen, setBeneficiarySearchOpen] = useState(false);
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
   const [showNewBeneficiaryModal, setShowNewBeneficiaryModal] = useState(false);
+  
+  // Check if we're editing - get contractId from URL params
+  const urlParams = new URLSearchParams(window.location.search);
+  const editContractId = urlParams.get('edit');
+  const isEditing = Boolean(editContractId);
 
   // Fetch system settings for date format
   const { data: systemSettings } = useQuery<{ dateFormat: DateFormat }>({
@@ -171,36 +177,98 @@ export default function ContractForm() {
     queryKey: ["/api/beneficiaries"],
   });
 
-  // Create contract mutation
-  const createContractMutation = useMutation({
-    mutationFn: (data: ContractFormData) => {
-      return apiRequest("POST", "/api/contracts", {
-        beneficiaryData: data.beneficiary,
-        contractData: {
-          templateId: data.contract.templateId,
-          value: data.contract.value ? parseFloat(data.contract.value) : null,
-          currency: data.contract.currency,
-          createdDate: data.contract.createdDate || null,
-          startDate: data.contract.startDate ? parseDate(data.contract.startDate, dateFormat) || new Date(data.contract.startDate) : null,
-          endDate: data.contract.endDate ? parseDate(data.contract.endDate, dateFormat) || new Date(data.contract.endDate) : null,
-          notes: data.contract.notes,
-          status: "draft",
+  // Fetch contract data for editing
+  const { data: editContract } = useQuery({
+    queryKey: ["/api/contracts", editContractId],
+    queryFn: () => editContractId ? fetch(`/api/contracts/${editContractId}`).then(res => res.json()) : null,
+    enabled: isEditing && Boolean(editContractId),
+  });
+
+  // Update form when editing contract data is loaded
+  React.useEffect(() => {
+    if (editContract && isEditing) {
+      const contractData = editContract;
+      setSelectedBeneficiary(contractData.beneficiary);
+      
+      // Format dates for form inputs
+      const createdDate = contractData.createdAt ? new Date(contractData.createdAt).toISOString().split('T')[0] : '';
+      const startDate = contractData.startDate ? new Date(contractData.startDate).toISOString().split('T')[0] : '';
+      const endDate = contractData.endDate ? new Date(contractData.endDate).toISOString().split('T')[0] : '';
+      
+      form.reset({
+        beneficiary: {
+          name: contractData.beneficiary.name || "",
+          email: contractData.beneficiary.email || "",
+          phone: contractData.beneficiary.phone || "",
+          address: contractData.beneficiary.address || "",
+          cnp: contractData.beneficiary.cnp || "",
+          companyName: contractData.beneficiary.companyName || "",
+          companyAddress: contractData.beneficiary.companyAddress || "",
+          companyCui: contractData.beneficiary.companyCui || "",
+          companyRegistrationNumber: contractData.beneficiary.companyRegistrationNumber || "",
+          companyLegalRepresentative: contractData.beneficiary.companyLegalRepresentative || "",
+          isCompany: contractData.beneficiary.isCompany || false,
+        },
+        contract: {
+          templateId: contractData.templateId,
+          value: contractData.value?.toString() || "",
+          currency: contractData.currency || "RON",
+          createdDate,
+          startDate,
+          endDate,
+          notes: contractData.notes || "",
         },
       });
+    }
+  }, [editContract, isEditing, form]);
+
+  // Create or update contract mutation
+  const contractMutation = useMutation({
+    mutationFn: (data: ContractFormData) => {
+      if (isEditing && editContractId) {
+        // Update existing contract
+        return apiRequest("PUT", `/api/contracts/${editContractId}`, {
+          beneficiaryData: data.beneficiary,
+          contractData: {
+            templateId: data.contract.templateId,
+            value: data.contract.value ? parseFloat(data.contract.value) : null,
+            currency: data.contract.currency,
+            createdDate: data.contract.createdDate || null,
+            startDate: data.contract.startDate ? parseDate(data.contract.startDate, dateFormat) || new Date(data.contract.startDate) : null,
+            endDate: data.contract.endDate ? parseDate(data.contract.endDate, dateFormat) || new Date(data.contract.endDate) : null,
+            notes: data.contract.notes,
+          },
+        });
+      } else {
+        // Create new contract
+        return apiRequest("POST", "/api/contracts", {
+          beneficiaryData: data.beneficiary,
+          contractData: {
+            templateId: data.contract.templateId,
+            value: data.contract.value ? parseFloat(data.contract.value) : null,
+            currency: data.contract.currency,
+            createdDate: data.contract.createdDate || null,
+            startDate: data.contract.startDate ? parseDate(data.contract.startDate, dateFormat) || new Date(data.contract.startDate) : null,
+            endDate: data.contract.endDate ? parseDate(data.contract.endDate, dateFormat) || new Date(data.contract.endDate) : null,
+            notes: data.contract.notes,
+            status: "draft",
+          },
+        });
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/contracts"] });
       queryClient.invalidateQueries({ queryKey: ["/api/contracts/stats"] });
       toast({
         title: "Success",
-        description: "Contractul a fost creat cu succes!",
+        description: isEditing ? "Contractul a fost actualizat cu succes!" : "Contractul a fost creat cu succes!",
       });
-      setLocation("/");
+      setLocation("/contracts");
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "A apărut o eroare la crearea contractului.",
+        description: isEditing ? "A apărut o eroare la actualizarea contractului." : "A apărut o eroare la crearea contractului.",
         variant: "destructive",
       });
     },
@@ -269,7 +337,7 @@ export default function ContractForm() {
       return;
     }
 
-    createContractMutation.mutate(data);
+    contractMutation.mutate(data);
   };
 
   const onReserve = () => {
@@ -460,8 +528,12 @@ export default function ContractForm() {
         <header className="bg-white shadow-sm border-b border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900">Creează Contract Nou</h2>
-              <p className="text-gray-600 mt-1">Completați datele pentru generarea contractului</p>
+              <h2 className="text-2xl font-semibold text-gray-900">
+                {isEditing ? "Editează Contract" : "Creează Contract Nou"}
+              </h2>
+              <p className="text-gray-600 mt-1">
+                {isEditing ? "Modifică datele contractului existent" : "Completați datele pentru generarea contractului"}
+              </p>
             </div>
           </div>
         </header>
@@ -754,10 +826,13 @@ export default function ContractForm() {
                 </Button>
                 <Button 
                   type="submit" 
-                  disabled={createContractMutation.isPending}
+                  disabled={contractMutation.isPending}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
-                  {createContractMutation.isPending ? "Se creează..." : "Generează Contract"}
+                  {contractMutation.isPending ? 
+                    (isEditing ? "Se actualizează..." : "Se creează...") : 
+                    (isEditing ? "Actualizează Contract" : "Generează Contract")
+                  }
                 </Button>
               </div>
             </form>
