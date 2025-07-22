@@ -57,6 +57,7 @@ export default function ContractTable({ contracts, onView, onDownload, onEmail, 
                 <SelectItem value="draft">În Așteptare</SelectItem>
                 <SelectItem value="sent">Trimis</SelectItem>
                 <SelectItem value="completed">Finalizat</SelectItem>
+                <SelectItem value="reserved">Rezervat</SelectItem>
               </SelectContent>
             </Select>
           </div>
