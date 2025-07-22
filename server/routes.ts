@@ -461,60 +461,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { jsPDF } = await import('jspdf');
       const pdf = new jsPDF('p', 'mm', 'a4');
       
-      // Simple and clean approach - parse text properly
+      // Improved text processing for better formatting
       let textContent = populatedContent
-        // Remove table first to avoid signature duplication
+        // Remove table first
         .replace(/<table[^>]*>[\s\S]*?<\/table>/g, '')
-        // Handle paragraph breaks properly
-        .replace(/<\/p><p[^>]*>/g, '\n\n')  // Paragraph breaks
-        .replace(/<p[^>]*style="[^"]*center[^"]*"[^>]*>/g, '')  // Center paragraphs
-        .replace(/<\/p>/g, '\n')
+        // Handle center-aligned title specially
+        .replace(/<p[^>]*style="[^"]*center[^"]*"[^>]*>(.*?)<\/p>/g, '\n\nTITLE:$1\n\n')
+        // Convert paragraphs to double line breaks
+        .replace(/<\/p>/g, '\n\n')
         .replace(/<p[^>]*>/g, '')
         .replace(/<br\s*\/?>/g, '\n')
-        // Remove all HTML tags and formatting
+        // Remove all HTML tags
         .replace(/<[^>]*>/g, '')
-        // Clean up HTML entities
+        // Clean HTML entities
         .replace(/&nbsp;/g, ' ')
         .replace(/&amp;/g, '&')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
         .replace(/&quot;/g, '"')
-        // Clean up whitespace
+        // Normalize whitespace
         .replace(/\s+/g, ' ')
-        .replace(/\n +/g, '\n')
+        .replace(/\n\s+/g, '\n')
         .replace(/\n{3,}/g, '\n\n')
         .trim();
 
-      // Split by double line breaks for paragraphs  
-      const paragraphs = textContent.split('\n\n').filter(p => p.trim().length > 0);
+      // Split into paragraphs and process them
+      const rawParagraphs = textContent.split('\n\n').filter(p => p.trim().length > 0);
+      const processedParagraphs = [];
       
-      // Clean paragraphs and split long ones
-      const cleanParagraphs = [];
-      for (const para of paragraphs) {
+      for (const para of rawParagraphs) {
         const cleaned = para.trim();
-        if (cleaned.length > 0) {
-          // Split very long paragraphs at sentence boundaries
-          if (cleaned.length > 300) {
-            const sentences = cleaned.split('. ');
-            let currentPara = '';
-            for (const sentence of sentences) {
-              if ((currentPara + sentence).length > 250) {
-                if (currentPara) {
-                  cleanParagraphs.push(currentPara.trim());
-                  currentPara = sentence;
-                } else {
-                  cleanParagraphs.push(sentence);
-                }
-              } else {
-                currentPara += (currentPara ? '. ' : '') + sentence;
-              }
+        if (cleaned.startsWith('TITLE:')) {
+          // Handle title specially
+          processedParagraphs.push({
+            type: 'title',
+            content: cleaned.substring(6).trim()
+          });
+        } else if (cleaned.includes('Art.')) {
+          // Split articles if they're combined
+          const articles = cleaned.split(/(?=Art\.\s*\d+)/);
+          for (const article of articles) {
+            if (article.trim().length > 0) {
+              processedParagraphs.push({
+                type: 'article',
+                content: article.trim()
+              });
             }
-            if (currentPara) {
-              cleanParagraphs.push(currentPara.trim());
-            }
-          } else {
-            cleanParagraphs.push(cleaned);
           }
+        } else {
+          processedParagraphs.push({
+            type: 'paragraph',
+            content: cleaned
+          });
         }
       }
       
@@ -529,7 +527,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const maxWidth = 170; // Page width minus margins
       
       // Check if title exists and add if needed
-      const hasTitle = cleanParagraphs.some(p => p.includes('CONTRACT Nr.'));
+      const hasTitle = processedParagraphs.some(p => p.type === 'title' || p.content.includes('CONTRACT Nr.'));
       if (!hasTitle) {
         pdf.setFontSize(16);
         pdf.setFont('helvetica', 'bold');
@@ -537,40 +535,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         yPosition += 15;
       }
       
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'normal');
-      
-      // Add content paragraph by paragraph
-      for (const paragraph of cleanParagraphs) {
-        if (paragraph.trim()) {
-          // Check if we need a new page
-          if (yPosition > pageHeight - 30) {
-            pdf.addPage();
-            yPosition = margin;
-          }
+      // Process each paragraph according to its type
+      for (const item of processedParagraphs) {
+        // Check if we need a new page
+        if (yPosition > pageHeight - 40) {
+          pdf.addPage();
+          yPosition = margin;
+        }
+        
+        if (item.type === 'title') {
+          // Handle title
+          pdf.setFontSize(16);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(item.content, 105, yPosition, { align: 'center' });
+          yPosition += 20;
+        } else if (item.type === 'article') {
+          // Handle articles with special formatting
+          pdf.setFontSize(12);
+          pdf.setFont('helvetica', 'normal');
+          yPosition += 3; // Extra space before articles
           
-          // Handle title specially
-          if (paragraph.includes('CONTRACT Nr.')) {
-            pdf.setFontSize(16);
-            pdf.setFont('helvetica', 'bold');
-            const titleLines = pdf.splitTextToSize(paragraph, maxWidth);
-            for (const line of titleLines) {
-              pdf.text(line, 105, yPosition, { align: 'center' });
-              yPosition += 8;
-            }
-            pdf.setFontSize(12);
-            pdf.setFont('helvetica', 'normal');
-            yPosition += 10;
-            continue;
-          }
-          
-          // Add spacing before articles
-          if (paragraph.includes('Art.')) {
-            yPosition += 5;
-          }
-          
-          // Split paragraph to fit page width
-          const lines = pdf.splitTextToSize(paragraph, maxWidth);
+          const lines = pdf.splitTextToSize(item.content, maxWidth);
           for (const line of lines) {
             if (yPosition > pageHeight - 30) {
               pdf.addPage();
@@ -579,9 +564,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
             pdf.text(line, margin, yPosition);
             yPosition += lineHeight;
           }
+          yPosition += 3; // Extra space after articles
+        } else {
+          // Handle regular paragraphs
+          pdf.setFontSize(12);
+          pdf.setFont('helvetica', 'normal');
           
-          // Add spacing after paragraphs
-          yPosition += 5;
+          const lines = pdf.splitTextToSize(item.content, maxWidth);
+          for (const line of lines) {
+            if (yPosition > pageHeight - 30) {
+              pdf.addPage();
+              yPosition = margin;
+            }
+            pdf.text(line, margin, yPosition);
+            yPosition += lineHeight;
+          }
+          yPosition += 5; // Space after paragraphs
         }
       }
       
