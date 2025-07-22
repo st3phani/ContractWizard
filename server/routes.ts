@@ -461,35 +461,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { jsPDF } = await import('jspdf');
       const pdf = new jsPDF('p', 'mm', 'a4');
       
-      // Better HTML parsing that preserves structure and avoids duplication
+      // Clean and structure the content properly
       let cleanContent = populatedContent
-        // First, handle table content separately to avoid duplication
-        .replace(/<table[^>]*>.*?<\/table>/gs, '\n\nPRESTATOR                    BENEFICIAR\n_________________            _________________\n')
-        // Handle paragraphs properly  
-        .replace(/<\/p>/g, '\n')  // Single line break after paragraphs
-        .replace(/<p[^>]*>/g, '')  // Remove opening p tags
-        .replace(/<br\s*\/?>/g, '\n')  // Convert <br> to line breaks
-        .replace(/<strong>/g, '')  // Remove bold tags
+        // Remove HTML tags but preserve structure
+        .replace(/<p[^>]*style="text-align:\s*center[^"]*"[^>]*>/g, '\n\n') // Center aligned paragraphs get double breaks
+        .replace(/<\/p>/g, '\n')  // End paragraphs with line break
+        .replace(/<p[^>]*>/g, '\n')  // Start paragraphs with line break
+        .replace(/<br\s*\/?>/g, '\n')  // Convert breaks to line breaks
+        .replace(/<strong>/g, '')  // Remove formatting tags
         .replace(/<\/strong>/g, '')
-        .replace(/<span[^>]*>/g, '')  // Remove span tags
+        .replace(/<span[^>]*>/g, '')
         .replace(/<\/span>/g, '')
+        .replace(/<table[^>]*>[\s\S]*?<\/table>/g, '') // Remove table entirely - we'll add signatures manually
         .replace(/<[^>]*>/g, '')  // Remove all remaining HTML tags
-        .replace(/&nbsp;/g, ' ')  // Replace non-breaking spaces
-        .replace(/&amp;/g, '&')   // Replace HTML entities
+        .replace(/&nbsp;/g, ' ')  // HTML entities
+        .replace(/&amp;/g, '&')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
         .replace(/&quot;/g, '"')
-        .replace(/\s+/g, ' ')  // Replace multiple spaces with single space
-        .replace(/\n\s+/g, '\n')  // Remove spaces at beginning of lines
-        .replace(/\n+/g, '\n')  // Replace multiple line breaks with single
+        .replace(/\s+/g, ' ')  // Normalize spaces
+        .replace(/\n\s+/g, '\n')  // Remove leading spaces on lines
+        .replace(/\n{3,}/g, '\n\n')  // Max 2 consecutive line breaks
         .trim();
+
+      // Split into meaningful sections
+      const sections = cleanContent.split('\n').filter(line => line.trim().length > 0);
       
-      // Split into lines and clean them
-      const lines = cleanContent.split('\n').filter(line => line.trim().length > 0);
+      // Remove the duplicate title that appears at the beginning
+      const filteredSections = [];
+      let titleAdded = false;
       
-      // Remove duplicated title if it appears
-      if (lines.length > 1 && lines[0].includes('CONTRACT') && lines[1].includes('CONTRACT')) {
-        lines.splice(0, 1); // Remove first duplicate
+      for (const section of sections) {
+        if (section.includes('CONTRACT Nr.') && !titleAdded) {
+          titleAdded = true;
+          continue; // Skip the first title, we'll add our own
+        }
+        if (section.trim().length > 0) {
+          filteredSections.push(section.trim());
+        }
       }
       
       // Set font and margins
@@ -511,22 +520,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'normal');
       
-      // Add content line by line with proper spacing
-      for (const line of lines) {
-        if (line.trim()) {
+      // Add content with proper formatting
+      for (const section of filteredSections) {
+        if (section.trim()) {
           // Check if we need a new page
           if (yPosition > pageHeight - 30) {
             pdf.addPage();
             yPosition = margin;
           }
           
-          // Special handling for different content types
-          if (line.includes('Art.')) {
-            yPosition += 5; // Extra space before articles
+          // Add spacing before articles
+          if (section.includes('Art.')) {
+            yPosition += 5;
+          }
+          
+          // Add spacing before key sections
+          if (section.includes('Între:') || section.includes('S-a încheiat')) {
+            yPosition += 5;
           }
           
           // Split long lines to fit page width
-          const splitLines = pdf.splitTextToSize(line.trim(), maxWidth);
+          const splitLines = pdf.splitTextToSize(section, maxWidth);
           for (const splitLine of splitLines) {
             if (yPosition > pageHeight - 30) {
               pdf.addPage();
@@ -536,31 +550,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
             yPosition += lineHeight;
           }
           
-          // Add spacing after certain lines
-          if (line.includes('Art.') || line.includes('și') || line.includes('clauze:')) {
-            yPosition += 2;
+          // Add spacing after articles and key sections
+          if (section.includes('Art.') || section.includes('și') || section.includes('clauze:')) {
+            yPosition += 3;
           }
         }
       }
       
-      // Only add signature section if not already present in content
-      if (!cleanContent.includes('PRESTATOR') || !cleanContent.includes('BENEFICIAR')) {
-        // Add signature section at the bottom
-        if (yPosition > pageHeight - 40) {
-          pdf.addPage();
-          yPosition = margin;
-        }
-        
-        yPosition = Math.max(yPosition + 20, pageHeight - 40);
-        
-        pdf.setFont('helvetica', 'bold');
-        pdf.text('PRESTATOR', margin, yPosition);
-        pdf.text('BENEFICIAR', 105 + margin, yPosition);
-        
-        yPosition += 20;
-        pdf.text('_________________', margin, yPosition);
-        pdf.text('_________________', 105 + margin, yPosition);
+      // Always add signature section at the bottom (since we removed table)
+      if (yPosition > pageHeight - 50) {
+        pdf.addPage();
+        yPosition = margin;
       }
+      
+      yPosition += 20; // Add space before signatures
+      
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('PRESTATOR', margin, yPosition);
+      pdf.text('BENEFICIAR', 105, yPosition);
+      
+      yPosition += 15;
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('_________________', margin, yPosition);
+      pdf.text('_________________', 105, yPosition);
       
       const pdfBuffer = Buffer.from(pdf.output('arraybuffer'));
       
