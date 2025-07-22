@@ -207,6 +207,8 @@ export default function Beneficiaries() {
       }
     });
 
+    console.log("Form data before mutation:", formData);
+    
     if (selectedBeneficiary) {
       // Update existing beneficiary
       updateBeneficiaryMutation.mutate({ id: selectedBeneficiary.id, data: formData });
