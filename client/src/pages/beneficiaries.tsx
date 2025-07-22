@@ -470,7 +470,10 @@ export default function Beneficiaries() {
               <Label>Tip Beneficiar</Label>
               <Select 
                 value={formData.isCompany ? "true" : "false"}
-                onValueChange={(value) => setFormData({ ...formData, isCompany: value === "true" })}
+                onValueChange={(value) => {
+                  console.log("Setting isCompany to:", value === "true");
+                  setFormData({ ...formData, isCompany: value === "true" });
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selectează tipul" />
@@ -490,7 +493,10 @@ export default function Beneficiaries() {
                   <Input
                     id="companyName"
                     value={formData.companyName || ""}
-                    onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                    onChange={(e) => {
+                      console.log("Setting companyName to:", e.target.value);
+                      setFormData({ ...formData, companyName: e.target.value });
+                    }}
                     placeholder="Denumirea companiei"
                   />
                 </div>
