@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, Trash2, Mail, Phone, MapPin } from "lucide-react";
+import { Plus, Edit, Trash2, Mail, Phone, MapPin, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -250,7 +250,12 @@ export default function Beneficiaries() {
                             </Avatar>
                             <div>
                               <div className="font-medium">{beneficiary.name}</div>
-                              {beneficiary.address && (
+                              {beneficiary.companyName ? (
+                                <div className="text-sm text-gray-500 flex items-center">
+                                  <Building className="h-3 w-3 mr-1" />
+                                  {beneficiary.companyName}
+                                </div>
+                              ) : beneficiary.address && (
                                 <div className="text-sm text-gray-500 flex items-center">
                                   <MapPin className="h-3 w-3 mr-1" />
                                   {beneficiary.address}
