@@ -119,7 +119,7 @@ Three main entities:
 ```
 Changelog:
 
-- July 22, 2025. **ADMINISTRATOR PROFILE MOVED TO SIDEBAR** - Moved administrator profile from header to left sidebar bottom section in same format as menu items. Profile includes avatar with "AD" initials, name, email, and dropdown with Profil/Setări/Deconectare options. Removed profile from dashboard and settings headers for cleaner UI.
+- July 22, 2025. **ADMINISTRATOR PROFILE MOVED TO SIDEBAR** - Moved administrator profile from header to left sidebar bottom section in same format as menu items. Profile includes avatar with "AD" initials, name, email, and dropdown with Profil/Setări/Deconectare options. Removed profile from dashboard and settings headers for cleaner UI. Settings accessible only through profile dropdown, removed from main navigation menu.
 - July 22, 2025. **CONTRACTS PAGE PAGINATION CLEANUP** - Removed items-per-page dropdown from header, keeping only search and status filter. Pagination controls (including items-per-page) now exclusively in footer using paginationUtils.ts for consistency with beneficiaries page.
 - July 22, 2025. **CONTRACTS PAGE PAGINATION REFACTOR** - Updated contract-table.tsx to use paginationUtils.ts for consistent pagination across the application. Replaced manual pagination calculations with standardized utility functions, improving code reusability and maintainability.
 - July 22, 2025. **PAGINATION UTILITIES REFACTOR** - Extracted pagination logic from Beneficiaries page into reusable paginationUtils.ts. Created comprehensive pagination utilities with validation, page number generation, and standardized pagination interface. Improved code reusability while maintaining all existing functionality.
