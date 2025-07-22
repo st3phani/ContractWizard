@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { formatDate, getStatusColor, getStatusText, getInitials, getAvatarColor } from "@/lib/utils";
 import type { ContractWithDetails } from "@shared/schema";
+import { paginateItems, type PaginationConfig } from "@/utils/paginationUtils";
 
 interface ContractTableProps {
   contracts: ContractWithDetails[];
@@ -39,11 +40,19 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
     return matchesSearch && matchesStatus;
   });
 
-  // Pagination calculations
-  const totalPages = Math.ceil(filteredContracts.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedContracts = filteredContracts.slice(startIndex, endIndex);
+  // Apply pagination using utils
+  const paginationConfig: PaginationConfig = { currentPage, itemsPerPage };
+  const paginationResult = paginateItems(filteredContracts, paginationConfig);
+  
+  const {
+    items: paginatedContracts,
+    totalItems,
+    totalPages,
+    hasNextPage,
+    hasPreviousPage,
+    startIndex,
+    endIndex
+  } = paginationResult;
 
   const canDeleteContract = (contract: ContractWithDetails) => {
     return contract.orderNumber === maxOrderNumber;
@@ -198,24 +207,24 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
           </TableBody>
         </Table>
         
-        {filteredContracts.length === 0 && (
+        {totalItems === 0 && (
           <div className="text-center py-8 text-gray-500">
             Nu au fost găsite contracte
           </div>
         )}
 
         {/* Pagination */}
-        {filteredContracts.length > 0 && (
+        {totalItems > 0 && (
           <div className="flex items-center justify-between mt-4 px-2">
             <div className="text-sm text-gray-700">
-              Afișare {startIndex + 1}-{Math.min(endIndex, filteredContracts.length)} din {filteredContracts.length} contracte
+              Afișare {startIndex + 1}-{Math.min(endIndex, totalItems)} din {totalItems} contracte
             </div>
             <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={!hasPreviousPage}
               >
                 <ChevronLeft className="h-4 w-4" />
                 Anterioara
@@ -246,8 +255,8 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={!hasNextPage}
               >
                 Următoarea
                 <ChevronRight className="h-4 w-4" />
