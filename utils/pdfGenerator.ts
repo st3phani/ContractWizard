@@ -170,7 +170,7 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     
       // Handle centered content
       if (trimmedLine.includes('**CENTER**')) {
-        const centerText = fixRomanianChars(trimmedLine.replace('**CENTER**', '').trim());
+        const centerText = fixRomanianChars(trimmedLine.replace('**CENTER**', '').replace(/\*\*/g, '').trim());
         if (centerText) {
           pdf.setFontSize(16);
           pdf.setFont('helvetica', 'bold');
@@ -199,7 +199,8 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
             const words = parts[i].split(' ');
             
             for (const word of words) {
-              const testPart = { text: fixRomanianChars(word), bold: isBold };
+              const cleanWord = word.replace(/\*\*/g, ''); // Remove any remaining asterisks
+              const testPart = { text: fixRomanianChars(cleanWord), bold: isBold };
               const testLine = currentLineParts.concat([testPart]);
               
               // Calculate width of test line
