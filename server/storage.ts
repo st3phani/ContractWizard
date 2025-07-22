@@ -40,7 +40,7 @@ export interface IStorage {
   getContract(id: number): Promise<ContractWithDetails | undefined>;
   getContractByOrderNumber(orderNumber: number): Promise<ContractWithDetails | undefined>;
   createContract(contract: InsertContract): Promise<ContractWithDetails>;
-  updateContract(id: number, contract: Partial<InsertContract>): Promise<ContractWithDetails | undefined>;
+  updateContract(id: number, contract: any): Promise<ContractWithDetails | undefined>;
   deleteContract(id: number): Promise<boolean>;
   
   // Reserve Contract
@@ -369,15 +369,21 @@ _________________           _________________`,
     };
   }
 
-  async updateContract(id: number, contractData: Partial<Contract>): Promise<ContractWithDetails | undefined> {
+  async updateContract(id: number, contractData: any): Promise<ContractWithDetails | undefined> {
     const existing = this.contracts.get(id);
     if (!existing) return undefined;
     
-    const updated = { ...existing, ...contractData };
+    // Process the data to ensure compatibility
+    const processedData = {
+      ...contractData,
+      value: typeof contractData.value === 'number' ? String(contractData.value) : contractData.value
+    };
+    
+    const updated = { ...existing, ...processedData };
     this.contracts.set(id, updated);
     
-    const template = this.contractTemplates.get(updated.templateId);
-    const beneficiary = this.beneficiaries.get(updated.beneficiaryId);
+    const template = this.contractTemplates.get(updated.templateId || 0);
+    const beneficiary = this.beneficiaries.get(updated.beneficiaryId || 0);
     
     if (!template || !beneficiary) return undefined;
     
@@ -676,16 +682,31 @@ export class DatabaseStorage implements IStorage {
     return contractWithDetails;
   }
 
-  async updateContract(id: number, contractData: Partial<Contract>): Promise<ContractWithDetails | undefined> {
+  async updateContract(id: number, contractData: any): Promise<ContractWithDetails | undefined> {
+    // Process the data to ensure compatibility
+    const processedData = {
+      ...contractData,
+      value: typeof contractData.value === 'number' ? String(contractData.value) : contractData.value
+    };
+    
+    console.log("DatabaseStorage updateContract - processing data:", processedData);
+    
     const [updated] = await db
       .update(contracts)
-      .set(contractData)
+      .set(processedData)
       .where(eq(contracts.id, id))
       .returning();
     
-    if (!updated) return undefined;
+    console.log("DatabaseStorage updateContract - updated result:", updated);
     
-    return await this.getContract(id);
+    if (!updated) {
+      console.log("DatabaseStorage updateContract - no contract updated");
+      return undefined;
+    }
+    
+    const result = await this.getContract(id);
+    console.log("DatabaseStorage updateContract - final result:", result);
+    return result;
   }
 
   async deleteContract(id: number): Promise<boolean> {
