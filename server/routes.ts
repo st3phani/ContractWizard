@@ -461,9 +461,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { jsPDF } = await import('jspdf');
       const pdf = new jsPDF('p', 'mm', 'a4');
       
-      // Debug and fix content processing
-      console.log('Original content length:', populatedContent.length);
-      console.log('First 500 chars:', populatedContent.substring(0, 500));
+      // Remove debug logging for production
+      // console.log('Original content length:', populatedContent.length);
+      // console.log('First 500 chars:', populatedContent.substring(0, 500));
       
       // Very conservative text cleaning
       let cleanText = populatedContent
@@ -492,8 +492,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .replace(/\n{3,}/g, '\n\n') // Max 2 consecutive newlines
         .trim();
 
-      console.log('Cleaned text length:', cleanText.length);
-      console.log('Cleaned text first 500 chars:', cleanText.substring(0, 500));
+      // console.log('Cleaned text length:', cleanText.length);
+      // console.log('Cleaned text first 500 chars:', cleanText.substring(0, 500));
 
       // Split content more carefully
       const contentParts = cleanText.split(/\n\n+/).filter(part => part.trim().length > 0);
@@ -504,9 +504,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       let yPosition = 30;
       const lineHeight = 7;
-      const pageHeight = 280; // A4 height in mm minus bottom margin
-      const margin = 20;
-      const maxWidth = 170; // Page width minus margins
+      const pageHeight = 270; // A4 height in mm minus bottom margin
+      const leftMargin = 25;
+      const rightMargin = 25; 
+      const maxWidth = 210 - leftMargin - rightMargin; // A4 width (210mm) minus both margins (160mm)
       
       // Add title if needed
       const hasTitle = contentParts.some(part => part.includes('CONTRACT Nr.'));
@@ -526,7 +527,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Check if we need a new page
           if (yPosition > pageHeight - 40) {
             pdf.addPage();
-            yPosition = margin;
+            yPosition = 30;
           }
           
           // Special formatting for title
@@ -545,14 +546,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
             yPosition += 5;
           }
           
-          // Split text to fit page width
+          // Split text to fit page width with proper wrapping
           const lines = pdf.splitTextToSize(part, maxWidth);
           for (const line of lines) {
             if (yPosition > pageHeight - 30) {
               pdf.addPage();
-              yPosition = margin;
+              yPosition = 30;
             }
-            pdf.text(line, margin, yPosition);
+            pdf.text(line, leftMargin, yPosition);
             yPosition += lineHeight;
           }
           
@@ -564,19 +565,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Always add signature section at the bottom (since we removed table)
       if (yPosition > pageHeight - 50) {
         pdf.addPage();
-        yPosition = margin;
+        yPosition = 30;
       }
       
       yPosition += 20; // Add space before signatures
       
       pdf.setFont('helvetica', 'bold');
-      pdf.text('PRESTATOR', margin, yPosition);
-      pdf.text('BENEFICIAR', 105, yPosition);
+      pdf.text('PRESTATOR', leftMargin, yPosition);
+      pdf.text('BENEFICIAR', leftMargin + 80, yPosition);
       
       yPosition += 15;
       pdf.setFont('helvetica', 'normal');
-      pdf.text('_________________', margin, yPosition);
-      pdf.text('_________________', 105, yPosition);
+      pdf.text('_________________', leftMargin, yPosition);
+      pdf.text('_________________', leftMargin + 80, yPosition);
       
       const pdfBuffer = Buffer.from(pdf.output('arraybuffer'));
       
