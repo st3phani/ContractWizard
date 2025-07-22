@@ -82,8 +82,8 @@ export function htmlToText(htmlContent: string): string {
   let cleanText = htmlContent
     // First, extract and preserve text content from specific elements
     .replace(/<span[^>]*>(.*?)<\/span>/g, '$1') // Extract span content
-    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**') // Mark bold content
-    .replace(/<p[^>]*style="[^"]*center[^"]*"[^>]*>(.*?)<\/p>/gi, '\n\n**CENTER**$1') // Mark centered content
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, 'BOLD_START$1BOLD_END') // Mark bold content with placeholders
+    .replace(/<p[^>]*style="[^"]*center[^"]*"[^>]*>(.*?)<\/p>/gi, '\n\nCENTER_START$1CENTER_END') // Mark centered content
     .replace(/<p[^>]*>(.*?)<\/p>/gi, '\n$1\n') // Extract paragraph content
     .replace(/<br\s*\/?>/gi, '\n') // Convert breaks to newlines
     .replace(/<div[^>]*>(.*?)<\/div>/gi, '\n$1\n') // Extract div content
@@ -107,9 +107,8 @@ export function htmlToText(htmlContent: string): string {
     .replace(/Î/g, 'Î')
     .replace(/Ș/g, 'Ș')
     .replace(/Ț/g, 'Ț')
-    // Fix duplicate bold markers that create issues like **CONTRACT**** 
-    .replace(/\*{3,}/g, '**') // Replace 3 or more asterisks with just 2
-    .replace(/\*\*\*\*/g, '**') // Replace quadruple asterisks with double
+    // Remove all asterisks completely
+    .replace(/\*/g, '')
     // Clean up whitespace but preserve structure
     .replace(/[ \t]+/g, ' ') // Multiple spaces to single
     .replace(/\n[ \t]+/g, '\n') // Remove leading spaces on lines
@@ -172,8 +171,8 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
       }
     
       // Handle centered content
-      if (trimmedLine.includes('**CENTER**')) {
-        const centerText = fixRomanianChars(trimmedLine.replace('**CENTER**', '').trim());
+      if (trimmedLine.includes('CENTER_START')) {
+        const centerText = fixRomanianChars(trimmedLine.replace(/CENTER_START|CENTER_END/g, '').trim());
         if (centerText) {
           pdf.setFontSize(16);
           pdf.setFont('helvetica', 'bold');
@@ -191,9 +190,9 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
       }
       
       // Process text with proper word wrapping (handle both bold and regular text)
-      if (trimmedLine.includes('**')) {
+      if (trimmedLine.includes('BOLD_START')) {
         // For lines with bold text, we need to handle word wrapping more carefully
-        const parts = trimmedLine.split('**');
+        const parts = trimmedLine.split(/BOLD_START|BOLD_END/);
         let currentLineParts: Array<{text: string, bold: boolean}> = [];
         
         for (let i = 0; i < parts.length; i++) {
