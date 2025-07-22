@@ -4,16 +4,19 @@ import {
   beneficiaries,
   companySettings,
   systemSettings,
+  userProfiles,
   type Contract, 
   type ContractTemplate, 
   type Beneficiary,
   type CompanySettings,
   type SystemSettings,
+  type UserProfile,
   type InsertContract, 
   type InsertContractTemplate, 
   type InsertBeneficiary,
   type InsertCompanySettings,
   type InsertSystemSettings,
+  type InsertUserProfile,
   type ContractWithDetails
 } from "@shared/schema";
 import { db } from "./db";
@@ -64,7 +67,9 @@ export interface IStorage {
   getSystemSettings(): Promise<SystemSettings | undefined>;
   updateSystemSettings(settings: InsertSystemSettings): Promise<SystemSettings>;
 
-
+  // User Profile
+  getUserProfile(): Promise<UserProfile | undefined>;
+  updateUserProfile(profile: InsertUserProfile): Promise<UserProfile>;
 }
 
 export class MemStorage implements IStorage {
@@ -117,6 +122,34 @@ export class MemStorage implements IStorage {
       updatedAt: new Date()
     };
   }
+
+  // User Profile
+  async getUserProfile(): Promise<UserProfile | undefined> {
+    return {
+      id: 1,
+      firstName: "Administrator",
+      lastName: "Sistem",
+      email: "admin@example.com",
+      phone: "0700000000",
+      role: "administrator",
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+  }
+
+  async updateUserProfile(profile: InsertUserProfile): Promise<UserProfile> {
+    return {
+      id: 1,
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      email: profile.email,
+      phone: profile.phone,
+      role: profile.role || "administrator",
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+  }
+
   private contractTemplates: Map<number, ContractTemplate>;
   private beneficiaries: Map<number, Beneficiary>;
   private contracts: Map<number, Contract>;
@@ -984,6 +1017,33 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  // User Profile
+  async getUserProfile(): Promise<UserProfile | undefined> {
+    const [profile] = await db.select().from(userProfiles).limit(1);
+    return profile || undefined;
+  }
+
+  async updateUserProfile(profileData: InsertUserProfile): Promise<UserProfile> {
+    // Check if profile exists
+    const existing = await this.getUserProfile();
+    
+    if (existing) {
+      // Update existing profile
+      const [updated] = await db
+        .update(userProfiles)
+        .set({ ...profileData, updatedAt: new Date() })
+        .where(eq(userProfiles.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      // Create new profile
+      const [created] = await db
+        .insert(userProfiles)
+        .values(profileData)
+        .returning();
+      return created;
+    }
+  }
 
 }
 

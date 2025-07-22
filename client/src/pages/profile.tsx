@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,17 +6,72 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { User, Save, Mail, Phone, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import type { UserProfile, InsertUserProfile } from "@shared/schema";
 import Sidebar from "@/components/sidebar";
 
 export default function Profile() {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   
+  // Fetch user profile
+  const { data: userProfile, isLoading } = useQuery<UserProfile>({
+    queryKey: ["/api/user-profile"],
+  });
+
   const [profileData, setProfileData] = useState({
-    firstName: "Administrator",
-    lastName: "System",
-    email: "admin@contractmanager.ro",
-    phone: "+40 21 123 4567",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
     role: "administrator",
+  });
+
+  // Update local state when profile data is loaded
+  useEffect(() => {
+    if (userProfile) {
+      setProfileData({
+        firstName: userProfile.firstName || "",
+        lastName: userProfile.lastName || "",
+        email: userProfile.email || "",
+        phone: userProfile.phone || "",
+        role: userProfile.role || "administrator",
+      });
+    }
+  }, [userProfile]);
+
+  // Update profile mutation
+  const updateProfileMutation = useMutation({
+    mutationFn: async (data: InsertUserProfile) => {
+      const response = await fetch("/api/user-profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to update profile");
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/user-profile"] });
+      toast({
+        title: "Succes",
+        description: "Profilul a fost actualizat cu succes",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Eroare",
+        description: "A apărut o eroare la actualizarea profilului",
+        variant: "destructive",
+      });
+    },
   });
 
   const handleSave = () => {
@@ -79,10 +134,8 @@ export default function Profile() {
       }
     });
 
-    toast({
-      title: "Success",
-      description: "Profilul a fost salvat cu succes!",
-    });
+    // Save profile to backend
+    updateProfileMutation.mutate(profileData);
   };
 
   return (
@@ -211,10 +264,11 @@ export default function Profile() {
               <div className="flex justify-end pt-4">
                 <Button 
                   onClick={handleSave}
+                  disabled={updateProfileMutation.isPending || isLoading}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  Salvează Profil
+                  {updateProfileMutation.isPending ? "Se salvează..." : "Salvează Profil"}
                 </Button>
               </div>
             </CardContent>

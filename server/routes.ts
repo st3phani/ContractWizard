@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema, insertSystemSettingsSchema } from "@shared/schema";
+import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema, insertSystemSettingsSchema, insertUserProfileSchema } from "@shared/schema";
 import { z } from "zod";
 
 // Helper function to generate sequential order numbers
@@ -588,6 +588,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
 
+
+  // User Profiles
+  app.get("/api/user-profile", async (req, res) => {
+    try {
+      const profile = await storage.getUserProfile();
+      res.json(profile);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch user profile" });
+    }
+  });
+
+  app.put("/api/user-profile", async (req, res) => {
+    try {
+      const result = insertUserProfileSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ message: "Invalid profile data", errors: result.error.issues });
+      }
+      
+      const profile = await storage.updateUserProfile(result.data);
+      res.json(profile);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update user profile" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
