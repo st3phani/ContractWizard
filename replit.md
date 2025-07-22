@@ -114,6 +114,11 @@ Three main entities:
 ```
 Changelog:
 
+- July 22, 2025. Implemented contract deletion restriction - only the latest contract (highest order number) can be deleted, with disabled/opaque delete button for other contracts
+- July 22, 2025. Completed comprehensive contract editing functionality with all data fields saving correctly to PostgreSQL database
+- July 22, 2025. Fixed contract date fields (start date and end date) not saving during contract updates by simplifying date processing
+- July 22, 2025. Resolved template selection display issue in edit mode by adding proper value binding to Select component
+- July 22, 2025. Added automatic status change from "reserved" to "draft" when editing reserved contracts
 - July 22, 2025. Enhanced Rich Text Editor (TipTap) with advanced table functionality: insert/delete rows/columns, toggle border, and real-time table detection
 - July 22, 2025. Fixed table toolbar visibility issues with state management for accurate cursor position tracking in table elements
 - July 22, 2025. Implemented comprehensive table editing capabilities with border removal option for cleaner document formatting

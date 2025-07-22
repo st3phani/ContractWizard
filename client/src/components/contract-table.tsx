@@ -23,6 +23,9 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
+  // Find the highest order number to determine which contract can be deleted
+  const maxOrderNumber = Math.max(...contracts.map(c => c.orderNumber || 0));
+
   const filteredContracts = contracts.filter((contract) => {
     const matchesSearch = 
       String(contract.orderNumber || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -33,6 +36,10 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
     
     return matchesSearch && matchesStatus;
   });
+
+  const canDeleteContract = (contract: ContractWithDetails) => {
+    return contract.orderNumber === maxOrderNumber;
+  };
 
   return (
     <Card className="shadow-sm">
@@ -133,7 +140,9 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => onDelete(contract)}
+                      onClick={() => canDeleteContract(contract) ? onDelete(contract) : undefined}
+                      disabled={!canDeleteContract(contract)}
+                      className={!canDeleteContract(contract) ? "opacity-30 cursor-not-allowed" : ""}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
