@@ -287,15 +287,17 @@ export default function Profile() {
         </header>
 
         {/* Content */}
-        <div className="p-6 space-y-6">
-          <Card className="max-w-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <User className="h-5 w-5 mr-2" />
-                Informații Personale
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+        <div className="p-6">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 max-w-7xl">
+            {/* Profile Information Card */}
+            <Card className="w-full">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <User className="h-5 w-5 mr-2" />
+                  Informații Personale
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="firstName">Prenume *</Label>
@@ -404,19 +406,19 @@ export default function Profile() {
                   {updateProfileMutation.isPending ? "Se salvează..." : "Salvează Profil"}
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* Password Section */}
-          <Card className="max-w-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Lock className="h-5 w-5 mr-2" />
-                Schimbare Parolă
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
+            {/* Password Section */}
+            <Card className="w-full">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Lock className="h-5 w-5 mr-2" />
+                  Schimbare Parolă
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
                 <Label htmlFor="currentPassword">Parola Curentă *</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -504,8 +506,9 @@ export default function Profile() {
                   {updatePasswordMutation.isPending ? "Se actualizează..." : "Actualizează Parola"}
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
     </div>
