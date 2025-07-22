@@ -119,6 +119,7 @@ Three main entities:
 ```
 Changelog:
 
+- July 22, 2025. **PDF GENERATION v1.0.9 STABLE** - Achieved production-ready PDF generation with standardized Arial font family across editor, preview, and PDF output. Complete elimination of font family selection from editor ensures consistent formatting. Clean title formatting, Romanian character encoding, bold text support, and optimal text wrapping maintained. **Status: Production Stable**
 - July 22, 2025. **PDF GENERATION v1.0.7 PERFECTED** - Achieved perfect PDF generation with clean title formatting, complete elimination of formatting markers, Romanian character encoding, bold text support, and optimal text wrapping. Title displays cleanly as "CONTRACT Nr. X din DD.MM.YYYY" without asterisks. Text fits perfectly within margins with proper word wrapping. **Status: Production Perfect**
 - July 22, 2025. Added ID column to beneficiaries table and implemented descending ID sorting for newest-first display
 - July 22, 2025. Fixed beneficiary creation for companies by correcting form field mapping and removing duplicate representative fields

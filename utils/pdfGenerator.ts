@@ -1,6 +1,6 @@
-// PDF Generator v1.0.7 - Production Perfect
+// PDF Generator v1.0.9 - Production Stable
 // Romanian Contract Management System  
-// Perfect PDF generation with clean title formatting and character encoding fixes
+// Standardized Arial font family with consistent formatting across all outputs
 
 import { jsPDF } from 'jspdf';
 import type { ContractWithDetails } from '../shared/schema';
