@@ -457,179 +457,117 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
       
-      // Generate PDF using jsPDF with better formatting
-      const { jsPDF } = await import('jspdf');
-      const pdf = new jsPDF('p', 'mm', 'a4');
+      // Try puppeteer approach with better configuration
+      const puppeteer = await import('puppeteer');
       
-      // Remove debug logging for production
-      // console.log('Original content length:', populatedContent.length);
-      // console.log('First 500 chars:', populatedContent.substring(0, 500));
-      
-      // Better HTML processing that respects original formatting
-      let cleanText = populatedContent
-        // Remove table tags only
-        .replace(/<table[^>]*>[\s\S]*?<\/table>/g, '')
-        // Handle center-aligned content (like title)
-        .replace(/<p[^>]*style="[^"]*center[^"]*"[^>]*>(.*?)<\/p>/gi, '\n\nCENTER:$1\n\n')
-        // Convert HTML structure to text with better spacing
-        .replace(/<\/p>/gi, '\n\n')
-        .replace(/<p[^>]*>/gi, '')
-        .replace(/<br\s*\/?>/gi, '\n')
-        .replace(/<\/div>/gi, '\n')
-        .replace(/<div[^>]*>/gi, '')
-        // Preserve bold text markers temporarily
-        .replace(/<strong>/gi, '**')
-        .replace(/<\/strong>/gi, '**')
-        // Remove remaining HTML tags
-        .replace(/<span[^>]*>/gi, '')
-        .replace(/<\/span>/gi, '')
-        .replace(/<[^>]*>/g, '')
-        // Clean HTML entities
-        .replace(/&nbsp;/g, ' ')
-        .replace(/&amp;/g, '&')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&quot;/g, '"')
-        // Intelligent whitespace cleanup
-        .replace(/[ \t]+/g, ' ')
-        .replace(/\n[ \t]+/g, '\n')
-        .replace(/\n{4,}/g, '\n\n\n')
-        .trim();
-
-      // console.log('Cleaned text length:', cleanText.length);
-      // console.log('Cleaned text first 500 chars:', cleanText.substring(0, 500));
-
-      // Process content with better structure awareness
-      const contentParts = cleanText.split(/\n\n+/).filter(part => part.trim().length > 0).map(part => {
-        const trimmed = part.trim();
-        if (trimmed.startsWith('CENTER:')) {
-          return { type: 'center', content: trimmed.substring(7).trim() };
-        } else if (trimmed.startsWith('Art.')) {
-          return { type: 'article', content: trimmed };
-        } else {
-          return { type: 'normal', content: trimmed };
-        }
+      const browser = await puppeteer.launch({
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-gpu',
+          '--disable-extensions',
+          '--no-first-run',
+          '--disable-default-apps'
+        ]
       });
       
-      // Set font and margins
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(12);
-      
-      let yPosition = 30;
-      const lineHeight = 7;
-      const pageHeight = 270; // A4 height in mm minus bottom margin
-      const leftMargin = 30;
-      const rightMargin = 30; 
-      const maxWidth = 210 - leftMargin - rightMargin; // A4 width (210mm) minus both margins (150mm)
-      
-      // Add title if needed
-      const hasTitle = contentParts.some(part => part.content && part.content.includes('CONTRACT Nr.'));
-      if (!hasTitle) {
-        pdf.setFontSize(16);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text(`CONTRACT Nr. ${contract.orderNumber} din ${new Date().toLocaleDateString('ro-RO')}`, 105, yPosition, { align: 'center' });
-        yPosition += 15;
-      }
-      
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'normal');
-      
-      // Process each content part based on its type
-      for (const part of contentParts) {
-        if (part.content && part.content.trim()) {
-          // Check if we need a new page
-          if (yPosition > pageHeight - 40) {
-            pdf.addPage();
-            yPosition = 30;
-          }
-          
-          let content = part.content;
-          
-          // Handle bold text
-          const hasBold = content.includes('**');
-          if (hasBold) {
-            // Split by bold markers and alternate fonts
-            const segments = content.split('**');
-            let currentX = leftMargin;
+      try {
+        const page = await browser.newPage();
+        
+        // Better HTML structure for PDF generation
+        const htmlContent = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="UTF-8">
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                font-size: 12pt;
+                line-height: 1.4;
+                margin: 40px;
+                color: #000;
+              }
+              .contract-title {
+                text-align: center;
+                font-size: 16pt;
+                font-weight: bold;
+                margin-bottom: 30px;
+              }
+              .article {
+                margin: 15px 0;
+              }
+              .signature-section {
+                margin-top: 40px;
+                display: flex;
+                justify-content: space-between;
+              }
+              .signature {
+                text-align: center;
+                width: 40%;
+              }
+              .signature-line {
+                border-bottom: 1px solid #000;
+                margin-top: 30px;
+                padding-bottom: 5px;
+              }
+              @page {
+                size: A4;
+                margin: 2cm;
+              }
+              @media print {
+                body { margin: 0; }
+              }
+            </style>
+          </head>
+          <body>
+            ${populatedContent}
             
-            for (let i = 0; i < segments.length; i++) {
-              if (segments[i].trim()) {
-                const isBold = i % 2 === 1;
-                pdf.setFont('helvetica', isBold ? 'bold' : 'normal');
-                
-                const segmentLines = pdf.splitTextToSize(segments[i], maxWidth - (currentX - leftMargin));
-                for (const line of segmentLines) {
-                  if (yPosition > pageHeight - 30) {
-                    pdf.addPage();
-                    yPosition = 30;
-                    currentX = leftMargin;
-                  }
-                  pdf.text(line, currentX, yPosition);
-                  yPosition += lineHeight;
-                  currentX = leftMargin; // Reset X for next line
-                }
-              }
-            }
-            pdf.setFont('helvetica', 'normal'); // Reset to normal
-          } else {
-            // Handle different content types
-            if (part.type === 'center') {
-              pdf.setFontSize(16);
-              pdf.setFont('helvetica', 'bold');
-              pdf.text(content, 105, yPosition, { align: 'center' });
-              pdf.setFontSize(12);
-              pdf.setFont('helvetica', 'normal');
-              yPosition += 20;
-            } else if (part.type === 'article') {
-              yPosition += 5; // Extra space before articles
-              const lines = pdf.splitTextToSize(content, maxWidth);
-              for (const line of lines) {
-                if (yPosition > pageHeight - 30) {
-                  pdf.addPage();
-                  yPosition = 30;
-                }
-                pdf.text(line, leftMargin, yPosition);
-                yPosition += lineHeight;
-              }
-              yPosition += 3; // Extra space after articles
-            } else {
-              // Normal content
-              const lines = pdf.splitTextToSize(content, maxWidth);
-              for (const line of lines) {
-                if (yPosition > pageHeight - 30) {
-                  pdf.addPage();
-                  yPosition = 30;
-                }
-                pdf.text(line, leftMargin, yPosition);
-                yPosition += lineHeight;
-              }
-              yPosition += 5;
-            }
+            <div class="signature-section">
+              <div class="signature">
+                <strong>PRESTATOR</strong>
+                <div class="signature-line"></div>
+              </div>
+              <div class="signature">
+                <strong>BENEFICIAR</strong>
+                <div class="signature-line"></div>
+              </div>
+            </div>
+          </body>
+          </html>
+        `;
+        
+        await page.setContent(htmlContent);
+        
+        // Generate PDF with better settings
+        const pdfBuffer = await page.pdf({
+          format: 'A4',
+          margin: {
+            top: '2cm',
+            right: '2cm',
+            bottom: '2cm',
+            left: '2cm'
+          },
+          printBackground: true,
+          preferCSSPageSize: true
+        });
+        
+        await browser.close();
+        
+        return new Response(pdfBuffer, {
+          headers: {
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename="contract-${contract.orderNumber}.pdf"`
           }
-        }
+        });
+        
+      } catch (error) {
+        console.error('PDF generation error:', error);
+        await browser.close().catch(() => {});
+        throw new Error('Nu s-a putut genera PDF-ul');
       }
-      
-      // Always add signature section at the bottom (since we removed table)
-      if (yPosition > pageHeight - 50) {
-        pdf.addPage();
-        yPosition = 30;
-      }
-      
-      yPosition += 20; // Add space before signatures
-      
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('PRESTATOR', leftMargin, yPosition);
-      pdf.text('BENEFICIAR', leftMargin + 75, yPosition);
-      
-      yPosition += 15;
-      pdf.setFont('helvetica', 'normal');
-      pdf.text('_________________', leftMargin, yPosition);
-      pdf.text('_________________', leftMargin + 75, yPosition);
-      
-      const pdfBuffer = Buffer.from(pdf.output('arraybuffer'));
-      
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="contract-${contract.orderNumber}.pdf"`);
       res.send(pdfBuffer);
     } catch (error) {
       console.error("PDF generation error:", error);
