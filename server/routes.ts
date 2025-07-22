@@ -153,7 +153,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/beneficiaries", async (req, res) => {
     try {
+      console.log("Received data:", req.body);
       const beneficiaryData = insertBeneficiarySchema.parse(req.body);
+      console.log("Parsed data:", beneficiaryData);
       
       // Check if beneficiary already exists
       const existing = await storage.getBeneficiaryByEmail(beneficiaryData.email);

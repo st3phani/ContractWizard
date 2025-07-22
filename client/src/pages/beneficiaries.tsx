@@ -211,7 +211,9 @@ export default function Beneficiaries() {
       }
     });
 
-    console.log("Form data before mutation:", formData);
+    console.log("Form data before mutation:", JSON.stringify(formData, null, 2));
+    console.log("Is company?", formData.isCompany);
+    console.log("Company name:", formData.companyName);
     
     if (selectedBeneficiary) {
       // Update existing beneficiary

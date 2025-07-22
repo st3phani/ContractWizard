@@ -101,17 +101,6 @@ export const insertBeneficiarySchema = createInsertSchema(beneficiaries).omit({
   companyCui: z.string().optional(),
   companyRegistrationNumber: z.string().optional(),
   companyLegalRepresentative: z.string().optional(),
-}).refine((data) => {
-  // If it's a company, require company fields
-  if (data.isCompany) {
-    return !!(data.companyName && data.companyAddress && data.companyCui && 
-             data.companyRegistrationNumber && data.companyLegalRepresentative && data.cnp);
-  }
-  // If it's an individual, require individual fields
-  return !!(data.name && data.address && data.cnp);
-}, {
-  message: "Completați toate câmpurile obligatorii",
-  path: ["name"],
 });
 
 export const insertCompanySettingsSchema = createInsertSchema(companySettings).omit({
