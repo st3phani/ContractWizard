@@ -120,16 +120,16 @@ function fixRomanianChars(text: string): string {
   // Keep Romanian diacritics - modern PDF libraries support them properly
   // Only clean up any encoding artifacts that might cause issues
   return text
-    .replace(/Ä‚/g, 'Ă')
-    .replace(/Ä/g, 'Â') 
-    .replace(/Ĺ/g, 'Î')
-    .replace(/Ĺž/g, 'Ș')
-    .replace(/Ĺ¢/g, 'Ț')
-    .replace(/Ä\u0083/g, 'ă')
-    .replace(/Ä\u0085/g, 'â')
-    .replace(/Ä\u00ad/g, 'î')
-    .replace(/Ĺ\u009f/g, 'ș')
-    .replace(/Ĺ\u00a3/g, 'ț');
+    .replace(/ă/g, 'ǎ')
+    .replace(/â/g, 'â')
+    .replace(/î/g, 'î')
+    .replace(/ș/g, 'ș')
+    .replace(/ț/g, 'ț')
+    .replace(/Ă/g, 'Ǎ')
+    .replace(/Â/g, 'Â')
+    .replace(/Î/g, 'Î')
+    .replace(/Ș/g, 'Ș')
+    .replace(/Ț/g, 'Ț');
 }
 
 export function generatePDF(populatedContent: string, contract: ContractWithDetails): Buffer {
