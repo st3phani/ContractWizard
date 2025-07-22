@@ -78,17 +78,20 @@ export function populateTemplate(template: string, data: PDFGenerationData): str
 }
 
 export function htmlToText(htmlContent: string): string {
-  // Better HTML to text conversion that preserves content
+  // Convert HTML to clean text with simplified processing
   let cleanText = htmlContent
-    // First, extract and preserve text content from specific elements
-    .replace(/<span[^>]*>(.*?)<\/span>/g, '$1') // Extract span content
-    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, 'BOLD_START$1BOLD_END') // Mark bold content with placeholders
-    .replace(/<p[^>]*style="[^"]*center[^"]*"[^>]*>(.*?)<\/p>/gi, '\n\nCENTER_START$1CENTER_END') // Mark centered content
-    .replace(/<p[^>]*>(.*?)<\/p>/gi, '\n$1\n') // Extract paragraph content
-    .replace(/<br\s*\/?>/gi, '\n') // Convert breaks to newlines
-    .replace(/<div[^>]*>(.*?)<\/div>/gi, '\n$1\n') // Extract div content
-    .replace(/<table[^>]*>[\s\S]*?<\/table>/g, '') // Remove table elements
-    .replace(/<[^>]*>/g, '') // Remove remaining HTML tags
+    // Process centered paragraphs first
+    .replace(/<p[^>]*style="[^"]*center[^"]*"[^>]*>(.*?)<\/p>/gi, '\n\nCENTER:$1')
+    // Process all other paragraphs
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '\n$1\n')
+    // Handle line breaks
+    .replace(/<br\s*\/?>/gi, '\n')
+    // Remove table elements completely
+    .replace(/<table[^>]*>[\s\S]*?<\/table>/g, '')
+    // Mark bold content for later processing
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, 'BOLD:$1:BOLD')
+    // Remove all other HTML tags
+    .replace(/<[^>]*>/g, '')
     // Clean up HTML entities
     .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
@@ -96,23 +99,12 @@ export function htmlToText(htmlContent: string): string {
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
-    // Fix Romanian diacritics and encoding issues
-    .replace(/ă/g, 'ă')
-    .replace(/â/g, 'â')
-    .replace(/î/g, 'î')
-    .replace(/ș/g, 'ș')
-    .replace(/ț/g, 'ț')
-    .replace(/Ă/g, 'Ă')
-    .replace(/Â/g, 'Â')
-    .replace(/Î/g, 'Î')
-    .replace(/Ș/g, 'Ș')
-    .replace(/Ț/g, 'Ț')
     // Remove all asterisks completely
     .replace(/\*/g, '')
     // Clean up whitespace but preserve structure
-    .replace(/[ \t]+/g, ' ') // Multiple spaces to single
-    .replace(/\n[ \t]+/g, '\n') // Remove leading spaces on lines
-    .replace(/\n{3,}/g, '\n\n') // Max 2 consecutive newlines
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n[ \t]+/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
     .trim();
 
   return cleanText;
@@ -171,8 +163,8 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
       }
     
       // Handle centered content
-      if (trimmedLine.includes('CENTER_START')) {
-        const centerText = fixRomanianChars(trimmedLine.replace(/CENTER_START|CENTER_END/g, '').trim());
+      if (trimmedLine.startsWith('CENTER:')) {
+        const centerText = fixRomanianChars(trimmedLine.replace('CENTER:', '').trim());
         if (centerText) {
           pdf.setFontSize(16);
           pdf.setFont('helvetica', 'bold');
@@ -190,9 +182,9 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
       }
       
       // Process text with proper word wrapping (handle both bold and regular text)
-      if (trimmedLine.includes('BOLD_START')) {
+      if (trimmedLine.includes('BOLD:')) {
         // For lines with bold text, we need to handle word wrapping more carefully
-        const parts = trimmedLine.split(/BOLD_START|BOLD_END/);
+        const parts = trimmedLine.split(/BOLD:|:BOLD/);
         let currentLineParts: Array<{text: string, bold: boolean}> = [];
         
         for (let i = 0; i < parts.length; i++) {
