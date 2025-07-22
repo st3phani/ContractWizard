@@ -317,6 +317,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         providerLegalRepresentative: companySettings?.legalRepresentative || existingContract.providerLegalRepresentative,
       };
       
+      // Debug log the update data
+      console.log("Update data being sent to database:", JSON.stringify(updateData, null, 2));
+      
       // Update the contract
       const contract = await storage.updateContract(id, updateData);
       if (!contract) {
