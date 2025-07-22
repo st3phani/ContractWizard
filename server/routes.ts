@@ -457,80 +457,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
       
-      // Generate PDF using puppeteer
-      const puppeteer = await import('puppeteer');
-      const browser = await puppeteer.default.launch({
-        headless: true,
-        args: [
-          '--no-sandbox', 
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-accelerated-2d-canvas',
-          '--no-first-run',
-          '--no-zygote',
-          '--single-process',
-          '--disable-gpu'
-        ]
-      });
+      // Generate PDF using jsPDF - more reliable without browser dependencies
+      const { jsPDF } = await import('jspdf');
+      const pdf = new jsPDF('p', 'mm', 'a4');
       
-      const page = await browser.newPage();
+      // Clean HTML content and convert to plain text for PDF
+      const cleanContent = populatedContent
+        .replace(/<[^>]*>/g, '')  // Remove HTML tags
+        .replace(/&nbsp;/g, ' ')  // Replace non-breaking spaces
+        .replace(/&amp;/g, '&')   // Replace HTML entities
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .split('\n')
+        .filter(line => line.trim().length > 0);
       
-      // Create a complete HTML document with proper styling
-      const htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8">
-          <title>Contract ${contract.orderNumber}</title>
-          <style>
-            body {
-              font-family: 'Times New Roman', serif;
-              font-size: 14px;
-              line-height: 1.6;
-              margin: 20px;
-              color: #000;
-            }
-            p {
-              margin: 10px 0;
-            }
-            table {
-              width: 100%;
-              border-collapse: collapse;
-              margin: 20px 0;
-            }
-            td {
-              padding: 10px;
-              border: 1px solid #000;
-              vertical-align: top;
-            }
-            .center {
-              text-align: center;
-            }
-            .bold {
-              font-weight: bold;
-            }
-          </style>
-        </head>
-        <body>
-          ${populatedContent}
-        </body>
-        </html>
-      `;
+      // Set font and margins
+      pdf.setFont('times', 'normal');
+      pdf.setFontSize(12);
       
-      await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+      let yPosition = 30;
+      const lineHeight = 6;
+      const pageHeight = 297; // A4 height in mm
+      const margin = 20;
+      const maxWidth = 170; // Page width minus margins
       
-      const pdfBuffer = await page.pdf({
-        format: 'A4',
-        printBackground: true,
-        margin: {
-          top: '20mm',
-          right: '20mm',
-          bottom: '20mm',
-          left: '20mm'
+      // Add title
+      pdf.setFontSize(16);
+      pdf.setFont('times', 'bold');
+      pdf.text(`CONTRACT Nr. ${contract.orderNumber} din ${new Date().toLocaleDateString('ro-RO')}`, 105, yPosition, { align: 'center' });
+      yPosition += 15;
+      
+      pdf.setFontSize(12);
+      pdf.setFont('times', 'normal');
+      
+      // Add content line by line
+      for (const line of cleanContent) {
+        if (line.trim()) {
+          // Check if we need a new page
+          if (yPosition > pageHeight - margin) {
+            pdf.addPage();
+            yPosition = margin;
+          }
+          
+          // Split long lines to fit page width
+          const splitLines = pdf.splitTextToSize(line.trim(), maxWidth);
+          for (const splitLine of splitLines) {
+            if (yPosition > pageHeight - margin) {
+              pdf.addPage();
+              yPosition = margin;
+            }
+            pdf.text(splitLine, margin, yPosition);
+            yPosition += lineHeight;
+          }
         }
-      });
+      }
       
-      await browser.close();
+      const pdfBuffer = Buffer.from(pdf.output('arraybuffer'));
       
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="contract-${contract.orderNumber}.pdf"`);
