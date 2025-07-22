@@ -18,7 +18,6 @@ const navigation = [
   { name: "Contracte", href: "/contracts", icon: FolderOpen },
   { name: "Template-uri", href: "/templates", icon: FileText },
   { name: "Beneficiari", href: "/beneficiaries", icon: Users },
-  { name: "Setări", href: "/settings", icon: Settings },
 ];
 
 export default function Sidebar() {
