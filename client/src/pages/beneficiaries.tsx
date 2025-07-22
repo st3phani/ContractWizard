@@ -33,7 +33,6 @@ export default function Beneficiaries() {
     companyAddress: "",
     companyCui: "",
     companyRegistrationNumber: "",
-    companyLegalRepresentative: "",
     isCompany: false,
   });
   
@@ -77,7 +76,7 @@ export default function Beneficiaries() {
       console.log("API Response:", result);
       queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
       setIsCreateModalOpen(false);
-      setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", companyLegalRepresentative: "", isCompany: false });
+      setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
       setSelectedBeneficiary(null);
     },
     onError: (error) => {
@@ -97,7 +96,7 @@ export default function Beneficiaries() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
       setIsCreateModalOpen(false);
-      setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", companyLegalRepresentative: "", isCompany: false });
+      setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
       setSelectedBeneficiary(null);
     },
     onError: () => {
@@ -147,10 +146,7 @@ export default function Beneficiaries() {
         missingFields.push('Nr. Înregistrare');
         fieldsToFocus.push('companyRegistrationNumber');
       }
-      if (!formData.companyLegalRepresentative) {
-        missingFields.push('Reprezentant Legal');
-        fieldsToFocus.push('companyLegalRepresentative');
-      }
+
       if (!formData.cnp) {
         missingFields.push('CNP Reprezentant');
         fieldsToFocus.push('cnp');
@@ -205,7 +201,7 @@ export default function Beneficiaries() {
     }
 
     // Remove red borders on successful validation
-    const allFields = ['name', 'email', 'phone', 'address', 'cnp', 'companyName', 'companyAddress', 'companyCui', 'companyRegistrationNumber', 'companyLegalRepresentative'];
+    const allFields = ['name', 'email', 'phone', 'address', 'cnp', 'companyName', 'companyAddress', 'companyCui', 'companyRegistrationNumber'];
     allFields.forEach(fieldId => {
       const element = document.getElementById(fieldId);
       if (element) {
@@ -238,7 +234,7 @@ export default function Beneficiaries() {
       companyAddress: beneficiary.companyAddress ?? "",
       companyCui: beneficiary.companyCui ?? "",
       companyRegistrationNumber: beneficiary.companyRegistrationNumber ?? "",
-      companyLegalRepresentative: beneficiary.companyLegalRepresentative ?? "",
+
       isCompany: beneficiary.isCompany ?? false,
     });
     setIsCreateModalOpen(true);
@@ -253,7 +249,7 @@ export default function Beneficiaries() {
   const resetForm = () => {
     setIsCreateModalOpen(false);
     setSelectedBeneficiary(null);
-    setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", companyLegalRepresentative: "", isCompany: false });
+    setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
   };
 
   return (
@@ -505,17 +501,6 @@ export default function Beneficiaries() {
                   />
                 </div>
 
-                {/* Nume Contact (reprezentant legal) */}
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nume Contact (Reprezentant Legal) *</Label>
-                  <Input
-                    id="name"
-                    value={formData.name || ""}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Numele reprezentantului legal"
-                  />
-                </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="companyAddress">Adresa Companiei *</Label>
                   <Textarea
@@ -551,11 +536,11 @@ export default function Beneficiaries() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="companyLegalRepresentative">Reprezentant Legal *</Label>
+                    <Label htmlFor="name">Reprezentant Legal *</Label>
                     <Input
-                      id="companyLegalRepresentative"
-                      value={formData.companyLegalRepresentative || ""}
-                      onChange={(e) => setFormData({ ...formData, companyLegalRepresentative: e.target.value })}
+                      id="name"
+                      value={formData.name || ""}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="Numele reprezentantului legal"
                     />
                   </div>
