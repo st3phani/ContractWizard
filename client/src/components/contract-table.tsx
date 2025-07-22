@@ -41,6 +41,10 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
     return contract.orderNumber === maxOrderNumber;
   };
 
+  const canPerformActions = (contract: ContractWithDetails) => {
+    return contract.status !== "reserved";
+  };
+
   return (
     <Card className="shadow-sm">
       <CardHeader>
@@ -112,7 +116,9 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => onView(contract)}
+                      onClick={() => canPerformActions(contract) ? onView(contract) : undefined}
+                      disabled={!canPerformActions(contract)}
+                      className={!canPerformActions(contract) ? "opacity-30 cursor-not-allowed" : ""}
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
@@ -126,14 +132,18 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => onDownload(contract)}
+                      onClick={() => canPerformActions(contract) ? onDownload(contract) : undefined}
+                      disabled={!canPerformActions(contract)}
+                      className={!canPerformActions(contract) ? "opacity-30 cursor-not-allowed" : ""}
                     >
                       <Download className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => onEmail(contract)}
+                      onClick={() => canPerformActions(contract) ? onEmail(contract) : undefined}
+                      disabled={!canPerformActions(contract)}
+                      className={!canPerformActions(contract) ? "opacity-30 cursor-not-allowed" : ""}
                     >
                       <Mail className="h-4 w-4" />
                     </Button>

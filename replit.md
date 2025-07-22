@@ -114,6 +114,8 @@ Three main entities:
 ```
 Changelog:
 
+- July 22, 2025. Fixed contract editing functionality by removing strict validation in edit mode that was preventing updates
+- July 22, 2025. Added restrictions for reserved contracts - disabled preview, download, and email actions with opaque icons
 - July 22, 2025. Modified contract reservation system to not create temporary beneficiaries - reserved contracts now use beneficiary_id = 0 instead
 - July 22, 2025. Updated contract sorting to use contract ID in descending order for both dashboard and contracts page
 - July 22, 2025. Implemented contract deletion restriction - only the latest contract (highest order number) can be deleted, with disabled/opaque delete button for other contracts
