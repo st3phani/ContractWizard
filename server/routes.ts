@@ -460,25 +460,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Use jsPDF with simpler, more reliable approach
       const { jsPDF } = await import('jspdf');
       
-      // Clean HTML content to plain text  
-      const cleanText = populatedContent
-        .replace(/<table[^>]*>[\s\S]*?<\/table>/g, '') // Remove table
-        .replace(/<p[^>]*style="[^"]*center[^"]*"[^>]*>/gi, '\n\n**CENTER**') // Mark centered content
-        .replace(/<\/p>/gi, '\n')
-        .replace(/<p[^>]*>/gi, '\n')
-        .replace(/<br\s*\/?>/gi, '\n')
-        .replace(/<strong>/gi, '**')
-        .replace(/<\/strong>/gi, '**')
-        .replace(/<[^>]*>/g, '') // Remove all HTML tags
+      // Better HTML to text conversion that preserves content
+      let cleanText = populatedContent
+        // First, extract and preserve text content from specific elements
+        .replace(/<span[^>]*>(.*?)<\/span>/g, '$1') // Extract span content
+        .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**') // Mark bold content
+        .replace(/<p[^>]*style="[^"]*center[^"]*"[^>]*>(.*?)<\/p>/gi, '\n\n**CENTER**$1') // Mark centered content
+        .replace(/<p[^>]*>(.*?)<\/p>/gi, '\n$1\n') // Extract paragraph content
+        .replace(/<br\s*\/?>/gi, '\n') // Convert breaks to newlines
+        .replace(/<div[^>]*>(.*?)<\/div>/gi, '\n$1\n') // Extract div content
+        .replace(/<table[^>]*>[\s\S]*?<\/table>/g, '') // Remove table elements
+        .replace(/<[^>]*>/g, '') // Remove remaining HTML tags
+        // Clean up HTML entities
         .replace(/&nbsp;/g, ' ')
         .replace(/&amp;/g, '&')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
         .replace(/&quot;/g, '"')
-        .replace(/\s+/g, ' ')
-        .replace(/\n\s+/g, '\n')
-        .replace(/\n{3,}/g, '\n\n')
+        .replace(/&#39;/g, "'")
+        // Clean up whitespace but preserve structure
+        .replace(/[ \t]+/g, ' ') // Multiple spaces to single
+        .replace(/\n[ \t]+/g, '\n') // Remove leading spaces on lines
+        .replace(/\n{3,}/g, '\n\n') // Max 2 consecutive newlines
         .trim();
+
+      console.log('Cleaned text preview:', cleanText.substring(0, 500));
 
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pageWidth = 210;
@@ -492,94 +498,106 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let y = margin + 10;
       const lineHeight = 6;
       
-      // Split content into lines
-      const lines = cleanText.split('\n').filter(line => line.trim());
+      // Split content into paragraphs and process each
+      const paragraphs = cleanText.split('\n\n').filter(p => p.trim());
       
-      for (const line of lines) {
-        const trimmedLine = line.trim();
+      for (const paragraph of paragraphs) {
+        const trimmedParagraph = paragraph.trim();
         
-        if (!trimmedLine) continue;
+        if (!trimmedParagraph) continue;
         
-        // Check if we need a new page
-        if (y > pageHeight - 30) {
-          pdf.addPage();
-          y = margin + 10;
-        }
+        // Split long paragraphs into lines for better formatting
+        const lines = trimmedParagraph.split('\n').filter(line => line.trim());
         
-        // Handle centered content
-        if (trimmedLine.includes('**CENTER**')) {
-          const centerText = trimmedLine.replace('**CENTER**', '').trim();
-          if (centerText) {
-            pdf.setFontSize(16);
-            pdf.setFont('helvetica', 'bold');
-            pdf.text(centerText, pageWidth / 2, y, { align: 'center' });
-            pdf.setFontSize(12);
-            pdf.setFont('helvetica', 'normal');
-            y += lineHeight + 5;
-          }
-          continue;
-        }
-        
-        // Handle articles with extra spacing
-        if (trimmedLine.startsWith('Art.')) {
-          y += 3;
-        }
-        
-        // Handle bold text
-        if (trimmedLine.includes('**')) {
-          const parts = trimmedLine.split('**');
-          let x = margin;
+        for (const line of lines) {
+          const trimmedLine = line.trim();
           
-          for (let i = 0; i < parts.length; i++) {
-            if (parts[i]) {
-              const isBold = i % 2 === 1;
-              pdf.setFont('helvetica', isBold ? 'bold' : 'normal');
-              
-              const textWidth = pdf.getTextWidth(parts[i]);
-              if (x + textWidth > pageWidth - margin) {
-                y += lineHeight;
-                x = margin;
-              }
-              
-              pdf.text(parts[i], x, y);
-              x += textWidth;
+          if (!trimmedLine) continue;
+        
+          // Check if we need a new page
+          if (y > pageHeight - 30) {
+            pdf.addPage();
+            y = margin + 10;
+          }
+        
+          // Handle centered content
+          if (trimmedLine.includes('**CENTER**')) {
+            const centerText = trimmedLine.replace('**CENTER**', '').trim();
+            if (centerText) {
+              pdf.setFontSize(16);
+              pdf.setFont('helvetica', 'bold');
+              pdf.text(centerText, pageWidth / 2, y, { align: 'center' });
+              pdf.setFontSize(12);
+              pdf.setFont('helvetica', 'normal');
+              y += lineHeight + 5;
             }
+            continue;
           }
-          pdf.setFont('helvetica', 'normal');
-          y += lineHeight;
-        } else {
-          // Regular text with word wrapping
-          const words = trimmedLine.split(' ');
-          let currentLine = '';
           
-          for (const word of words) {
-            const testLine = currentLine + (currentLine ? ' ' : '') + word;
-            const textWidth = pdf.getTextWidth(testLine);
+          // Handle articles with extra spacing
+          if (trimmedLine.startsWith('Art.')) {
+            y += 3;
+          }
+          
+          // Handle bold text
+          if (trimmedLine.includes('**')) {
+            const parts = trimmedLine.split('**');
+            let x = margin;
             
-            if (textWidth > usableWidth && currentLine) {
+            for (let i = 0; i < parts.length; i++) {
+              if (parts[i]) {
+                const isBold = i % 2 === 1;
+                pdf.setFont('helvetica', isBold ? 'bold' : 'normal');
+                
+                const textWidth = pdf.getTextWidth(parts[i]);
+                if (x + textWidth > pageWidth - margin) {
+                  y += lineHeight;
+                  x = margin;
+                }
+                
+                pdf.text(parts[i], x, y);
+                x += textWidth;
+              }
+            }
+            pdf.setFont('helvetica', 'normal');
+            y += lineHeight;
+          } else {
+            // Regular text with word wrapping
+            const words = trimmedLine.split(' ');
+            let currentLine = '';
+            
+            for (const word of words) {
+              const testLine = currentLine + (currentLine ? ' ' : '') + word;
+              const textWidth = pdf.getTextWidth(testLine);
+              
+              if (textWidth > usableWidth && currentLine) {
+                pdf.text(currentLine, margin, y);
+                y += lineHeight;
+                currentLine = word;
+                
+                if (y > pageHeight - 30) {
+                  pdf.addPage();
+                  y = margin + 10;
+                }
+              } else {
+                currentLine = testLine;
+              }
+            }
+            
+            if (currentLine) {
               pdf.text(currentLine, margin, y);
               y += lineHeight;
-              currentLine = word;
-              
-              if (y > pageHeight - 30) {
-                pdf.addPage();
-                y = margin + 10;
-              }
-            } else {
-              currentLine = testLine;
             }
           }
           
-          if (currentLine) {
-            pdf.text(currentLine, margin, y);
-            y += lineHeight;
+          // Extra spacing after articles
+          if (trimmedLine.startsWith('Art.')) {
+            y += 2;
           }
         }
         
-        // Extra spacing after articles
-        if (trimmedLine.startsWith('Art.')) {
-          y += 2;
-        }
+        // Add spacing between paragraphs
+        y += 3;
       }
       
       // Add signatures
