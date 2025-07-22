@@ -440,22 +440,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const populatedContent = populateTemplate(contract.template.content, {
         orderNumber: contract.orderNumber,
         currentDate: new Date().toLocaleDateString('ro-RO'),
-        beneficiary: contract.beneficiary,
+        beneficiary: {
+          name: contract.beneficiary.name,
+          email: contract.beneficiary.email,
+          phone: contract.beneficiary.phone || '',
+          address: contract.beneficiary.address || '',
+          cnp: contract.beneficiary.cnp || '',
+          companyName: contract.beneficiary.companyName || '',
+          companyAddress: contract.beneficiary.companyAddress || '',
+          companyCui: contract.beneficiary.companyCui || '',
+          companyRegistrationNumber: contract.beneficiary.companyRegistrationNumber || '',
+          companyLegalRepresentative: contract.beneficiary.companyLegalRepresentative || '',
+          isCompany: contract.beneficiary.isCompany
+        },
         contract: {
-          startDate: contract.startDate?.toLocaleDateString('ro-RO'),
-          endDate: contract.endDate?.toLocaleDateString('ro-RO'),
-          value: contract.value,
-          currency: contract.currency,
-          notes: contract.notes
+          startDate: contract.startDate?.toLocaleDateString('ro-RO') || '',
+          endDate: contract.endDate?.toLocaleDateString('ro-RO') || '',
+          value: contract.value || '',
+          currency: contract.currency || '',
+          notes: contract.notes || ''
         },
         provider: {
-          name: contract.providerName,
-          address: contract.providerAddress,
-          phone: contract.providerPhone,
-          email: contract.providerEmail,
-          cui: contract.providerCui,
-          registrationNumber: contract.providerRegistrationNumber,
-          legalRepresentative: contract.providerLegalRepresentative,
+          name: contract.providerName || '',
+          address: contract.providerAddress || '',
+          phone: contract.providerPhone || '',
+          email: contract.providerEmail || '',
+          cui: contract.providerCui || '',
+          registrationNumber: contract.providerRegistrationNumber || '',
+          legalRepresentative: contract.providerLegalRepresentative || '',
         }
       });
       
