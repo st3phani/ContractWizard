@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, Trash2, Mail, Phone, Building, Search } from "lucide-react";
+import { Plus, Edit, Trash2, Mail, Phone, Building, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -21,6 +21,8 @@ export default function Beneficiaries() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [formData, setFormData] = useState<InsertBeneficiary>({
     name: "",
     email: "",
@@ -51,6 +53,19 @@ export default function Beneficiaries() {
     beneficiary.cnp?.includes(searchQuery) ||
     beneficiary.companyCui?.includes(searchQuery)
   );
+
+  // Pagination logic
+  const totalItems = filteredBeneficiaries.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedBeneficiaries = filteredBeneficiaries.slice(startIndex, endIndex);
+
+  // Reset to page 1 when search query changes
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setCurrentPage(1);
+  };
 
   // Create beneficiary mutation
   const createBeneficiaryMutation = useMutation({
@@ -239,7 +254,7 @@ export default function Beneficiaries() {
                   <Input
                     placeholder="Căutare beneficiari..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => handleSearchChange(e.target.value)}
                     className="pl-10"
                   />
                 </div>
@@ -260,7 +275,7 @@ export default function Beneficiaries() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredBeneficiaries.map((beneficiary) => (
+                    {paginatedBeneficiaries.map((beneficiary) => (
                       <TableRow key={beneficiary.id}>
                         <TableCell>
                           <div className="flex items-center space-x-3">
@@ -337,6 +352,71 @@ export default function Beneficiaries() {
               {filteredBeneficiaries.length === 0 && !isLoading && (
                 <div className="text-center py-8 text-gray-500">
                   {searchQuery ? "Nu au fost găsiți beneficiari care să corespundă căutării" : "Nu au fost găsiți beneficiari"}
+                </div>
+              )}
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between px-6 py-4 border-t">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-700">Afișare:</span>
+                    <Select
+                      value={itemsPerPage.toString()}
+                      onValueChange={(value) => {
+                        setItemsPerPage(Number(value));
+                        setCurrentPage(1);
+                      }}
+                    >
+                      <SelectTrigger className="w-20">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="5">5</SelectItem>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="20">20</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <span className="text-sm text-gray-700">
+                      din {totalItems} {totalItems === 1 ? 'beneficiar' : 'beneficiari'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      Anterior
+                    </Button>
+                    
+                    <div className="flex space-x-1">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                        <Button
+                          key={pageNum}
+                          variant={currentPage === pageNum ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setCurrentPage(pageNum)}
+                          className="w-8 h-8 p-0"
+                        >
+                          {pageNum}
+                        </Button>
+                      ))}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      Următor
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               )}
             </CardContent>

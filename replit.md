@@ -114,6 +114,9 @@ Three main entities:
 ```
 Changelog:
 
+- July 22, 2025. Added pagination system to Beneficiaries page with configurable items per page (5, 10, 20, 50) and navigation controls
+- July 22, 2025. Enhanced Beneficiaries page with search functionality across name, email, company, CNP and CUI fields
+- July 22, 2025. Modified Beneficiaries display to show company name instead of address, and both CNP/CUI in single column
 - July 22, 2025. Added unique background colors for beneficiary avatars based on name hash with 16-color palette
 - July 22, 2025. Improved beneficiary avatar initials to show first letter of first and last name instead of first two characters
 - July 22, 2025. Added reserved contracts counter to dashboard stats with purple calendar icon and 5-column layout
