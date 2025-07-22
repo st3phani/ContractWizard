@@ -281,10 +281,39 @@ _________________           _________________`,
     const contractsWithDetails: ContractWithDetails[] = [];
     
     for (const contract of contractsArray) {
-      const template = this.contractTemplates.get(contract.templateId);
-      const beneficiary = this.beneficiaries.get(contract.beneficiaryId);
+      const template = contract.templateId ? this.contractTemplates.get(contract.templateId) : null;
+      const beneficiary = contract.beneficiaryId ? this.beneficiaries.get(contract.beneficiaryId) : null;
       
-      if (template && beneficiary) {
+      // Handle reserved contracts with null template/beneficiary
+      if (contract.status === "reserved") {
+        const mockTemplate: ContractTemplate = {
+          id: 0,
+          name: "Template Rezervat",
+          content: "",
+          fields: "[]",
+          createdAt: new Date()
+        };
+        const mockBeneficiary: Beneficiary = {
+          id: 0,
+          name: "Rezervat",
+          email: "",
+          phone: null,
+          address: null,
+          cnp: null,
+          companyName: null,
+          companyAddress: null,
+          companyCui: null,
+          companyRegistrationNumber: null,
+          companyLegalRepresentative: null,
+          isCompany: false,
+          createdAt: new Date()
+        };
+        contractsWithDetails.push({
+          ...contract,
+          template: mockTemplate,
+          beneficiary: mockBeneficiary
+        });
+      } else if (template && beneficiary) {
         contractsWithDetails.push({
           ...contract,
           template,
@@ -300,8 +329,39 @@ _________________           _________________`,
     const contract = this.contracts.get(id);
     if (!contract) return undefined;
     
-    const template = this.contractTemplates.get(contract.templateId);
-    const beneficiary = this.beneficiaries.get(contract.beneficiaryId);
+    const template = contract.templateId ? this.contractTemplates.get(contract.templateId) : null;
+    const beneficiary = contract.beneficiaryId ? this.beneficiaries.get(contract.beneficiaryId) : null;
+    
+    // Handle reserved contracts
+    if (contract.status === "reserved") {
+      const mockTemplate: ContractTemplate = {
+        id: 0,
+        name: "Template Rezervat",
+        content: "",
+        fields: "[]",
+        createdAt: new Date()
+      };
+      const mockBeneficiary: Beneficiary = {
+        id: 0,
+        name: "Rezervat",
+        email: "",
+        phone: null,
+        address: null,
+        cnp: null,
+        companyName: null,
+        companyAddress: null,
+        companyCui: null,
+        companyRegistrationNumber: null,
+        companyLegalRepresentative: null,
+        isCompany: false,
+        createdAt: new Date()
+      };
+      return {
+        ...contract,
+        template: mockTemplate,
+        beneficiary: mockBeneficiary
+      };
+    }
     
     if (!template || !beneficiary) return undefined;
     
@@ -316,8 +376,39 @@ _________________           _________________`,
     const contract = Array.from(this.contracts.values()).find(c => c.orderNumber === orderNumber);
     if (!contract) return undefined;
     
-    const template = this.contractTemplates.get(contract.templateId);
-    const beneficiary = this.beneficiaries.get(contract.beneficiaryId);
+    const template = contract.templateId ? this.contractTemplates.get(contract.templateId) : null;
+    const beneficiary = contract.beneficiaryId ? this.beneficiaries.get(contract.beneficiaryId) : null;
+    
+    // Handle reserved contracts
+    if (contract.status === "reserved") {
+      const mockTemplate: ContractTemplate = {
+        id: 0,
+        name: "Template Rezervat",
+        content: "",
+        fields: "[]",
+        createdAt: new Date()
+      };
+      const mockBeneficiary: Beneficiary = {
+        id: 0,
+        name: "Rezervat",
+        email: "",
+        phone: null,
+        address: null,
+        cnp: null,
+        companyName: null,
+        companyAddress: null,
+        companyCui: null,
+        companyRegistrationNumber: null,
+        companyLegalRepresentative: null,
+        isCompany: false,
+        createdAt: new Date()
+      };
+      return {
+        ...contract,
+        template: mockTemplate,
+        beneficiary: mockBeneficiary
+      };
+    }
     
     if (!template || !beneficiary) return undefined;
     
@@ -565,9 +656,16 @@ export class DatabaseStorage implements IStorage {
       orderBy: (contracts, { desc }) => [desc(contracts.id)],
     });
     
-    // Handle reserved contracts with beneficiaryId = 0
+    // Handle reserved contracts with beneficiaryId = 0 and templateId = 0
     return contractsWithDetails.map(contract => {
-      if (contract.beneficiaryId === 0) {
+      if (contract.beneficiaryId === 0 || contract.templateId === 0) {
+        const mockTemplate: ContractTemplate = {
+          id: 0,
+          name: "Template Rezervat",
+          content: "",
+          fields: "[]",
+          createdAt: new Date()
+        };
         const mockBeneficiary: Beneficiary = {
           id: 0,
           name: "Rezervat",
@@ -585,7 +683,8 @@ export class DatabaseStorage implements IStorage {
         };
         return {
           ...contract,
-          beneficiary: mockBeneficiary
+          template: contract.template || mockTemplate,
+          beneficiary: contract.beneficiary || mockBeneficiary
         };
       }
       return contract;
@@ -603,8 +702,15 @@ export class DatabaseStorage implements IStorage {
     
     if (!contract) return undefined;
     
-    // Handle reserved contracts with beneficiaryId = 0
-    if (contract.beneficiaryId === 0) {
+    // Handle reserved contracts with beneficiaryId = 0 or templateId = 0
+    if (contract.beneficiaryId === 0 || contract.templateId === 0) {
+      const mockTemplate: ContractTemplate = {
+        id: 0,
+        name: "Template Rezervat",
+        content: "",
+        fields: "[]",
+        createdAt: new Date()
+      };
       const mockBeneficiary: Beneficiary = {
         id: 0,
         name: "Rezervat",
@@ -622,7 +728,8 @@ export class DatabaseStorage implements IStorage {
       };
       return {
         ...contract,
-        beneficiary: mockBeneficiary
+        template: contract.template || mockTemplate,
+        beneficiary: contract.beneficiary || mockBeneficiary
       };
     }
     
@@ -640,8 +747,15 @@ export class DatabaseStorage implements IStorage {
     
     if (!contract) return undefined;
     
-    // Handle reserved contracts with beneficiaryId = 0
-    if (contract.beneficiaryId === 0) {
+    // Handle reserved contracts with beneficiaryId = 0 or templateId = 0
+    if (contract.beneficiaryId === 0 || contract.templateId === 0) {
+      const mockTemplate: ContractTemplate = {
+        id: 0,
+        name: "Template Rezervat",
+        content: "",
+        fields: "[]",
+        createdAt: new Date()
+      };
       const mockBeneficiary: Beneficiary = {
         id: 0,
         name: "Rezervat",
@@ -659,7 +773,8 @@ export class DatabaseStorage implements IStorage {
       };
       return {
         ...contract,
-        beneficiary: mockBeneficiary
+        template: contract.template || mockTemplate,
+        beneficiary: contract.beneficiary || mockBeneficiary
       };
     }
     
