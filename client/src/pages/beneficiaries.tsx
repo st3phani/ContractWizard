@@ -86,6 +86,25 @@ export default function Beneficiaries() {
     },
   });
 
+  // Update beneficiary mutation
+  const updateBeneficiaryMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<InsertBeneficiary> }) => 
+      apiRequest("PUT", `/api/beneficiaries/${id}`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
+      setIsCreateModalOpen(false);
+      setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", companyLegalRepresentative: "", isCompany: false });
+      setSelectedBeneficiary(null);
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "A apărut o eroare la actualizarea beneficiarului.",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Delete beneficiary mutation
   const deleteBeneficiaryMutation = useMutation({
     mutationFn: (id: number) => apiRequest("DELETE", `/api/beneficiaries/${id}`),
@@ -188,7 +207,13 @@ export default function Beneficiaries() {
       }
     });
 
-    createBeneficiaryMutation.mutate(formData);
+    if (selectedBeneficiary) {
+      // Update existing beneficiary
+      updateBeneficiaryMutation.mutate({ id: selectedBeneficiary.id, data: formData });
+    } else {
+      // Create new beneficiary
+      createBeneficiaryMutation.mutate(formData);
+    }
   };
 
   const handleEdit = (beneficiary: Beneficiary) => {
