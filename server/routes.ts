@@ -457,121 +457,159 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
       
-      // Try puppeteer approach with better configuration
-      const puppeteer = await import('puppeteer');
+      // Use jsPDF with simpler, more reliable approach
+      const { jsPDF } = await import('jspdf');
       
-      const browser = await puppeteer.launch({
-        headless: true,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-gpu',
-          '--disable-extensions',
-          '--no-first-run',
-          '--disable-default-apps'
-        ]
+      // Clean HTML content to plain text  
+      const cleanText = populatedContent
+        .replace(/<table[^>]*>[\s\S]*?<\/table>/g, '') // Remove table
+        .replace(/<p[^>]*style="[^"]*center[^"]*"[^>]*>/gi, '\n\n**CENTER**') // Mark centered content
+        .replace(/<\/p>/gi, '\n')
+        .replace(/<p[^>]*>/gi, '\n')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<strong>/gi, '**')
+        .replace(/<\/strong>/gi, '**')
+        .replace(/<[^>]*>/g, '') // Remove all HTML tags
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/\s+/g, ' ')
+        .replace(/\n\s+/g, '\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = 210;
+      const pageHeight = 297;
+      const margin = 25;
+      const usableWidth = pageWidth - (2 * margin);
+      
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(12);
+      
+      let y = margin + 10;
+      const lineHeight = 6;
+      
+      // Split content into lines
+      const lines = cleanText.split('\n').filter(line => line.trim());
+      
+      for (const line of lines) {
+        const trimmedLine = line.trim();
+        
+        if (!trimmedLine) continue;
+        
+        // Check if we need a new page
+        if (y > pageHeight - 30) {
+          pdf.addPage();
+          y = margin + 10;
+        }
+        
+        // Handle centered content
+        if (trimmedLine.includes('**CENTER**')) {
+          const centerText = trimmedLine.replace('**CENTER**', '').trim();
+          if (centerText) {
+            pdf.setFontSize(16);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(centerText, pageWidth / 2, y, { align: 'center' });
+            pdf.setFontSize(12);
+            pdf.setFont('helvetica', 'normal');
+            y += lineHeight + 5;
+          }
+          continue;
+        }
+        
+        // Handle articles with extra spacing
+        if (trimmedLine.startsWith('Art.')) {
+          y += 3;
+        }
+        
+        // Handle bold text
+        if (trimmedLine.includes('**')) {
+          const parts = trimmedLine.split('**');
+          let x = margin;
+          
+          for (let i = 0; i < parts.length; i++) {
+            if (parts[i]) {
+              const isBold = i % 2 === 1;
+              pdf.setFont('helvetica', isBold ? 'bold' : 'normal');
+              
+              const textWidth = pdf.getTextWidth(parts[i]);
+              if (x + textWidth > pageWidth - margin) {
+                y += lineHeight;
+                x = margin;
+              }
+              
+              pdf.text(parts[i], x, y);
+              x += textWidth;
+            }
+          }
+          pdf.setFont('helvetica', 'normal');
+          y += lineHeight;
+        } else {
+          // Regular text with word wrapping
+          const words = trimmedLine.split(' ');
+          let currentLine = '';
+          
+          for (const word of words) {
+            const testLine = currentLine + (currentLine ? ' ' : '') + word;
+            const textWidth = pdf.getTextWidth(testLine);
+            
+            if (textWidth > usableWidth && currentLine) {
+              pdf.text(currentLine, margin, y);
+              y += lineHeight;
+              currentLine = word;
+              
+              if (y > pageHeight - 30) {
+                pdf.addPage();
+                y = margin + 10;
+              }
+            } else {
+              currentLine = testLine;
+            }
+          }
+          
+          if (currentLine) {
+            pdf.text(currentLine, margin, y);
+            y += lineHeight;
+          }
+        }
+        
+        // Extra spacing after articles
+        if (trimmedLine.startsWith('Art.')) {
+          y += 2;
+        }
+      }
+      
+      // Add signatures
+      if (y > pageHeight - 50) {
+        pdf.addPage();
+        y = margin + 20;
+      } else {
+        y += 20;
+      }
+      
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('PRESTATOR', margin, y);
+      pdf.text('BENEFICIAR', margin + 90, y);
+      
+      y += 15;
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('_________________', margin, y);
+      pdf.text('_________________', margin + 90, y);
+      
+      const pdfBuffer = Buffer.from(pdf.output('arraybuffer'));
+      return new Response(pdfBuffer, {
+        headers: {
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': `attachment; filename="contract-${contract.orderNumber}.pdf"`
+        }
       });
       
-      try {
-        const page = await browser.newPage();
-        
-        // Better HTML structure for PDF generation
-        const htmlContent = `
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <meta charset="UTF-8">
-            <style>
-              body {
-                font-family: Arial, sans-serif;
-                font-size: 12pt;
-                line-height: 1.4;
-                margin: 40px;
-                color: #000;
-              }
-              .contract-title {
-                text-align: center;
-                font-size: 16pt;
-                font-weight: bold;
-                margin-bottom: 30px;
-              }
-              .article {
-                margin: 15px 0;
-              }
-              .signature-section {
-                margin-top: 40px;
-                display: flex;
-                justify-content: space-between;
-              }
-              .signature {
-                text-align: center;
-                width: 40%;
-              }
-              .signature-line {
-                border-bottom: 1px solid #000;
-                margin-top: 30px;
-                padding-bottom: 5px;
-              }
-              @page {
-                size: A4;
-                margin: 2cm;
-              }
-              @media print {
-                body { margin: 0; }
-              }
-            </style>
-          </head>
-          <body>
-            ${populatedContent}
-            
-            <div class="signature-section">
-              <div class="signature">
-                <strong>PRESTATOR</strong>
-                <div class="signature-line"></div>
-              </div>
-              <div class="signature">
-                <strong>BENEFICIAR</strong>
-                <div class="signature-line"></div>
-              </div>
-            </div>
-          </body>
-          </html>
-        `;
-        
-        await page.setContent(htmlContent);
-        
-        // Generate PDF with better settings
-        const pdfBuffer = await page.pdf({
-          format: 'A4',
-          margin: {
-            top: '2cm',
-            right: '2cm',
-            bottom: '2cm',
-            left: '2cm'
-          },
-          printBackground: true,
-          preferCSSPageSize: true
-        });
-        
-        await browser.close();
-        
-        return new Response(pdfBuffer, {
-          headers: {
-            'Content-Type': 'application/pdf',
-            'Content-Disposition': `attachment; filename="contract-${contract.orderNumber}.pdf"`
-          }
-        });
-        
-      } catch (error) {
-        console.error('PDF generation error:', error);
-        await browser.close().catch(() => {});
-        throw new Error('Nu s-a putut genera PDF-ul');
-      }
-      res.send(pdfBuffer);
     } catch (error) {
       console.error("PDF generation error:", error);
-      res.status(500).json({ message: "Failed to generate PDF" });
+      throw new Error("Nu s-a putut genera PDF-ul");
     }
   });
 
