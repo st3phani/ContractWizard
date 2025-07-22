@@ -275,25 +275,25 @@ export default function ContractForm() {
     // Create minimal contract data for reservation
     const reservationData: ContractFormData = {
       beneficiary: {
-        name: formData.beneficiary?.name || "Rezervat",
+        name: formData.beneficiary?.name || "-",
         email: formData.beneficiary?.email || "rezervat@temp.com",
-        phone: formData.beneficiary?.phone || "000000000",
-        address: formData.beneficiary?.address || "",
-        cnp: formData.beneficiary?.cnp || "0000000000000",
-        companyName: formData.beneficiary?.companyName || "",
-        companyAddress: formData.beneficiary?.companyAddress || "",
-        companyCui: formData.beneficiary?.companyCui || "",
-        companyRegistrationNumber: formData.beneficiary?.companyRegistrationNumber || "",
-        companyLegalRepresentative: formData.beneficiary?.companyLegalRepresentative || "",
+        phone: formData.beneficiary?.phone || "-",
+        address: formData.beneficiary?.address || "-",
+        cnp: formData.beneficiary?.cnp || "-",
+        companyName: formData.beneficiary?.companyName || "-",
+        companyAddress: formData.beneficiary?.companyAddress || "-",
+        companyCui: formData.beneficiary?.companyCui || "-",
+        companyRegistrationNumber: formData.beneficiary?.companyRegistrationNumber || "-",
+        companyLegalRepresentative: formData.beneficiary?.companyLegalRepresentative || "-",
         isCompany: formData.beneficiary?.isCompany || false,
       },
       contract: {
         templateId: formData.contract?.templateId || 1,
-        value: formData.contract?.value || "",
+        value: formData.contract?.value || "-",
         currency: formData.contract?.currency || "RON",
-        startDate: formData.contract?.startDate || "",
-        endDate: formData.contract?.endDate || "",
-        notes: formData.contract?.notes || "",
+        startDate: formData.contract?.startDate || "-",
+        endDate: formData.contract?.endDate || "-",
+        notes: formData.contract?.notes || "-",
       }
     };
 
