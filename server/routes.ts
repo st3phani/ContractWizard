@@ -322,10 +322,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Update data being sent to database:", JSON.stringify(updateData, null, 2));
       
       // Update the contract
+      console.log("Calling storage.updateContract with ID:", id, "and data:", updateData);
       const contract = await storage.updateContract(id, updateData);
+      console.log("Result from storage.updateContract:", contract);
+      
       if (!contract) {
+        console.log("Contract update failed - contract not found");
         return res.status(404).json({ message: "Contract not found" });
       }
+      
+      console.log("Contract update successful, returning:", contract);
       res.json(contract);
     } catch (error) {
       if (error instanceof z.ZodError) {
