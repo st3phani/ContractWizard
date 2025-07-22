@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User, Save, Mail, Phone, Shield } from "lucide-react";
+import { User, Save, Mail, Phone, Shield, Lock, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -26,6 +26,18 @@ export default function Profile() {
     email: "",
     phone: "",
     role: "administrator",
+  });
+
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    confirm: false,
   });
 
   // Update local state when profile data is loaded
@@ -69,6 +81,44 @@ export default function Profile() {
       toast({
         title: "Eroare",
         description: "A apărut o eroare la actualizarea profilului",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Update password mutation
+  const updatePasswordMutation = useMutation({
+    mutationFn: async (data: { currentPassword: string; newPassword: string }) => {
+      const response = await fetch("/api/user-profile/password", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to update password");
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Succes",
+        description: "Parola a fost actualizată cu succes",
+      });
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Eroare",
+        description: error.message,
         variant: "destructive",
       });
     },
@@ -138,6 +188,89 @@ export default function Profile() {
     updateProfileMutation.mutate(profileData);
   };
 
+  const handlePasswordSave = () => {
+    const missingFields = [];
+    const fieldsToFocus = [];
+
+    if (!passwordData.currentPassword) {
+      missingFields.push('Parola curentă');
+      fieldsToFocus.push('currentPassword');
+    }
+    if (!passwordData.newPassword) {
+      missingFields.push('Parola nouă');
+      fieldsToFocus.push('newPassword');
+    }
+    if (!passwordData.confirmPassword) {
+      missingFields.push('Confirmarea parolei');
+      fieldsToFocus.push('confirmPassword');
+    }
+
+    if (missingFields.length > 0) {
+      // Add red border to missing fields
+      fieldsToFocus.forEach(fieldId => {
+        const element = document.getElementById(fieldId);
+        if (element) {
+          element.classList.add('field-error');
+        }
+      });
+
+      // Focus on first missing field
+      if (fieldsToFocus.length > 0) {
+        const firstField = document.getElementById(fieldsToFocus[0]);
+        if (firstField) {
+          firstField.focus();
+          firstField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+
+      return;
+    }
+
+    // Check if passwords match
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      const confirmField = document.getElementById('confirmPassword');
+      if (confirmField) {
+        confirmField.classList.add('field-error');
+        confirmField.focus();
+      }
+      toast({
+        title: "Eroare",
+        description: "Parola nouă și confirmarea nu coincid",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check password length
+    if (passwordData.newPassword.length < 6) {
+      const newPasswordField = document.getElementById('newPassword');
+      if (newPasswordField) {
+        newPasswordField.classList.add('field-error');
+        newPasswordField.focus();
+      }
+      toast({
+        title: "Eroare",
+        description: "Parola nouă trebuie să aibă cel puțin 6 caractere",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Remove error styling from all fields
+    ['currentPassword', 'newPassword', 'confirmPassword'].forEach(fieldId => {
+      const element = document.getElementById(fieldId);
+      if (element) {
+        element.classList.remove('field-error');
+      }
+    });
+
+    // Save password to backend
+    updatePasswordMutation.mutate({
+      currentPassword: passwordData.currentPassword,
+      newPassword: passwordData.newPassword,
+    });
+  };
+
   return (
     <div className="min-h-screen flex bg-gray-50">
       <Sidebar />
@@ -154,7 +287,7 @@ export default function Profile() {
         </header>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-6 space-y-6">
           <Card className="max-w-2xl">
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -269,6 +402,106 @@ export default function Profile() {
                 >
                   <Save className="h-4 w-4 mr-2" />
                   {updateProfileMutation.isPending ? "Se salvează..." : "Salvează Profil"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Password Section */}
+          <Card className="max-w-2xl">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Lock className="h-5 w-5 mr-2" />
+                Schimbare Parolă
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="currentPassword">Parola Curentă *</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="currentPassword"
+                    type={showPasswords.current ? "text" : "password"}
+                    value={passwordData.currentPassword}
+                    onChange={(e) => {
+                      setPasswordData({ ...passwordData, currentPassword: e.target.value });
+                      if (e.target.value.length > 0) {
+                        e.target.classList.remove('field-error');
+                      }
+                    }}
+                    className="pl-10 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPasswords.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="newPassword">Parola Nouă *</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="newPassword"
+                    type={showPasswords.new ? "text" : "password"}
+                    value={passwordData.newPassword}
+                    onChange={(e) => {
+                      setPasswordData({ ...passwordData, newPassword: e.target.value });
+                      if (e.target.value.length > 0) {
+                        e.target.classList.remove('field-error');
+                      }
+                    }}
+                    className="pl-10 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPasswords.new ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirmă Parola Nouă *</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="confirmPassword"
+                    type={showPasswords.confirm ? "text" : "password"}
+                    value={passwordData.confirmPassword}
+                    onChange={(e) => {
+                      setPasswordData({ ...passwordData, confirmPassword: e.target.value });
+                      if (e.target.value.length > 0) {
+                        e.target.classList.remove('field-error');
+                      }
+                    }}
+                    className="pl-10 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPasswords.confirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-4">
+                <Button 
+                  onClick={handlePasswordSave}
+                  disabled={updatePasswordMutation.isPending}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  {updatePasswordMutation.isPending ? "Se actualizează..." : "Actualizează Parola"}
                 </Button>
               </div>
             </CardContent>

@@ -70,6 +70,7 @@ export interface IStorage {
   // User Profile
   getUserProfile(): Promise<UserProfile | undefined>;
   updateUserProfile(profile: InsertUserProfile): Promise<UserProfile>;
+  updateUserPassword(currentPassword: string, newPassword: string): Promise<{ success: boolean; message: string }>;
 }
 
 export class MemStorage implements IStorage {
@@ -132,6 +133,7 @@ export class MemStorage implements IStorage {
       email: "admin@example.com",
       phone: "0700000000",
       role: "administrator",
+      password: "admin123",
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -145,9 +147,18 @@ export class MemStorage implements IStorage {
       email: profile.email,
       phone: profile.phone,
       role: profile.role || "administrator",
+      password: "admin123",
       createdAt: new Date(),
       updatedAt: new Date()
     };
+  }
+
+  async updateUserPassword(currentPassword: string, newPassword: string): Promise<{ success: boolean; message: string }> {
+    // For MemStorage, just validate current password is "admin123"
+    if (currentPassword !== "admin123") {
+      return { success: false, message: "Current password is incorrect" };
+    }
+    return { success: true, message: "Password updated successfully" };
   }
 
   private contractTemplates: Map<number, ContractTemplate>;
@@ -1043,6 +1054,27 @@ export class DatabaseStorage implements IStorage {
         .returning();
       return created;
     }
+  }
+
+  async updateUserPassword(currentPassword: string, newPassword: string): Promise<{ success: boolean; message: string }> {
+    const existing = await this.getUserProfile();
+    
+    if (!existing) {
+      return { success: false, message: "User profile not found" };
+    }
+
+    // Check if current password matches
+    if (existing.password !== currentPassword) {
+      return { success: false, message: "Current password is incorrect" };
+    }
+
+    // Update password
+    await db
+      .update(userProfiles)
+      .set({ password: newPassword, updatedAt: new Date() })
+      .where(eq(userProfiles.id, existing.id));
+
+    return { success: true, message: "Password updated successfully" };
   }
 
 }

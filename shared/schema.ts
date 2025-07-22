@@ -56,6 +56,7 @@ export const userProfiles = pgTable("user_profiles", {
   email: text("email").notNull().unique(),
   phone: text("phone").notNull(),
   role: text("role").notNull().default("administrator"),
+  password: text("password").notNull().default("admin123"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
