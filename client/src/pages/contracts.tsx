@@ -44,9 +44,22 @@ export default function ContractsPage() {
     setLocation(`/contract-form?edit=${contract.id}`);
   };
 
-  const handleDownload = (contract: ContractWithDetails) => {
-    setSelectedContract(contract);
-    // PDF download functionality will be handled by ContractModal
+  const handleDownload = async (contract: ContractWithDetails) => {
+    try {
+      const response = await fetch(`/api/contracts/${contract.id}/pdf`);
+      const blob = await response.blob();
+      
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `contract-${contract.orderNumber}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Eroare la descărcarea PDF-ului:', error);
+    }
   };
 
   const handleEmail = (contract: ContractWithDetails) => {
