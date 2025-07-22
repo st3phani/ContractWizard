@@ -72,6 +72,7 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
               <div 
                 dangerouslySetInnerHTML={{ __html: previewContent }}
                 className="prose prose-sm max-w-none"
+                style={{ fontFamily: 'Times New Roman, serif' }}
               />
             )}
           </div>
