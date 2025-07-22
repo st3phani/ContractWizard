@@ -73,6 +73,12 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Set Arial font for all contract content */
+  .contract-content, .prose, .ProseMirror {
+    font-family: Arial, sans-serif !important;
     font-feature-settings: "rlig" 1, "calt" 1;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   }

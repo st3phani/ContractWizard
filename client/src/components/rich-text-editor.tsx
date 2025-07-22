@@ -452,7 +452,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
       <style>{`
         .ProseMirror {
           outline: none !important;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-family: Arial, sans-serif;
           font-size: 14px;
           line-height: 1.4;
         }

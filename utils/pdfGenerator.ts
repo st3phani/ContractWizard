@@ -140,6 +140,7 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
   const margin = 25;
   const usableWidth = pageWidth - (2 * margin);
   
+  // Use Arial font (same as editor and display)
   pdf.setFont('helvetica', 'normal');
   pdf.setFontSize(12);
   
