@@ -543,8 +543,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (trimmedLine.includes('**')) {
             // For lines with bold text, we need to handle word wrapping more carefully
             const parts = trimmedLine.split('**');
-            let currentLineText = '';
-            let currentLineParts = [];
+            let currentLineParts: Array<{text: string, bold: boolean}> = [];
             
             for (let i = 0; i < parts.length; i++) {
               if (parts[i]) {
