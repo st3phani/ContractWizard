@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { formatDate, getStatusColor, getStatusText, getInitials } from "@/lib/utils";
+import { formatDate, getStatusColor, getStatusText, getInitials, getAvatarColor } from "@/lib/utils";
 import type { ContractWithDetails } from "@shared/schema";
 
 interface ContractTableProps {
@@ -129,7 +129,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                 <TableCell>
                   <div className="flex items-center space-x-3">
                     <Avatar>
-                      <AvatarFallback>
+                      <AvatarFallback className={`${getAvatarColor(contract.beneficiary.name || "")} text-white`}>
                         {getInitials(contract.beneficiary.name || "")}
                       </AvatarFallback>
                     </Avatar>

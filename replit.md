@@ -114,6 +114,7 @@ Three main entities:
 ```
 Changelog:
 
+- July 22, 2025. Added unique background colors for beneficiary avatars based on name hash with 16-color palette
 - July 22, 2025. Improved beneficiary avatar initials to show first letter of first and last name instead of first two characters
 - July 22, 2025. Added reserved contracts counter to dashboard stats with purple calendar icon and 5-column layout
 - July 22, 2025. Implemented pagination for contract table with configurable items per page (5, 10, 20, 50) and navigation controls
