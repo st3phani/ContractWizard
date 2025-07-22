@@ -553,7 +553,7 @@ export class DatabaseStorage implements IStorage {
         template: true,
         beneficiary: true,
       },
-      orderBy: (contracts, { desc }) => [desc(contracts.createdAt)],
+      orderBy: (contracts, { desc }) => [desc(contracts.id)],
     });
     
     // Handle reserved contracts with beneficiaryId = 0

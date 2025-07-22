@@ -114,6 +114,8 @@ Three main entities:
 ```
 Changelog:
 
+- July 22, 2025. Modified contract reservation system to not create temporary beneficiaries - reserved contracts now use beneficiary_id = 0 instead
+- July 22, 2025. Updated contract sorting to use contract ID in descending order for both dashboard and contracts page
 - July 22, 2025. Implemented contract deletion restriction - only the latest contract (highest order number) can be deleted, with disabled/opaque delete button for other contracts
 - July 22, 2025. Completed comprehensive contract editing functionality with all data fields saving correctly to PostgreSQL database
 - July 22, 2025. Fixed contract date fields (start date and end date) not saving during contract updates by simplifying date processing
