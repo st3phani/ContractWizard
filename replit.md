@@ -119,7 +119,7 @@ Three main entities:
 ```
 Changelog:
 
-- July 22, 2025. **PDF GENERATION v1.0.0 RELEASE** - Production-ready PDF system with complete Romanian character encoding fixes, perfect text wrapping, bold formatting support, and automatic page breaks. Text fits perfectly within page margins with correct word wrapping for mixed bold/normal text. Moved PDF generation logic to utils/pdfGenerator.ts for better code organization. **Status: Production Ready**
+- July 22, 2025. **PDF GENERATION v1.0.0 RESTORED** - Restored original v1.0.0 production-ready PDF system with complete Romanian character encoding fixes, perfect text wrapping, bold formatting support, and automatic page breaks. Text fits perfectly within page margins with correct word wrapping for mixed bold/normal text. Moved PDF generation logic to utils/pdfGenerator.ts for better code organization. **Status: Production Ready**
 - July 22, 2025. Added ID column to beneficiaries table and implemented descending ID sorting for newest-first display
 - July 22, 2025. Fixed beneficiary creation for companies by correcting form field mapping and removing duplicate representative fields
 - July 22, 2025. Resolved backend API route missing for beneficiary updates (PUT /api/beneficiaries/:id) 

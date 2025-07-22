@@ -78,13 +78,17 @@ export function populateTemplate(template: string, data: PDFGenerationData): str
 }
 
 export function htmlToText(htmlContent: string): string {
-  // Simple HTML to text conversion - extract only the text content
+  // Better HTML to text conversion that preserves content
   let cleanText = htmlContent
-    // Remove all HTML tags and extract only text content
-    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '') // Remove style tags completely
-    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '') // Remove script tags completely
-    .replace(/<table[^>]*>[\s\S]*?<\/table>/g, '') // Remove table elements completely
-    .replace(/<[^>]*>/g, '') // Remove all HTML tags
+    // First, extract and preserve text content from specific elements
+    .replace(/<span[^>]*>(.*?)<\/span>/g, '$1') // Extract span content
+    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**') // Mark bold content
+    .replace(/<p[^>]*style="[^"]*center[^"]*"[^>]*>(.*?)<\/p>/gi, '\n\n**CENTER**$1') // Mark centered content
+    .replace(/<p[^>]*>(.*?)<\/p>/gi, '\n$1\n') // Extract paragraph content
+    .replace(/<br\s*\/?>/gi, '\n') // Convert breaks to newlines
+    .replace(/<div[^>]*>(.*?)<\/div>/gi, '\n$1\n') // Extract div content
+    .replace(/<table[^>]*>[\s\S]*?<\/table>/g, '') // Remove table elements
+    .replace(/<[^>]*>/g, '') // Remove remaining HTML tags
     // Clean up HTML entities
     .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
@@ -92,13 +96,21 @@ export function htmlToText(htmlContent: string): string {
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
-    // Remove all asterisks and formatting markers
-    .replace(/\*/g, '')
-    .replace(/BOLD_MARKER|END_BOLD|CENTER_MARKER|END_CENTER/g, '')
+    // Fix Romanian diacritics and encoding issues
+    .replace(/ă/g, 'ă')
+    .replace(/â/g, 'â')
+    .replace(/î/g, 'î')
+    .replace(/ș/g, 'ș')
+    .replace(/ț/g, 'ț')
+    .replace(/Ă/g, 'Ă')
+    .replace(/Â/g, 'Â')
+    .replace(/Î/g, 'Î')
+    .replace(/Ș/g, 'Ș')
+    .replace(/Ț/g, 'Ț')
     // Clean up whitespace but preserve structure
-    .replace(/[ \t]+/g, ' ')
-    .replace(/\n[ \t]+/g, '\n')
-    .replace(/\n{3,}/g, '\n\n')
+    .replace(/[ \t]+/g, ' ') // Multiple spaces to single
+    .replace(/\n[ \t]+/g, '\n') // Remove leading spaces on lines
+    .replace(/\n{3,}/g, '\n\n') // Max 2 consecutive newlines
     .trim();
 
   return cleanText;
@@ -156,13 +168,13 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
         y = margin + 10;
       }
     
-      // Handle title line - make it centered and bold
-      if (trimmedLine.includes('CONTRACT') && trimmedLine.includes('Nr.')) {
-        const titleText = fixRomanianChars(trimmedLine.trim());
-        if (titleText) {
+      // Handle centered content
+      if (trimmedLine.includes('**CENTER**')) {
+        const centerText = fixRomanianChars(trimmedLine.replace('**CENTER**', '').trim());
+        if (centerText) {
           pdf.setFontSize(16);
           pdf.setFont('helvetica', 'bold');
-          pdf.text(titleText, pageWidth / 2, y, { align: 'center' });
+          pdf.text(centerText, pageWidth / 2, y, { align: 'center' });
           pdf.setFontSize(12);
           pdf.setFont('helvetica', 'normal');
           y += lineHeight + 5;
@@ -175,8 +187,64 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
         y += 3;
       }
       
-      // Process normal text with word wrapping
-      {
+      // Process text with proper word wrapping (handle both bold and regular text)
+      if (trimmedLine.includes('**')) {
+        // For lines with bold text, we need to handle word wrapping more carefully
+        const parts = trimmedLine.split('**');
+        let currentLineParts: Array<{text: string, bold: boolean}> = [];
+        
+        for (let i = 0; i < parts.length; i++) {
+          if (parts[i]) {
+            const isBold = i % 2 === 1;
+            const words = parts[i].split(' ');
+            
+            for (const word of words) {
+              const testPart = { text: fixRomanianChars(word), bold: isBold };
+              const testLine = currentLineParts.concat([testPart]);
+              
+              // Calculate width of test line
+              let testWidth = 0;
+              for (const part of testLine) {
+                pdf.setFont('helvetica', part.bold ? 'bold' : 'normal');
+                testWidth += pdf.getTextWidth(part.text + ' ');
+              }
+              
+              if (testWidth > usableWidth && currentLineParts.length > 0) {
+                // Render current line
+                let x = margin;
+                for (const part of currentLineParts) {
+                  pdf.setFont('helvetica', part.bold ? 'bold' : 'normal');
+                  pdf.text(part.text, x, y);
+                  x += pdf.getTextWidth(part.text + ' ');
+                }
+                y += lineHeight;
+                
+                if (y > pageHeight - 30) {
+                  pdf.addPage();
+                  y = margin + 10;
+                }
+                
+                currentLineParts = [testPart];
+              } else {
+                currentLineParts.push(testPart);
+              }
+            }
+          }
+        }
+        
+        // Render remaining parts
+        if (currentLineParts.length > 0) {
+          let x = margin;
+          for (const part of currentLineParts) {
+            pdf.setFont('helvetica', part.bold ? 'bold' : 'normal');
+            pdf.text(part.text, x, y);
+            x += pdf.getTextWidth(part.text + ' ');
+          }
+          y += lineHeight;
+        }
+        
+        pdf.setFont('helvetica', 'normal');
+      } else {
         // Regular text with simple word wrapping
         const words = trimmedLine.split(' ');
         let currentLine = '';
