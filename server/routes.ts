@@ -171,6 +171,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/beneficiaries/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const beneficiaryData = req.body;
+      const updatedBeneficiary = await storage.updateBeneficiary(id, beneficiaryData);
+      if (!updatedBeneficiary) {
+        return res.status(404).json({ message: "Beneficiary not found" });
+      }
+      res.json(updatedBeneficiary);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid beneficiary data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update beneficiary" });
+    }
+  });
+
   app.delete("/api/beneficiaries/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
