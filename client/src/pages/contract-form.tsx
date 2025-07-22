@@ -697,7 +697,10 @@ export default function ContractForm() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Template Contract</FormLabel>
-                          <Select onValueChange={(value) => field.onChange(parseInt(value))}>
+                          <Select 
+                            value={field.value?.toString() || ""} 
+                            onValueChange={(value) => field.onChange(parseInt(value))}
+                          >
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Selectează template" />
