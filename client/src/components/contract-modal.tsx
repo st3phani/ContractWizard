@@ -22,14 +22,24 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
     if (contract && isOpen) {
       setIsLoading(true);
       fetch(`/api/contracts/${contract.id}/preview`)
-        .then(res => res.json())
+        .then(async res => {
+          if (!res.ok) {
+            const errorData = await res.json().catch(() => ({ message: 'Unknown error' }));
+            throw new Error(`HTTP ${res.status}: ${errorData.message || 'Server error'}`);
+          }
+          return res.json();
+        })
         .then(data => {
-          setPreviewContent(data.content);
+          if (data.content) {
+            setPreviewContent(data.content);
+          } else {
+            setPreviewContent("Nu s-a putut încărca conținutul contractului.");
+          }
           setIsLoading(false);
         })
         .catch(error => {
           console.error('Failed to load preview:', error);
-          setPreviewContent("Eroare la încărcarea contractului...");
+          setPreviewContent(`Eroare la încărcarea contractului: ${error.message}`);
           setIsLoading(false);
         });
     }

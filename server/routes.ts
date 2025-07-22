@@ -382,36 +382,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/contracts/:id/preview", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
+      
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid contract ID" });
+      }
+      
       const contract = await storage.getContract(id);
       if (!contract) {
         return res.status(404).json({ message: "Contract not found" });
+      }
+      
+      if (!contract.template) {
+        return res.status(400).json({ message: "Contract has no template" });
+      }
+      
+      if (!contract.template.content) {
+        return res.status(400).json({ message: "Template has no content" });
       }
       
       // Get company settings for the latest provider data
       const companySettings = await storage.getCompanySettings();
       
       const populationData = {
-        orderNumber: contract.orderNumber,
+        orderNumber: contract.orderNumber || 0,
         currentDate: new Date().toLocaleDateString('ro-RO'),
-        beneficiary: contract.beneficiary,
+        beneficiary: contract.beneficiary || {},
         contract: {
-          startDate: contract.startDate?.toLocaleDateString('ro-RO'),
-          endDate: contract.endDate?.toLocaleDateString('ro-RO'),
-          value: contract.value,
-          currency: contract.currency,
-          notes: contract.notes
+          startDate: contract.startDate?.toLocaleDateString('ro-RO') || '',
+          endDate: contract.endDate?.toLocaleDateString('ro-RO') || '',
+          value: contract.value || '',
+          currency: contract.currency || 'RON',
+          notes: contract.notes || ''
         },
         provider: {
-          name: companySettings?.name || contract.providerName,
-          address: companySettings?.address || contract.providerAddress,
-          phone: companySettings?.phone || contract.providerPhone,
-          email: companySettings?.email || contract.providerEmail,
-          cui: companySettings?.cui || contract.providerCui,
-          registrationNumber: companySettings?.registrationNumber || contract.providerRegistrationNumber,
-          legalRepresentative: companySettings?.legalRepresentative || contract.providerLegalRepresentative,
+          name: companySettings?.name || contract.providerName || '',
+          address: companySettings?.address || contract.providerAddress || '',
+          phone: companySettings?.phone || contract.providerPhone || '',
+          email: companySettings?.email || contract.providerEmail || '',
+          cui: companySettings?.cui || contract.providerCui || '',
+          registrationNumber: companySettings?.registrationNumber || contract.providerRegistrationNumber || '',
+          legalRepresentative: companySettings?.legalRepresentative || contract.providerLegalRepresentative || '',
         }
       };
       
+      console.log('Contract ID:', id);
+      console.log('Contract found:', !!contract);
       console.log('Template content:', contract.template.content);
       console.log('Population data:', JSON.stringify(populationData, null, 2));
       
@@ -422,7 +437,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ content: populatedContent });
     } catch (error) {
       console.error('Preview error:', error);
-      res.status(500).json({ message: "Failed to generate contract preview" });
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      res.status(500).json({ message: `Failed to generate contract preview: ${errorMessage}` });
     }
   });
 
