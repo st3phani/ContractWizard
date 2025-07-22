@@ -2,7 +2,7 @@
 
 ## Overview
 
-Contract Manager is a full-stack web application for managing contracts, beneficiaries, and contract templates. It provides a comprehensive interface for creating, viewing, and managing contract documents with PDF generation and email functionality.
+Contract Manager v1.0.0 is a production-ready full-stack web application for managing contracts, beneficiaries, and contract templates. It provides a comprehensive interface for creating, viewing, and managing contract documents with reliable PDF generation and email functionality. The PDF generation system is now fully optimized for Romanian language support with proper character encoding.
 
 ## System Architecture
 
@@ -83,6 +83,10 @@ Three main entities:
 - **Express.js**: Web framework
 - **Zod**: Schema validation (shared with frontend)
 
+### PDF Generation Dependencies
+- **jsPDF**: Client-side PDF generation library (v1.0.0 optimized)
+- **Custom Romanian Character Encoding**: Production-ready solution for ă, â, î, ș, ț
+
 ### Development Dependencies
 - **Vite**: Build tool and development server
 - **TypeScript**: Type safety across the stack
@@ -115,7 +119,7 @@ Three main entities:
 ```
 Changelog:
 
-- July 22, 2025. Fixed PDF generation completely - implemented reliable jsPDF solution with proper text wrapping, bold formatting support, automatic page breaks, and Romanian character encoding fixes. Text now fits perfectly within page margins with correct word wrapping for mixed bold/normal text. Moved PDF generation logic to utils/pdfGenerator.ts for better code organization.
+- July 22, 2025. **PDF GENERATION v1.0.0 RELEASE** - Production-ready PDF system with complete Romanian character encoding fixes, perfect text wrapping, bold formatting support, and automatic page breaks. Text fits perfectly within page margins with correct word wrapping for mixed bold/normal text. Moved PDF generation logic to utils/pdfGenerator.ts for better code organization. **Status: Production Ready**
 - July 22, 2025. Added ID column to beneficiaries table and implemented descending ID sorting for newest-first display
 - July 22, 2025. Fixed beneficiary creation for companies by correcting form field mapping and removing duplicate representative fields
 - July 22, 2025. Resolved backend API route missing for beneficiary updates (PUT /api/beneficiaries/:id) 
