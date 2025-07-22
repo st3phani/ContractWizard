@@ -105,17 +105,6 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                 <SelectItem value="reserved">Rezervat</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={itemsPerPage.toString()} onValueChange={handleItemsPerPageChange}>
-              <SelectTrigger className="w-[130px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="5">5 pe pagină</SelectItem>
-                <SelectItem value="10">10 pe pagină</SelectItem>
-                <SelectItem value="20">20 pe pagină</SelectItem>
-                <SelectItem value="50">50 pe pagină</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </div>
       </CardHeader>
