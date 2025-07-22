@@ -638,13 +638,33 @@ export class DatabaseStorage implements IStorage {
     return maxOrderNumber + 1;
   }
 
-  async reserveContract(orderNumber: number, companySettings: CompanySettings): Promise<ContractWithDetails> {
+  async reserveContract(orderNumber: number, companySettings: CompanySettings, customCreatedDate?: string): Promise<ContractWithDetails> {
+    // Create a temporary beneficiary for reserved contract
+    const [reservedBeneficiary] = await db
+      .insert(beneficiaries)
+      .values({
+        name: "Rezervat",
+        email: `rezervat-${orderNumber}@temp.com`,
+        phone: "-",
+        address: "-",
+        cnp: "-",
+        companyName: "-",
+        companyAddress: "-",
+        companyCui: "-",
+        companyRegistrationNumber: "-",
+        companyLegalRepresentative: "-",
+        isCompany: false,
+      })
+      .returning();
+
+    const createdAt = customCreatedDate ? new Date(customCreatedDate) : new Date();
+
     const [reservedContract] = await db
       .insert(contracts)
       .values({
         orderNumber,
-        templateId: null,
-        beneficiaryId: null,
+        templateId: 0,
+        beneficiaryId: reservedBeneficiary.id,
         value: null,
         currency: "RON",
         startDate: null,
@@ -658,6 +678,7 @@ export class DatabaseStorage implements IStorage {
         providerCui: companySettings.cui,
         providerRegistrationNumber: companySettings.registrationNumber,
         providerLegalRepresentative: companySettings.legalRepresentative,
+        createdAt,
       })
       .returning();
 
