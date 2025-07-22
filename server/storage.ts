@@ -727,11 +727,11 @@ export class DatabaseStorage implements IStorage {
         };
         return {
           ...contract,
-          template: contract.template || mockTemplate,
-          beneficiary: contract.beneficiary || mockBeneficiary
-        };
+          template: mockTemplate,
+          beneficiary: mockBeneficiary
+        } as ContractWithDetails;
       }
-      return contract;
+      return contract as ContractWithDetails;
     });
   }
 
