@@ -53,3 +53,18 @@ export function getStatusText(status: string): string {
       return "Necunoscut";
   }
 }
+
+export function getInitials(name: string): string {
+  if (!name) return "B";
+  
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) {
+    // Single name - take first 2 characters
+    return parts[0].substring(0, 2).toUpperCase();
+  } else {
+    // Multiple names - take first letter of first and last name
+    const first = parts[0].charAt(0);
+    const last = parts[parts.length - 1].charAt(0);
+    return (first + last).toUpperCase();
+  }
+}

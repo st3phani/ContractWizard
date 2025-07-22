@@ -114,6 +114,7 @@ Three main entities:
 ```
 Changelog:
 
+- July 22, 2025. Improved beneficiary avatar initials to show first letter of first and last name instead of first two characters
 - July 22, 2025. Added reserved contracts counter to dashboard stats with purple calendar icon and 5-column layout
 - July 22, 2025. Implemented pagination for contract table with configurable items per page (5, 10, 20, 50) and navigation controls
 - July 22, 2025. Fixed contract editing functionality by removing strict validation in edit mode that was preventing updates

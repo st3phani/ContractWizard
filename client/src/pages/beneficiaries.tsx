@@ -12,7 +12,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { formatDate } from "@/lib/utils";
+import { formatDate, getInitials } from "@/lib/utils";
 import Sidebar from "@/components/sidebar";
 import { BeneficiaryFormFields } from "@/components/beneficiary-form-fields";
 import type { Beneficiary, InsertBeneficiary } from "@shared/schema";
@@ -245,7 +245,7 @@ export default function Beneficiaries() {
                           <div className="flex items-center space-x-3">
                             <Avatar>
                               <AvatarFallback>
-                                {beneficiary.name.substring(0, 2).toUpperCase()}
+                                {getInitials(beneficiary.name || "")}
                               </AvatarFallback>
                             </Avatar>
                             <div>
