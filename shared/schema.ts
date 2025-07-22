@@ -24,7 +24,12 @@ export const beneficiaries = pgTable("beneficiaries", {
   companyCui: text("company_cui"),
   companyRegistrationNumber: text("company_registration_number"),
   companyLegalRepresentative: text("company_legal_representative"),
+  // EU Entity fields (new category)
+  euVatNumber: text("eu_vat_number"), // EU VAT Number (ex: DE123456789)
+  euCountryCode: text("eu_country_code"), // Country code (ex: DE, FR, IT)
+  euTaxId: text("eu_tax_id"), // EU Tax ID
   isCompany: boolean("is_company").notNull().default(false),
+  isEuEntity: boolean("is_eu_entity").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -113,6 +118,9 @@ export const insertBeneficiarySchema = createInsertSchema(beneficiaries).omit({
   companyCui: z.string().optional(),
   companyRegistrationNumber: z.string().optional(),
   companyLegalRepresentative: z.string().optional(),
+  euVatNumber: z.string().optional(),
+  euCountryCode: z.string().optional(),
+  euTaxId: z.string().optional(),
 });
 
 export const insertCompanySettingsSchema = createInsertSchema(companySettings).omit({

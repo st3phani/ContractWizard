@@ -300,6 +300,10 @@ _________________           _________________`,
       companyRegistrationNumber: beneficiary.companyRegistrationNumber ?? null,
       companyLegalRepresentative: beneficiary.companyLegalRepresentative ?? null,
       isCompany: beneficiary.isCompany ?? false,
+      isEuEntity: beneficiary.isEuEntity ?? false,
+      euVatNumber: beneficiary.euVatNumber ?? null,
+      euCountryCode: beneficiary.euCountryCode ?? null,
+      euTaxId: beneficiary.euTaxId ?? null,
       createdAt: new Date()
     };
     this.beneficiaries.set(id, newBeneficiary);

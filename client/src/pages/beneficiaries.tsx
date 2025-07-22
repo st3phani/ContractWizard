@@ -34,7 +34,11 @@ export default function Beneficiaries() {
     companyAddress: "",
     companyCui: "",
     companyRegistrationNumber: "",
+    euVatNumber: "",
+    euCountryCode: "",
+    euTaxId: "",
     isCompany: false,
+    isEuEntity: false,
   });
   
   const { toast } = useToast();
@@ -84,7 +88,7 @@ export default function Beneficiaries() {
       console.log("API Response:", result);
       queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
       setIsCreateModalOpen(false);
-      setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
+      setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", euVatNumber: "", euCountryCode: "", euTaxId: "", isCompany: false, isEuEntity: false });
       setSelectedBeneficiary(null);
     },
     onError: (error) => {
@@ -104,7 +108,7 @@ export default function Beneficiaries() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
       setIsCreateModalOpen(false);
-      setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
+      setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", euVatNumber: "", euCountryCode: "", euTaxId: "", isCompany: false, isEuEntity: false });
       setSelectedBeneficiary(null);
     },
     onError: () => {
@@ -240,7 +244,11 @@ export default function Beneficiaries() {
       companyAddress: beneficiary.companyAddress ?? "",
       companyCui: beneficiary.companyCui ?? "",
       companyRegistrationNumber: beneficiary.companyRegistrationNumber ?? "",
+      euVatNumber: beneficiary.euVatNumber ?? "",
+      euCountryCode: beneficiary.euCountryCode ?? "",
+      euTaxId: beneficiary.euTaxId ?? "",
       isCompany: beneficiary.isCompany ?? false,
+      isEuEntity: beneficiary.isEuEntity ?? false,
     });
     setIsCreateModalOpen(true);
   };
@@ -254,7 +262,7 @@ export default function Beneficiaries() {
   const resetForm = () => {
     setIsCreateModalOpen(false);
     setSelectedBeneficiary(null);
-    setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
+    setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", euVatNumber: "", euCountryCode: "", euTaxId: "", isCompany: false, isEuEntity: false });
   };
 
   return (
@@ -326,7 +334,12 @@ export default function Beneficiaries() {
                             </Avatar>
                             <div>
                               <div className="font-medium">{beneficiary.name}</div>
-                              {beneficiary.companyName && (
+                              {beneficiary.isEuEntity ? (
+                                <div className="text-sm text-blue-600 flex items-center">
+                                  <Building className="h-3 w-3 mr-1" />
+                                  Entitate UE ({beneficiary.euCountryCode || "UE"})
+                                </div>
+                              ) : beneficiary.companyName && (
                                 <div className="text-sm text-gray-500 flex items-center">
                                   <Building className="h-3 w-3 mr-1" />
                                   {beneficiary.companyName}
@@ -361,7 +374,12 @@ export default function Beneficiaries() {
                                 <span className="text-xs text-gray-400">CUI:</span> {beneficiary.companyCui}
                               </div>
                             )}
-                            {!beneficiary.cnp && !beneficiary.companyCui && "—"}
+                            {beneficiary.euVatNumber && (
+                              <div className="text-sm">
+                                <span className="text-xs text-gray-400">TVA UE:</span> {beneficiary.euVatNumber}
+                              </div>
+                            )}
+                            {!beneficiary.cnp && !beneficiary.companyCui && !beneficiary.euVatNumber && "—"}
                           </div>
                         </TableCell>
                         <TableCell>{formatDate(beneficiary.createdAt)}</TableCell>
