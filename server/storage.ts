@@ -555,7 +555,32 @@ export class DatabaseStorage implements IStorage {
       },
       orderBy: (contracts, { desc }) => [desc(contracts.createdAt)],
     });
-    return contractsWithDetails;
+    
+    // Handle reserved contracts with beneficiaryId = 0
+    return contractsWithDetails.map(contract => {
+      if (contract.beneficiaryId === 0) {
+        const mockBeneficiary: Beneficiary = {
+          id: 0,
+          name: "Rezervat",
+          email: "",
+          phone: null,
+          address: null,
+          cnp: null,
+          companyName: null,
+          companyAddress: null,
+          companyCui: null,
+          companyRegistrationNumber: null,
+          companyLegalRepresentative: null,
+          isCompany: false,
+          createdAt: new Date()
+        };
+        return {
+          ...contract,
+          beneficiary: mockBeneficiary
+        };
+      }
+      return contract;
+    });
   }
 
   async getContract(id: number): Promise<ContractWithDetails | undefined> {
@@ -566,7 +591,33 @@ export class DatabaseStorage implements IStorage {
         beneficiary: true,
       },
     });
-    return contract || undefined;
+    
+    if (!contract) return undefined;
+    
+    // Handle reserved contracts with beneficiaryId = 0
+    if (contract.beneficiaryId === 0) {
+      const mockBeneficiary: Beneficiary = {
+        id: 0,
+        name: "Rezervat",
+        email: "",
+        phone: null,
+        address: null,
+        cnp: null,
+        companyName: null,
+        companyAddress: null,
+        companyCui: null,
+        companyRegistrationNumber: null,
+        companyLegalRepresentative: null,
+        isCompany: false,
+        createdAt: new Date()
+      };
+      return {
+        ...contract,
+        beneficiary: mockBeneficiary
+      };
+    }
+    
+    return contract;
   }
 
   async getContractByOrderNumber(orderNumber: number): Promise<ContractWithDetails | undefined> {
@@ -577,7 +628,33 @@ export class DatabaseStorage implements IStorage {
         beneficiary: true,
       },
     });
-    return contract || undefined;
+    
+    if (!contract) return undefined;
+    
+    // Handle reserved contracts with beneficiaryId = 0
+    if (contract.beneficiaryId === 0) {
+      const mockBeneficiary: Beneficiary = {
+        id: 0,
+        name: "Rezervat",
+        email: "",
+        phone: null,
+        address: null,
+        cnp: null,
+        companyName: null,
+        companyAddress: null,
+        companyCui: null,
+        companyRegistrationNumber: null,
+        companyLegalRepresentative: null,
+        isCompany: false,
+        createdAt: new Date()
+      };
+      return {
+        ...contract,
+        beneficiary: mockBeneficiary
+      };
+    }
+    
+    return contract;
   }
 
   async createContract(contractData: InsertContract): Promise<ContractWithDetails> {
@@ -639,24 +716,6 @@ export class DatabaseStorage implements IStorage {
   }
 
   async reserveContract(orderNumber: number, companySettings: CompanySettings, customCreatedDate?: string): Promise<ContractWithDetails> {
-    // Create a temporary beneficiary for reserved contract
-    const [reservedBeneficiary] = await db
-      .insert(beneficiaries)
-      .values({
-        name: "Rezervat",
-        email: `rezervat-${orderNumber}@temp.com`,
-        phone: "-",
-        address: "-",
-        cnp: "-",
-        companyName: "-",
-        companyAddress: "-",
-        companyCui: "-",
-        companyRegistrationNumber: "-",
-        companyLegalRepresentative: "-",
-        isCompany: false,
-      })
-      .returning();
-
     const createdAt = customCreatedDate ? new Date(customCreatedDate) : new Date();
 
     const [reservedContract] = await db
@@ -664,7 +723,7 @@ export class DatabaseStorage implements IStorage {
       .values({
         orderNumber,
         templateId: 0,
-        beneficiaryId: reservedBeneficiary.id,
+        beneficiaryId: 0,
         value: null,
         currency: "RON",
         startDate: null,
