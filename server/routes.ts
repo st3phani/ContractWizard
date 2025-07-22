@@ -437,6 +437,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const populatedContent = populateContractTemplate(contract.template.content, {
         orderNumber: contract.orderNumber,
+        currentDate: new Date().toLocaleDateString('ro-RO'),
         beneficiary: contract.beneficiary,
         contract: {
           startDate: contract.startDate?.toLocaleDateString('ro-RO'),
@@ -456,12 +457,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
       
-      // For now, return the text content. In a real implementation, 
-      // you would use a PDF library like jsPDF or puppeteer
+      // Generate PDF using puppeteer
+      const puppeteer = await import('puppeteer');
+      const browser = await puppeteer.default.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
+      
+      const page = await browser.newPage();
+      
+      // Create a complete HTML document with proper styling
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Contract ${contract.orderNumber}</title>
+          <style>
+            body {
+              font-family: 'Times New Roman', serif;
+              font-size: 14px;
+              line-height: 1.6;
+              margin: 20px;
+              color: #000;
+            }
+            p {
+              margin: 10px 0;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin: 20px 0;
+            }
+            td {
+              padding: 10px;
+              border: 1px solid #000;
+              vertical-align: top;
+            }
+            .center {
+              text-align: center;
+            }
+            .bold {
+              font-weight: bold;
+            }
+          </style>
+        </head>
+        <body>
+          ${populatedContent}
+        </body>
+        </html>
+      `;
+      
+      await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+      
+      const pdfBuffer = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '20mm',
+          right: '20mm',
+          bottom: '20mm',
+          left: '20mm'
+        }
+      });
+      
+      await browser.close();
+      
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="contract-${contract.orderNumber}.pdf"`);
-      res.send(populatedContent);
+      res.send(pdfBuffer);
     } catch (error) {
+      console.error("PDF generation error:", error);
       res.status(500).json({ message: "Failed to generate PDF" });
     }
   });
