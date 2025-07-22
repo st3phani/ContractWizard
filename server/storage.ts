@@ -327,8 +327,10 @@ _________________           _________________`,
     };
   }
 
-  async createContract(contractData: InsertContract): Promise<ContractWithDetails> {
+  async createContract(contractData: InsertContract, customCreatedDate?: string): Promise<ContractWithDetails> {
     const id = this.currentContractId++;
+    const createdAt = customCreatedDate ? new Date(customCreatedDate) : new Date();
+    
     const newContract: Contract = {
       id,
       orderNumber: contractData.orderNumber,
@@ -347,7 +349,7 @@ _________________           _________________`,
       providerCui: null,
       providerRegistrationNumber: null,
       providerLegalRepresentative: null,
-      createdAt: new Date(),
+      createdAt,
       sentAt: null,
       completedAt: null
     };
@@ -412,8 +414,10 @@ _________________           _________________`,
     return maxOrderNumber + 1;
   }
 
-  async reserveContract(orderNumber: number, companySettings: CompanySettings): Promise<ContractWithDetails> {
+  async reserveContract(orderNumber: number, companySettings: CompanySettings, customCreatedDate?: string): Promise<ContractWithDetails> {
     const id = this.currentContractId++;
+    const createdAt = customCreatedDate ? new Date(customCreatedDate) : new Date();
+    
     const reservedContract: Contract = {
       id,
       orderNumber,
@@ -432,7 +436,7 @@ _________________           _________________`,
       providerCui: companySettings.cui,
       providerRegistrationNumber: companySettings.registrationNumber,
       providerLegalRepresentative: companySettings.legalRepresentative,
-      createdAt: new Date(),
+      createdAt,
       sentAt: null,
       completedAt: null
     };

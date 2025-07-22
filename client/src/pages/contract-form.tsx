@@ -94,6 +94,7 @@ const contractFormSchema = z.object({
     }).min(1, "Template-ul este obligatoriu"),
     value: z.string().min(1, "Valoarea contractului este obligatorie"),
     currency: z.string().default("RON"),
+    createdDate: z.string().optional(),
     startDate: z.string().min(1, "Data începerii este obligatorie"),
     endDate: z.string().min(1, "Data încheierii este obligatorie"),
     notes: z.string().optional(),
@@ -178,6 +179,7 @@ export default function ContractForm() {
           templateId: data.contract.templateId,
           value: data.contract.value ? parseFloat(data.contract.value) : null,
           currency: data.contract.currency,
+          createdDate: data.contract.createdDate || null,
           startDate: data.contract.startDate ? parseDate(data.contract.startDate, dateFormat) || new Date(data.contract.startDate) : null,
           endDate: data.contract.endDate ? parseDate(data.contract.endDate, dateFormat) || new Date(data.contract.endDate) : null,
           notes: data.contract.notes,
@@ -205,12 +207,13 @@ export default function ContractForm() {
 
   const reserveContractMutation = useMutation({
     mutationFn: (data: ContractFormData) => {
-      return apiRequest("POST", "/api/contracts", {
+      return apiRequest("POST", "/api/contracts/reserve", {
         beneficiaryData: data.beneficiary,
         contractData: {
           templateId: data.contract.templateId,
           value: data.contract.value ? parseFloat(data.contract.value) : null,
           currency: data.contract.currency,
+          createdDate: data.contract.createdDate || null,
           startDate: data.contract.startDate ? parseDate(data.contract.startDate, dateFormat) || new Date(data.contract.startDate) : null,
           endDate: data.contract.endDate ? parseDate(data.contract.endDate, dateFormat) || new Date(data.contract.endDate) : null,
           notes: data.contract.notes,
@@ -291,6 +294,7 @@ export default function ContractForm() {
         templateId: formData.contract?.templateId || 1,
         value: formData.contract?.value || "-",
         currency: formData.contract?.currency || "RON",
+        createdDate: formData.contract?.createdDate || "",
         startDate: formData.contract?.startDate || "-",
         endDate: formData.contract?.endDate || "-",
         notes: formData.contract?.notes || "-",
@@ -654,6 +658,24 @@ export default function ContractForm() {
                               <SelectItem value="USD">USD</SelectItem>
                             </SelectContent>
                           </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="contract.createdDate"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Data Creării</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="date" 
+                              {...field}
+                              placeholder={getDateInputFormat(dateFormat)}
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}

@@ -254,7 +254,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         providerLegalRepresentative: companySettings?.legalRepresentative || "Ion Popescu",
       });
       
-      const contract = await storage.createContract(validatedContract);
+      // Pass custom created date if provided
+      const customCreatedDate = contractData.createdDate;
+      const contract = await storage.createContract(validatedContract, customCreatedDate);
       res.json(contract);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -409,13 +411,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Reserve contract
   app.post("/api/contracts/reserve", async (req, res) => {
     try {
+      const { contractData } = req.body;
       const companySettings = await storage.getCompanySettings();
       if (!companySettings) {
         return res.status(400).json({ message: "Company settings not configured" });
       }
 
       const orderNumber = await storage.getNextOrderNumber();
-      const contract = await storage.reserveContract(orderNumber, companySettings);
+      const customCreatedDate = contractData?.createdDate;
+      const contract = await storage.reserveContract(orderNumber, companySettings, customCreatedDate);
       res.json(contract);
     } catch (error) {
       console.error("Reserve contract error:", error);
