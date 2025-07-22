@@ -112,18 +112,12 @@ export default function Dashboard() {
               <h2 className="text-2xl font-semibold text-gray-900">Dashboard Contracte</h2>
               <p className="text-gray-600 mt-1">Gestionați contractele dvs. rapid și eficient</p>
             </div>
-            <div className="flex items-center space-x-4">
-              <Link href="/contract-form">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Contract Nou
-                </Button>
-              </Link>
-              <div className="flex items-center space-x-3">
-                <User className="h-6 w-6 text-gray-400" />
-                <span className="text-gray-700 font-medium">Administrator</span>
-              </div>
-            </div>
+            <Link href="/contract-form">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                <Plus className="h-4 w-4 mr-2" />
+                Contract Nou
+              </Button>
+            </Link>
           </div>
         </header>
 
