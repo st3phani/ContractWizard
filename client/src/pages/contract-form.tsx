@@ -225,9 +225,12 @@ export default function ContractForm() {
   // Create or update contract mutation
   const contractMutation = useMutation({
     mutationFn: (data: ContractFormData) => {
+      console.log("Frontend mutation called with:", JSON.stringify(data, null, 2));
+      console.log("Is editing:", isEditing, "Edit contract ID:", editContractId);
+      
       if (isEditing && editContractId) {
         // Update existing contract
-        return apiRequest("PUT", `/api/contracts/${editContractId}`, {
+        const updatePayload = {
           beneficiaryData: data.beneficiary,
           contractData: {
             templateId: data.contract.templateId,
@@ -238,7 +241,9 @@ export default function ContractForm() {
             endDate: data.contract.endDate ? parseDate(data.contract.endDate, dateFormat) || new Date(data.contract.endDate) : null,
             notes: data.contract.notes,
           },
-        });
+        };
+        console.log("UPDATE payload being sent:", JSON.stringify(updatePayload, null, 2));
+        return apiRequest("PUT", `/api/contracts/${editContractId}`, updatePayload);
       } else {
         // Create new contract
         return apiRequest("POST", "/api/contracts", {
