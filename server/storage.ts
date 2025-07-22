@@ -53,6 +53,7 @@ export interface IStorage {
     pendingContracts: number;
     sentContracts: number;
     completedContracts: number;
+    reservedContracts: number;
   }>;
 
   // Company Settings
@@ -403,6 +404,7 @@ _________________           _________________`,
     pendingContracts: number;
     sentContracts: number;
     completedContracts: number;
+    reservedContracts: number;
   }> {
     const contracts = Array.from(this.contracts.values());
     
@@ -410,7 +412,8 @@ _________________           _________________`,
       totalContracts: contracts.length,
       pendingContracts: contracts.filter(c => c.status === "draft").length,
       sentContracts: contracts.filter(c => c.status === "sent").length,
-      completedContracts: contracts.filter(c => c.status === "completed").length
+      completedContracts: contracts.filter(c => c.status === "completed").length,
+      reservedContracts: contracts.filter(c => c.status === "reserved").length
     };
   }
 
@@ -719,6 +722,7 @@ export class DatabaseStorage implements IStorage {
     pendingContracts: number;
     sentContracts: number;
     completedContracts: number;
+    reservedContracts: number;
   }> {
     const allContracts = await db.select().from(contracts);
     
@@ -727,6 +731,7 @@ export class DatabaseStorage implements IStorage {
       pendingContracts: allContracts.filter(c => c.status === "draft").length,
       sentContracts: allContracts.filter(c => c.status === "sent").length,
       completedContracts: allContracts.filter(c => c.status === "completed").length,
+      reservedContracts: allContracts.filter(c => c.status === "reserved").length,
     };
   }
 

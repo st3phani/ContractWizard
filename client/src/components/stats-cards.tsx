@@ -1,4 +1,4 @@
-import { File, Clock, Send, CheckCircle } from "lucide-react";
+import { File, Clock, Send, CheckCircle, Calendar } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface StatsCardsProps {
@@ -7,6 +7,7 @@ interface StatsCardsProps {
     pendingContracts: number;
     sentContracts: number;
     completedContracts: number;
+    reservedContracts: number;
   };
 }
 
@@ -40,10 +41,17 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       bgColor: "bg-green-100",
       iconColor: "text-green-600",
     },
+    {
+      title: "Rezervate",
+      value: stats.reservedContracts,
+      icon: Calendar,
+      bgColor: "bg-purple-100",
+      iconColor: "text-purple-600",
+    },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
       {cards.map((card) => {
         const Icon = card.icon;
         return (
