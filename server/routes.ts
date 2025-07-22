@@ -461,30 +461,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { jsPDF } = await import('jspdf');
       const pdf = new jsPDF('p', 'mm', 'a4');
       
-      // Simplest approach - just clean HTML and preserve content
+      // Debug and fix content processing
+      console.log('Original content length:', populatedContent.length);
+      console.log('First 500 chars:', populatedContent.substring(0, 500));
+      
+      // Very conservative text cleaning
       let cleanText = populatedContent
-        // Remove table tags only
+        // Remove only table tags
         .replace(/<table[^>]*>[\s\S]*?<\/table>/g, '')
-        // Convert HTML breaks to line breaks
-        .replace(/<br\s*\/?>/g, '\n')
-        .replace(/<\/p>/g, '\n\n')
-        .replace(/<p[^>]*>/g, '')
-        // Remove all other HTML tags
-        .replace(/<[^>]*>/g, '')
-        // Clean HTML entities
+        // Convert basic HTML to text with minimal processing
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/p>/gi, '\n\n')
+        .replace(/<p[^>]*>/gi, '')
+        .replace(/<\/div>/gi, '\n')
+        .replace(/<div[^>]*>/gi, '')
+        .replace(/<strong>/gi, '')
+        .replace(/<\/strong>/gi, '')
+        .replace(/<span[^>]*>/gi, '')
+        .replace(/<\/span>/gi, '')
+        .replace(/<[^>]*>/g, '') // Remove remaining tags
+        // Handle entities
         .replace(/&nbsp;/g, ' ')
         .replace(/&amp;/g, '&')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
         .replace(/&quot;/g, '"')
-        // Basic whitespace cleanup
-        .replace(/\s+/g, ' ')
-        .replace(/\n\s*/g, '\n')
-        .replace(/\n{3,}/g, '\n\n')
+        // Minimal whitespace cleanup
+        .replace(/[ \t]+/g, ' ') // Multiple spaces to single
+        .replace(/\n[ \t]+/g, '\n') // Remove leading spaces on lines
+        .replace(/\n{3,}/g, '\n\n') // Max 2 consecutive newlines
         .trim();
 
-      // Just split by double line breaks for basic paragraphs
-      const contentParts = cleanText.split('\n\n').filter(part => part.trim().length > 0).map(part => part.trim());
+      console.log('Cleaned text length:', cleanText.length);
+      console.log('Cleaned text first 500 chars:', cleanText.substring(0, 500));
+
+      // Split content more carefully
+      const contentParts = cleanText.split(/\n\n+/).filter(part => part.trim().length > 0);
       
       // Set font and margins
       pdf.setFont('helvetica', 'normal');
