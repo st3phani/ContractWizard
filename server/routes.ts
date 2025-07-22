@@ -461,46 +461,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { jsPDF } = await import('jspdf');
       const pdf = new jsPDF('p', 'mm', 'a4');
       
-      // Clean and structure the content properly
-      let cleanContent = populatedContent
-        // Remove HTML tags but preserve structure
-        .replace(/<p[^>]*style="text-align:\s*center[^"]*"[^>]*>/g, '\n\n') // Center aligned paragraphs get double breaks
-        .replace(/<\/p>/g, '\n')  // End paragraphs with line break
-        .replace(/<p[^>]*>/g, '\n')  // Start paragraphs with line break
-        .replace(/<br\s*\/?>/g, '\n')  // Convert breaks to line breaks
-        .replace(/<strong>/g, '')  // Remove formatting tags
-        .replace(/<\/strong>/g, '')
-        .replace(/<span[^>]*>/g, '')
-        .replace(/<\/span>/g, '')
-        .replace(/<table[^>]*>[\s\S]*?<\/table>/g, '') // Remove table entirely - we'll add signatures manually
-        .replace(/<[^>]*>/g, '')  // Remove all remaining HTML tags
-        .replace(/&nbsp;/g, ' ')  // HTML entities
+      // Simple and clean approach - parse text properly
+      let textContent = populatedContent
+        // Remove table first to avoid signature duplication
+        .replace(/<table[^>]*>[\s\S]*?<\/table>/g, '')
+        // Handle paragraph breaks properly
+        .replace(/<\/p><p[^>]*>/g, '\n\n')  // Paragraph breaks
+        .replace(/<p[^>]*style="[^"]*center[^"]*"[^>]*>/g, '')  // Center paragraphs
+        .replace(/<\/p>/g, '\n')
+        .replace(/<p[^>]*>/g, '')
+        .replace(/<br\s*\/?>/g, '\n')
+        // Remove all HTML tags and formatting
+        .replace(/<[^>]*>/g, '')
+        // Clean up HTML entities
+        .replace(/&nbsp;/g, ' ')
         .replace(/&amp;/g, '&')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
         .replace(/&quot;/g, '"')
-        .replace(/\s+/g, ' ')  // Normalize spaces
-        .replace(/\n\s+/g, '\n')  // Remove leading spaces on lines
-        .replace(/\n{3,}/g, '\n\n')  // Max 2 consecutive line breaks
+        // Clean up whitespace
+        .replace(/\s+/g, ' ')
+        .replace(/\n +/g, '\n')
+        .replace(/\n{3,}/g, '\n\n')
         .trim();
 
-      // Split into meaningful sections
-      const sections = cleanContent.split('\n').filter(line => line.trim().length > 0);
+      // Split by double line breaks for paragraphs  
+      const paragraphs = textContent.split('\n\n').filter(p => p.trim().length > 0);
       
-      // Process content and remove only the duplicate title
-      const filteredSections = [];
-      let contractTitleCount = 0;
-      
-      for (const section of sections) {
-        const trimmedSection = section.trim();
-        if (trimmedSection.includes('CONTRACT Nr.')) {
-          contractTitleCount++;
-          if (contractTitleCount > 1) {
-            continue; // Skip duplicate titles after the first one
+      // Clean paragraphs and split long ones
+      const cleanParagraphs = [];
+      for (const para of paragraphs) {
+        const cleaned = para.trim();
+        if (cleaned.length > 0) {
+          // Split very long paragraphs at sentence boundaries
+          if (cleaned.length > 300) {
+            const sentences = cleaned.split('. ');
+            let currentPara = '';
+            for (const sentence of sentences) {
+              if ((currentPara + sentence).length > 250) {
+                if (currentPara) {
+                  cleanParagraphs.push(currentPara.trim());
+                  currentPara = sentence;
+                } else {
+                  cleanParagraphs.push(sentence);
+                }
+              } else {
+                currentPara += (currentPara ? '. ' : '') + sentence;
+              }
+            }
+            if (currentPara) {
+              cleanParagraphs.push(currentPara.trim());
+            }
+          } else {
+            cleanParagraphs.push(cleaned);
           }
-        }
-        if (trimmedSection.length > 0) {
-          filteredSections.push(trimmedSection);
         }
       }
       
@@ -514,52 +528,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const margin = 20;
       const maxWidth = 170; // Page width minus margins
       
-      // Add title only if not already in content
-      const hasTitle = filteredSections.some(section => section.includes('CONTRACT Nr.'));
+      // Check if title exists and add if needed
+      const hasTitle = cleanParagraphs.some(p => p.includes('CONTRACT Nr.'));
       if (!hasTitle) {
         pdf.setFontSize(16);
         pdf.setFont('helvetica', 'bold');
         pdf.text(`CONTRACT Nr. ${contract.orderNumber} din ${new Date().toLocaleDateString('ro-RO')}`, 105, yPosition, { align: 'center' });
-        yPosition += 20;
+        yPosition += 15;
       }
       
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'normal');
       
-      // Add content with proper formatting
-      for (const section of filteredSections) {
-        if (section.trim()) {
+      // Add content paragraph by paragraph
+      for (const paragraph of cleanParagraphs) {
+        if (paragraph.trim()) {
           // Check if we need a new page
           if (yPosition > pageHeight - 30) {
             pdf.addPage();
             yPosition = margin;
           }
           
+          // Handle title specially
+          if (paragraph.includes('CONTRACT Nr.')) {
+            pdf.setFontSize(16);
+            pdf.setFont('helvetica', 'bold');
+            const titleLines = pdf.splitTextToSize(paragraph, maxWidth);
+            for (const line of titleLines) {
+              pdf.text(line, 105, yPosition, { align: 'center' });
+              yPosition += 8;
+            }
+            pdf.setFontSize(12);
+            pdf.setFont('helvetica', 'normal');
+            yPosition += 10;
+            continue;
+          }
+          
           // Add spacing before articles
-          if (section.includes('Art.')) {
+          if (paragraph.includes('Art.')) {
             yPosition += 5;
           }
           
-          // Add spacing before key sections
-          if (section.includes('Între:') || section.includes('S-a încheiat')) {
-            yPosition += 5;
-          }
-          
-          // Split long lines to fit page width
-          const splitLines = pdf.splitTextToSize(section, maxWidth);
-          for (const splitLine of splitLines) {
+          // Split paragraph to fit page width
+          const lines = pdf.splitTextToSize(paragraph, maxWidth);
+          for (const line of lines) {
             if (yPosition > pageHeight - 30) {
               pdf.addPage();
               yPosition = margin;
             }
-            pdf.text(splitLine, margin, yPosition);
+            pdf.text(line, margin, yPosition);
             yPosition += lineHeight;
           }
           
-          // Add spacing after articles and key sections
-          if (section.includes('Art.') || section.includes('și') || section.includes('clauze:')) {
-            yPosition += 3;
-          }
+          // Add spacing after paragraphs
+          yPosition += 5;
         }
       }
       
