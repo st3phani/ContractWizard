@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Sidebar from "@/components/sidebar";
@@ -9,7 +8,7 @@ import StatsCards from "@/components/stats-cards";
 import ContractTable from "@/components/contract-table";
 import ContractModal from "@/components/contract-modal";
 import EmailModal from "@/components/email-modal";
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import type { ContractWithDetails } from "@shared/schema";
 
 export default function Dashboard() {
@@ -107,17 +106,9 @@ export default function Dashboard() {
       <main className="flex-1 overflow-auto">
         {/* Header */}
         <header className="bg-white shadow-sm border-b border-gray-200 p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-900">Dashboard Contracte</h2>
-              <p className="text-gray-600 mt-1">Gestionați contractele dvs. rapid și eficient</p>
-            </div>
-            <Link href="/contract-form">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                <Plus className="h-4 w-4 mr-2" />
-                Contract Nou
-              </Button>
-            </Link>
+          <div>
+            <h2 className="text-2xl font-semibold text-gray-900">Dashboard Contracte</h2>
+            <p className="text-gray-600 mt-1">Gestionați contractele dvs. rapid și eficient</p>
           </div>
         </header>
 
