@@ -69,15 +69,19 @@ export default function Beneficiaries() {
 
   // Create beneficiary mutation
   const createBeneficiaryMutation = useMutation({
-    mutationFn: (data: InsertBeneficiary) => 
-      apiRequest("POST", "/api/beneficiaries", data),
-    onSuccess: () => {
+    mutationFn: (data: InsertBeneficiary) => {
+      console.log("Sending to API:", data);
+      return apiRequest("POST", "/api/beneficiaries", data);
+    },
+    onSuccess: (result) => {
+      console.log("API Response:", result);
       queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
       setIsCreateModalOpen(false);
       setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", companyLegalRepresentative: "", isCompany: false });
       setSelectedBeneficiary(null);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("API Error:", error);
       toast({
         title: "Error",
         description: "A apărut o eroare la crearea beneficiarului.",
