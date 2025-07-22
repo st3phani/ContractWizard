@@ -273,7 +273,21 @@ export default function Beneficiaries() {
                             )}
                           </div>
                         </TableCell>
-                        <TableCell>{beneficiary.cnp || "—"}</TableCell>
+                        <TableCell>
+                          <div className="space-y-1">
+                            {beneficiary.cnp && (
+                              <div className="text-sm">
+                                <span className="text-xs text-gray-400">CNP:</span> {beneficiary.cnp}
+                              </div>
+                            )}
+                            {beneficiary.companyCui && (
+                              <div className="text-sm">
+                                <span className="text-xs text-gray-400">CUI:</span> {beneficiary.companyCui}
+                              </div>
+                            )}
+                            {!beneficiary.cnp && !beneficiary.companyCui && "—"}
+                          </div>
+                        </TableCell>
                         <TableCell>{formatDate(beneficiary.createdAt)}</TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
