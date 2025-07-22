@@ -487,17 +487,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Split into meaningful sections
       const sections = cleanContent.split('\n').filter(line => line.trim().length > 0);
       
-      // Remove the duplicate title that appears at the beginning
+      // Process content and remove only the duplicate title
       const filteredSections = [];
-      let titleAdded = false;
+      let contractTitleCount = 0;
       
       for (const section of sections) {
-        if (section.includes('CONTRACT Nr.') && !titleAdded) {
-          titleAdded = true;
-          continue; // Skip the first title, we'll add our own
+        const trimmedSection = section.trim();
+        if (trimmedSection.includes('CONTRACT Nr.')) {
+          contractTitleCount++;
+          if (contractTitleCount > 1) {
+            continue; // Skip duplicate titles after the first one
+          }
         }
-        if (section.trim().length > 0) {
-          filteredSections.push(section.trim());
+        if (trimmedSection.length > 0) {
+          filteredSections.push(trimmedSection);
         }
       }
       
@@ -511,11 +514,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const margin = 20;
       const maxWidth = 170; // Page width minus margins
       
-      // Add title
-      pdf.setFontSize(16);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text(`CONTRACT Nr. ${contract.orderNumber} din ${new Date().toLocaleDateString('ro-RO')}`, 105, yPosition, { align: 'center' });
-      yPosition += 20;
+      // Add title only if not already in content
+      const hasTitle = filteredSections.some(section => section.includes('CONTRACT Nr.'));
+      if (!hasTitle) {
+        pdf.setFontSize(16);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(`CONTRACT Nr. ${contract.orderNumber} din ${new Date().toLocaleDateString('ro-RO')}`, 105, yPosition, { align: 'center' });
+        yPosition += 20;
+      }
       
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'normal');
