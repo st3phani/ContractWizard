@@ -289,25 +289,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get company settings for auto-population
       const companySettings = await storage.getCompanySettings();
       
-      // Validate contract data
-      const validatedContract = insertContractSchema.parse({
-        ...contractData,
+      // Get existing contract to preserve orderNumber
+      const existingContract = await storage.getContract(id);
+      if (!existingContract) {
+        return res.status(404).json({ message: "Contract not found" });
+      }
+      
+      // Prepare update data without full validation (we're updating, not creating)
+      const updateData = {
+        templateId: contractData.templateId,
         beneficiaryId: beneficiary.id,
-        value: contractData.value || null,
+        value: contractData.value ? String(contractData.value) : null,
+        currency: contractData.currency || "RON",
         startDate: contractData.startDate ? new Date(contractData.startDate) : null,
         endDate: contractData.endDate ? new Date(contractData.endDate) : null,
+        notes: contractData.notes || null,
+        createdAt: contractData.createdDate ? new Date(contractData.createdDate) : existingContract.createdAt,
         // Auto-populate provider/company data
-        providerName: companySettings?.name || "Compania Mea SRL",
-        providerAddress: companySettings?.address || "Str. Principală nr. 123, București, România",
-        providerPhone: companySettings?.phone || "+40 21 123 4567",
-        providerEmail: companySettings?.email || "contact@compania-mea.ro",
-        providerCui: companySettings?.cui || "RO12345678",
-        providerRegistrationNumber: companySettings?.registrationNumber || "J40/1234/2023",
-        providerLegalRepresentative: companySettings?.legalRepresentative || "Ion Popescu",
-      });
+        providerName: companySettings?.name || existingContract.providerName,
+        providerAddress: companySettings?.address || existingContract.providerAddress,
+        providerPhone: companySettings?.phone || existingContract.providerPhone,
+        providerEmail: companySettings?.email || existingContract.providerEmail,
+        providerCui: companySettings?.cui || existingContract.providerCui,
+        providerRegistrationNumber: companySettings?.registrationNumber || existingContract.providerRegistrationNumber,
+        providerLegalRepresentative: companySettings?.legalRepresentative || existingContract.providerLegalRepresentative,
+      };
       
       // Update the contract
-      const contract = await storage.updateContract(id, validatedContract);
+      const contract = await storage.updateContract(id, updateData);
       if (!contract) {
         return res.status(404).json({ message: "Contract not found" });
       }
