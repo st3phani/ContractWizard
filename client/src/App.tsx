@@ -8,7 +8,7 @@ import ContractForm from "@/pages/contract-form";
 import Contracts from "@/pages/contracts";
 import Templates from "@/pages/templates";
 import Beneficiaries from "@/pages/beneficiaries";
-
+import Profile from "@/pages/profile";
 import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 
@@ -20,6 +20,7 @@ function Router() {
       <Route path="/contracts" component={Contracts} />
       <Route path="/templates" component={Templates} />
       <Route path="/beneficiaries" component={Beneficiaries} />
+      <Route path="/profile" component={Profile} />
       <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>

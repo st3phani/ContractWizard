@@ -76,10 +76,12 @@ export default function Sidebar() {
           <DropdownMenuContent align="start" className="w-56">
             <DropdownMenuLabel>Contul meu</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              <span>Profil</span>
-            </DropdownMenuItem>
+            <Link href="/profile">
+              <DropdownMenuItem>
+                <User className="mr-2 h-4 w-4" />
+                <span>Profil</span>
+              </DropdownMenuItem>
+            </Link>
             <Link href="/settings">
               <DropdownMenuItem>
                 <Settings className="mr-2 h-4 w-4" />
