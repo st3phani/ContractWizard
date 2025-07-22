@@ -210,7 +210,7 @@ export default function ContractForm() {
           isCompany: contractData.beneficiary.isCompany || false,
         },
         contract: {
-          templateId: contractData.templateId,
+          templateId: contractData.templateId || undefined,
           value: contractData.value?.toString() || "",
           currency: contractData.currency || "RON",
           createdDate,
