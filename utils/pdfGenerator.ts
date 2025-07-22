@@ -78,20 +78,13 @@ export function populateTemplate(template: string, data: PDFGenerationData): str
 }
 
 export function htmlToText(htmlContent: string): string {
-  // Convert HTML to clean text - completely remove formatting markers
+  // Simple HTML to text conversion - extract only the text content
   let cleanText = htmlContent
-    // Process centered paragraphs first - mark but clean up later
-    .replace(/<p[^>]*style="[^"]*center[^"]*"[^>]*>(.*?)<\/p>/gi, '\n\nCENTER_MARKER$1END_CENTER')
-    // Process all other paragraphs
-    .replace(/<p[^>]*>(.*?)<\/p>/gi, '\n$1\n')
-    // Handle line breaks
-    .replace(/<br\s*\/?>/gi, '\n')
-    // Remove table elements completely
-    .replace(/<table[^>]*>[\s\S]*?<\/table>/g, '')
-    // Mark bold content but clean it up immediately after
-    .replace(/<strong[^>]*>(.*?)<\/strong>/gi, 'BOLD_MARKER$1END_BOLD')
-    // Remove all other HTML tags
-    .replace(/<[^>]*>/g, '')
+    // Remove all HTML tags and extract only text content
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '') // Remove style tags completely
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '') // Remove script tags completely
+    .replace(/<table[^>]*>[\s\S]*?<\/table>/g, '') // Remove table elements completely
+    .replace(/<[^>]*>/g, '') // Remove all HTML tags
     // Clean up HTML entities
     .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
@@ -99,8 +92,9 @@ export function htmlToText(htmlContent: string): string {
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
-    // Remove all asterisks completely
+    // Remove all asterisks and formatting markers
     .replace(/\*/g, '')
+    .replace(/BOLD_MARKER|END_BOLD|CENTER_MARKER|END_CENTER/g, '')
     // Clean up whitespace but preserve structure
     .replace(/[ \t]+/g, ' ')
     .replace(/\n[ \t]+/g, '\n')
@@ -162,13 +156,13 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
         y = margin + 10;
       }
     
-      // Handle centered content
-      if (trimmedLine.includes('CENTER_MARKER')) {
-        const centerText = fixRomanianChars(trimmedLine.replace(/CENTER_MARKER|END_CENTER/g, '').trim());
-        if (centerText) {
+      // Handle title line - make it centered and bold
+      if (trimmedLine.includes('CONTRACT') && trimmedLine.includes('Nr.')) {
+        const titleText = fixRomanianChars(trimmedLine.trim());
+        if (titleText) {
           pdf.setFontSize(16);
           pdf.setFont('helvetica', 'bold');
-          pdf.text(centerText, pageWidth / 2, y, { align: 'center' });
+          pdf.text(titleText, pageWidth / 2, y, { align: 'center' });
           pdf.setFontSize(12);
           pdf.setFont('helvetica', 'normal');
           y += lineHeight + 5;
@@ -181,66 +175,8 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
         y += 3;
       }
       
-      // Process text with proper word wrapping (handle both bold and regular text)
-      if (trimmedLine.includes('BOLD_MARKER')) {
-        // For lines with bold text, we need to handle word wrapping more carefully
-        const parts = trimmedLine.split(/BOLD_MARKER|END_BOLD/);
-        let currentLineParts: Array<{text: string, bold: boolean}> = [];
-        
-        for (let i = 0; i < parts.length; i++) {
-          if (parts[i]) {
-            const isBold = i % 2 === 1;
-            const words = parts[i].split(' ');
-            
-            for (const word of words) {
-              if (word.trim()) { // Only process non-empty words
-                const testPart = { text: fixRomanianChars(word), bold: isBold };
-                const testLine = currentLineParts.concat([testPart]);
-                
-                // Calculate width of test line
-                let testWidth = 0;
-                for (const part of testLine) {
-                  pdf.setFont('helvetica', part.bold ? 'bold' : 'normal');
-                  testWidth += pdf.getTextWidth(part.text + ' ');
-                }
-                
-                if (testWidth > usableWidth && currentLineParts.length > 0) {
-                  // Render current line
-                  let x = margin;
-                  for (const part of currentLineParts) {
-                    pdf.setFont('helvetica', part.bold ? 'bold' : 'normal');
-                    pdf.text(part.text, x, y);
-                    x += pdf.getTextWidth(part.text + ' ');
-                  }
-                  y += lineHeight;
-                  
-                  if (y > pageHeight - 30) {
-                    pdf.addPage();
-                    y = margin + 10;
-                  }
-                  
-                  currentLineParts = [testPart];
-                } else {
-                  currentLineParts.push(testPart);
-                }
-              }
-            }
-          }
-        }
-        
-        // Render remaining parts
-        if (currentLineParts.length > 0) {
-          let x = margin;
-          for (const part of currentLineParts) {
-            pdf.setFont('helvetica', part.bold ? 'bold' : 'normal');
-            pdf.text(part.text, x, y);
-            x += pdf.getTextWidth(part.text + ' ');
-          }
-          y += lineHeight;
-        }
-        
-        pdf.setFont('helvetica', 'normal');
-      } else {
+      // Process normal text with word wrapping
+      {
         // Regular text with simple word wrapping
         const words = trimmedLine.split(' ');
         let currentLine = '';
