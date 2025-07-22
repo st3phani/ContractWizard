@@ -484,7 +484,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .replace(/\n{3,}/g, '\n\n') // Max 2 consecutive newlines
         .trim();
 
-      console.log('Cleaned text preview:', cleanText.substring(0, 500));
+      // console.log('Cleaned text preview:', cleanText.substring(0, 500));
 
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pageWidth = 210;
@@ -539,30 +539,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
             y += 3;
           }
           
-          // Handle bold text
+          // Process text with proper word wrapping (handle both bold and regular text)
           if (trimmedLine.includes('**')) {
+            // For lines with bold text, we need to handle word wrapping more carefully
             const parts = trimmedLine.split('**');
-            let x = margin;
+            let currentLineText = '';
+            let currentLineParts = [];
             
             for (let i = 0; i < parts.length; i++) {
               if (parts[i]) {
                 const isBold = i % 2 === 1;
-                pdf.setFont('helvetica', isBold ? 'bold' : 'normal');
+                const words = parts[i].split(' ');
                 
-                const textWidth = pdf.getTextWidth(parts[i]);
-                if (x + textWidth > pageWidth - margin) {
-                  y += lineHeight;
-                  x = margin;
+                for (const word of words) {
+                  const testPart = { text: word, bold: isBold };
+                  const testLine = currentLineParts.concat([testPart]);
+                  
+                  // Calculate width of test line
+                  let testWidth = 0;
+                  for (const part of testLine) {
+                    pdf.setFont('helvetica', part.bold ? 'bold' : 'normal');
+                    testWidth += pdf.getTextWidth(part.text + ' ');
+                  }
+                  
+                  if (testWidth > usableWidth && currentLineParts.length > 0) {
+                    // Render current line
+                    let x = margin;
+                    for (const part of currentLineParts) {
+                      pdf.setFont('helvetica', part.bold ? 'bold' : 'normal');
+                      pdf.text(part.text, x, y);
+                      x += pdf.getTextWidth(part.text + ' ');
+                    }
+                    y += lineHeight;
+                    
+                    if (y > pageHeight - 30) {
+                      pdf.addPage();
+                      y = margin + 10;
+                    }
+                    
+                    currentLineParts = [testPart];
+                  } else {
+                    currentLineParts.push(testPart);
+                  }
                 }
-                
-                pdf.text(parts[i], x, y);
-                x += textWidth;
               }
             }
+            
+            // Render remaining parts
+            if (currentLineParts.length > 0) {
+              let x = margin;
+              for (const part of currentLineParts) {
+                pdf.setFont('helvetica', part.bold ? 'bold' : 'normal');
+                pdf.text(part.text, x, y);
+                x += pdf.getTextWidth(part.text + ' ');
+              }
+              y += lineHeight;
+            }
+            
             pdf.setFont('helvetica', 'normal');
-            y += lineHeight;
           } else {
-            // Regular text with word wrapping
+            // Regular text with simple word wrapping
             const words = trimmedLine.split(' ');
             let currentLine = '';
             
