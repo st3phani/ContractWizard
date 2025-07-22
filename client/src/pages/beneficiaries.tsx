@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, Trash2, Mail, Phone, Building } from "lucide-react";
+import { Plus, Edit, Trash2, Mail, Phone, Building, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -20,6 +20,7 @@ import type { Beneficiary, InsertBeneficiary } from "@shared/schema";
 export default function Beneficiaries() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [formData, setFormData] = useState<InsertBeneficiary>({
     name: "",
     email: "",
@@ -41,6 +42,15 @@ export default function Beneficiaries() {
   const { data: beneficiaries = [], isLoading } = useQuery<Beneficiary[]>({
     queryKey: ["/api/beneficiaries"],
   });
+
+  // Filter beneficiaries based on search query
+  const filteredBeneficiaries = beneficiaries.filter(beneficiary =>
+    beneficiary.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    beneficiary.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    beneficiary.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    beneficiary.cnp?.includes(searchQuery) ||
+    beneficiary.companyCui?.includes(searchQuery)
+  );
 
   // Create beneficiary mutation
   const createBeneficiaryMutation = useMutation({
@@ -222,7 +232,18 @@ export default function Beneficiaries() {
         <div className="p-6">
           <Card>
             <CardHeader>
-              <CardTitle>Lista Beneficiari</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle>Lista Beneficiari</CardTitle>
+                <div className="relative w-64">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    placeholder="Căutare beneficiari..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               {isLoading ? (
@@ -239,7 +260,7 @@ export default function Beneficiaries() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {beneficiaries.map((beneficiary) => (
+                    {filteredBeneficiaries.map((beneficiary) => (
                       <TableRow key={beneficiary.id}>
                         <TableCell>
                           <div className="flex items-center space-x-3">
@@ -313,9 +334,9 @@ export default function Beneficiaries() {
                 </Table>
               )}
               
-              {beneficiaries.length === 0 && !isLoading && (
+              {filteredBeneficiaries.length === 0 && !isLoading && (
                 <div className="text-center py-8 text-gray-500">
-                  Nu au fost găsiți beneficiari
+                  {searchQuery ? "Nu au fost găsiți beneficiari care să corespundă căutării" : "Nu au fost găsiți beneficiari"}
                 </div>
               )}
             </CardContent>
