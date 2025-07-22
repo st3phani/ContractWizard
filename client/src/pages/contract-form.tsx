@@ -321,8 +321,16 @@ export default function ContractForm() {
   const onSubmit = (data: ContractFormData) => {
     console.log("onSubmit called with data:", JSON.stringify(data, null, 2));
     console.log("Form errors before submit:", JSON.stringify(form.formState.errors, null, 2));
+    console.log("Is editing mode:", isEditing);
     
-    // Force validation and trigger errors
+    // In edit mode, skip strict validation to allow updates
+    if (isEditing) {
+      console.log("Edit mode - proceeding with mutation without strict validation");
+      contractMutation.mutate(data);
+      return;
+    }
+    
+    // Force validation and trigger errors for new contracts
     form.trigger();
     
     // Check for validation errors
