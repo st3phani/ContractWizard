@@ -216,51 +216,63 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
         {/* Pagination */}
         {totalItems > 0 && (
           <div className="flex items-center justify-between mt-4 px-2">
-            <div className="text-sm text-gray-700">
-              Afișare {startIndex + 1}-{Math.min(endIndex, totalItems)} din {totalItems} contracte
-            </div>
             <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(currentPage - 1)}
-                disabled={!hasPreviousPage}
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Anterioara
-              </Button>
-              <div className="flex items-center space-x-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1)
-                  .filter(page => 
-                    page === 1 || 
-                    page === totalPages || 
-                    Math.abs(page - currentPage) <= 1
-                  )
-                  .map((page, index, filteredPages) => (
-                    <div key={page} className="flex items-center">
-                      {index > 0 && filteredPages[index - 1] !== page - 1 && (
-                        <span className="px-2 text-gray-500">...</span>
-                      )}
-                      <Button
-                        variant={currentPage === page ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setCurrentPage(page)}
-                        className="w-8 h-8 p-0"
-                      >
-                        {page}
-                      </Button>
-                    </div>
-                  ))}
+              <span className="text-sm text-gray-700">
+                Afișare {startIndex + 1}-{Math.min(endIndex, totalItems)} din {totalItems} contracte
+              </span>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-700">Afișare:</span>
+                <Select value={String(itemsPerPage)} onValueChange={handleItemsPerPageChange}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5 pe pagină</SelectItem>
+                    <SelectItem value="10">10 pe pagină</SelectItem>
+                    <SelectItem value="20">20 pe pagină</SelectItem>
+                    <SelectItem value="50">50 pe pagină</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={!hasNextPage}
-              >
-                Următoarea
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={!hasPreviousPage}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Anterior
+                </Button>
+                
+                <div className="flex space-x-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                    <Button
+                      key={pageNum}
+                      variant={currentPage === pageNum ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(pageNum)}
+                      className="w-8 h-8 p-0"
+                    >
+                      {pageNum}
+                    </Button>
+                  ))}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={!hasNextPage}
+                >
+                  Următor
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         )}
