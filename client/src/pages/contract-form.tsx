@@ -153,6 +153,7 @@ export default function ContractForm() {
         templateId: undefined as any,
         value: "",
         currency: "RON",
+        createdDate: new Date().toISOString().split('T')[0], // Current date in YYYY-MM-DD format
         startDate: "",
         endDate: "",
         notes: "",
