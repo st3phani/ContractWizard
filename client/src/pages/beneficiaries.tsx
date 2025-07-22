@@ -505,6 +505,17 @@ export default function Beneficiaries() {
                   />
                 </div>
 
+                {/* Nume Contact (reprezentant legal) */}
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nume Contact (Reprezentant Legal) *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name || ""}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Numele reprezentantului legal"
+                  />
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="companyAddress">Adresa Companiei *</Label>
                   <Textarea
