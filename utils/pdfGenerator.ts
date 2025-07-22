@@ -1,6 +1,6 @@
-// PDF Generator v1.1.0 - Enhanced Diacritics Support  
-// Romanian Contract Management System
-// Preserves Romanian diacritics with Arial font support
+// PDF Generator v1.0.9 - Production Stable
+// Romanian Contract Management System  
+// Standardized Arial font family with consistent formatting across all outputs
 
 import { jsPDF } from 'jspdf';
 import type { ContractWithDetails } from '../shared/schema';
@@ -117,19 +117,18 @@ export function htmlToText(htmlContent: string): string {
 }
 
 function fixRomanianChars(text: string): string {
-  // Keep Romanian diacritics - modern PDF libraries support them properly
-  // Only clean up any encoding artifacts that might cause issues
+  // Replace problematic Romanian characters with proper ones for PDF
   return text
-    .replace(/ă/g, 'ǎ')
-    .replace(/â/g, 'â')
-    .replace(/î/g, 'î')
-    .replace(/ș/g, 'ș')
-    .replace(/ț/g, 'ț')
-    .replace(/Ă/g, 'Ǎ')
-    .replace(/Â/g, 'Â')
-    .replace(/Î/g, 'Î')
-    .replace(/Ș/g, 'Ș')
-    .replace(/Ț/g, 'Ț');
+    .replace(/ă/g, 'a')
+    .replace(/â/g, 'a')
+    .replace(/î/g, 'i')
+    .replace(/ș/g, 's')
+    .replace(/ț/g, 't')
+    .replace(/Ă/g, 'A')
+    .replace(/Â/g, 'A')
+    .replace(/Î/g, 'I')
+    .replace(/Ș/g, 'S')
+    .replace(/Ț/g, 'T');
 }
 
 export function generatePDF(populatedContent: string, contract: ContractWithDetails): Buffer {
