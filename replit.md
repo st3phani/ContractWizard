@@ -114,6 +114,7 @@ Three main entities:
 ```
 Changelog:
 
+- July 22, 2025. Implemented pagination for contract table with configurable items per page (5, 10, 20, 50) and navigation controls
 - July 22, 2025. Fixed contract editing functionality by removing strict validation in edit mode that was preventing updates
 - July 22, 2025. Added restrictions for reserved contracts - disabled preview, download, and email actions with opaque icons
 - July 22, 2025. Modified contract reservation system to not create temporary beneficiaries - reserved contracts now use beneficiary_id = 0 instead
