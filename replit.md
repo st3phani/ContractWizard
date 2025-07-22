@@ -114,7 +114,7 @@ Three main entities:
 ```
 Changelog:
 
-- July 22, 2025. Fixed PDF generation and formatting - replaced puppeteer with jsPDF for reliable PDF creation without browser dependencies
+- July 22, 2025. Fixed PDF generation and formatting - replaced puppeteer with jsPDF for reliable PDF creation without browser dependencies, improved margins and text wrapping to prevent content overflow
 - July 22, 2025. Added ID column to beneficiaries table and implemented descending ID sorting for newest-first display
 - July 22, 2025. Fixed beneficiary creation for companies by correcting form field mapping and removing duplicate representative fields
 - July 22, 2025. Resolved backend API route missing for beneficiary updates (PUT /api/beneficiaries/:id) 

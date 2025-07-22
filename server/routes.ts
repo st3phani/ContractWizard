@@ -465,38 +465,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // console.log('Original content length:', populatedContent.length);
       // console.log('First 500 chars:', populatedContent.substring(0, 500));
       
-      // Very conservative text cleaning
+      // Better HTML processing that respects original formatting
       let cleanText = populatedContent
-        // Remove only table tags
+        // Remove table tags only
         .replace(/<table[^>]*>[\s\S]*?<\/table>/g, '')
-        // Convert basic HTML to text with minimal processing
-        .replace(/<br\s*\/?>/gi, '\n')
+        // Handle center-aligned content (like title)
+        .replace(/<p[^>]*style="[^"]*center[^"]*"[^>]*>(.*?)<\/p>/gi, '\n\nCENTER:$1\n\n')
+        // Convert HTML structure to text with better spacing
         .replace(/<\/p>/gi, '\n\n')
         .replace(/<p[^>]*>/gi, '')
+        .replace(/<br\s*\/?>/gi, '\n')
         .replace(/<\/div>/gi, '\n')
         .replace(/<div[^>]*>/gi, '')
-        .replace(/<strong>/gi, '')
-        .replace(/<\/strong>/gi, '')
+        // Preserve bold text markers temporarily
+        .replace(/<strong>/gi, '**')
+        .replace(/<\/strong>/gi, '**')
+        // Remove remaining HTML tags
         .replace(/<span[^>]*>/gi, '')
         .replace(/<\/span>/gi, '')
-        .replace(/<[^>]*>/g, '') // Remove remaining tags
-        // Handle entities
+        .replace(/<[^>]*>/g, '')
+        // Clean HTML entities
         .replace(/&nbsp;/g, ' ')
         .replace(/&amp;/g, '&')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
         .replace(/&quot;/g, '"')
-        // Minimal whitespace cleanup
-        .replace(/[ \t]+/g, ' ') // Multiple spaces to single
-        .replace(/\n[ \t]+/g, '\n') // Remove leading spaces on lines
-        .replace(/\n{3,}/g, '\n\n') // Max 2 consecutive newlines
+        // Intelligent whitespace cleanup
+        .replace(/[ \t]+/g, ' ')
+        .replace(/\n[ \t]+/g, '\n')
+        .replace(/\n{4,}/g, '\n\n\n')
         .trim();
 
       // console.log('Cleaned text length:', cleanText.length);
       // console.log('Cleaned text first 500 chars:', cleanText.substring(0, 500));
 
-      // Split content more carefully
-      const contentParts = cleanText.split(/\n\n+/).filter(part => part.trim().length > 0);
+      // Process content with better structure awareness
+      const contentParts = cleanText.split(/\n\n+/).filter(part => part.trim().length > 0).map(part => {
+        const trimmed = part.trim();
+        if (trimmed.startsWith('CENTER:')) {
+          return { type: 'center', content: trimmed.substring(7).trim() };
+        } else if (trimmed.startsWith('Art.')) {
+          return { type: 'article', content: trimmed };
+        } else {
+          return { type: 'normal', content: trimmed };
+        }
+      });
       
       // Set font and margins
       pdf.setFont('helvetica', 'normal');
@@ -505,12 +518,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let yPosition = 30;
       const lineHeight = 7;
       const pageHeight = 270; // A4 height in mm minus bottom margin
-      const leftMargin = 25;
-      const rightMargin = 25; 
-      const maxWidth = 210 - leftMargin - rightMargin; // A4 width (210mm) minus both margins (160mm)
+      const leftMargin = 30;
+      const rightMargin = 30; 
+      const maxWidth = 210 - leftMargin - rightMargin; // A4 width (210mm) minus both margins (150mm)
       
       // Add title if needed
-      const hasTitle = contentParts.some(part => part.includes('CONTRACT Nr.'));
+      const hasTitle = contentParts.some(part => part.content && part.content.includes('CONTRACT Nr.'));
       if (!hasTitle) {
         pdf.setFontSize(16);
         pdf.setFont('helvetica', 'bold');
@@ -521,44 +534,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'normal');
       
-      // Add each content part
+      // Process each content part based on its type
       for (const part of contentParts) {
-        if (part.trim()) {
+        if (part.content && part.content.trim()) {
           // Check if we need a new page
           if (yPosition > pageHeight - 40) {
             pdf.addPage();
             yPosition = 30;
           }
           
-          // Special formatting for title
-          if (part.includes('CONTRACT Nr.')) {
-            pdf.setFontSize(16);
-            pdf.setFont('helvetica', 'bold');
-            pdf.text(part, 105, yPosition, { align: 'center' });
-            pdf.setFontSize(12);
-            pdf.setFont('helvetica', 'normal');
-            yPosition += 20;
-            continue;
-          }
+          let content = part.content;
           
-          // Add spacing before articles
-          if (part.startsWith('Art.')) {
-            yPosition += 5;
-          }
-          
-          // Split text to fit page width with proper wrapping
-          const lines = pdf.splitTextToSize(part, maxWidth);
-          for (const line of lines) {
-            if (yPosition > pageHeight - 30) {
-              pdf.addPage();
-              yPosition = 30;
+          // Handle bold text
+          const hasBold = content.includes('**');
+          if (hasBold) {
+            // Split by bold markers and alternate fonts
+            const segments = content.split('**');
+            let currentX = leftMargin;
+            
+            for (let i = 0; i < segments.length; i++) {
+              if (segments[i].trim()) {
+                const isBold = i % 2 === 1;
+                pdf.setFont('helvetica', isBold ? 'bold' : 'normal');
+                
+                const segmentLines = pdf.splitTextToSize(segments[i], maxWidth - (currentX - leftMargin));
+                for (const line of segmentLines) {
+                  if (yPosition > pageHeight - 30) {
+                    pdf.addPage();
+                    yPosition = 30;
+                    currentX = leftMargin;
+                  }
+                  pdf.text(line, currentX, yPosition);
+                  yPosition += lineHeight;
+                  currentX = leftMargin; // Reset X for next line
+                }
+              }
             }
-            pdf.text(line, leftMargin, yPosition);
-            yPosition += lineHeight;
+            pdf.setFont('helvetica', 'normal'); // Reset to normal
+          } else {
+            // Handle different content types
+            if (part.type === 'center') {
+              pdf.setFontSize(16);
+              pdf.setFont('helvetica', 'bold');
+              pdf.text(content, 105, yPosition, { align: 'center' });
+              pdf.setFontSize(12);
+              pdf.setFont('helvetica', 'normal');
+              yPosition += 20;
+            } else if (part.type === 'article') {
+              yPosition += 5; // Extra space before articles
+              const lines = pdf.splitTextToSize(content, maxWidth);
+              for (const line of lines) {
+                if (yPosition > pageHeight - 30) {
+                  pdf.addPage();
+                  yPosition = 30;
+                }
+                pdf.text(line, leftMargin, yPosition);
+                yPosition += lineHeight;
+              }
+              yPosition += 3; // Extra space after articles
+            } else {
+              // Normal content
+              const lines = pdf.splitTextToSize(content, maxWidth);
+              for (const line of lines) {
+                if (yPosition > pageHeight - 30) {
+                  pdf.addPage();
+                  yPosition = 30;
+                }
+                pdf.text(line, leftMargin, yPosition);
+                yPosition += lineHeight;
+              }
+              yPosition += 5;
+            }
           }
-          
-          // Add spacing after content
-          yPosition += 5;
         }
       }
       
@@ -572,12 +619,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       pdf.setFont('helvetica', 'bold');
       pdf.text('PRESTATOR', leftMargin, yPosition);
-      pdf.text('BENEFICIAR', leftMargin + 80, yPosition);
+      pdf.text('BENEFICIAR', leftMargin + 75, yPosition);
       
       yPosition += 15;
       pdf.setFont('helvetica', 'normal');
       pdf.text('_________________', leftMargin, yPosition);
-      pdf.text('_________________', leftMargin + 80, yPosition);
+      pdf.text('_________________', leftMargin + 75, yPosition);
       
       const pdfBuffer = Buffer.from(pdf.output('arraybuffer'));
       
