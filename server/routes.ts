@@ -600,16 +600,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       pdf.text('_________________', margin + 90, y);
       
       const pdfBuffer = Buffer.from(pdf.output('arraybuffer'));
-      return new Response(pdfBuffer, {
-        headers: {
-          'Content-Type': 'application/pdf',
-          'Content-Disposition': `attachment; filename="contract-${contract.orderNumber}.pdf"`
-        }
-      });
+      
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="contract-${contract.orderNumber}.pdf"`);
+      res.send(pdfBuffer);
       
     } catch (error) {
       console.error("PDF generation error:", error);
-      throw new Error("Nu s-a putut genera PDF-ul");
+      res.status(500).json({ message: "Nu s-a putut genera PDF-ul" });
     }
   });
 
