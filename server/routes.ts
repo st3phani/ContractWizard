@@ -273,6 +273,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       const { beneficiaryData, contractData } = req.body;
+      console.log("Full UPDATE request body:", JSON.stringify(req.body, null, 2));
       
       // Validate beneficiary data
       const validatedBeneficiary = insertBeneficiarySchema.parse(beneficiaryData);
