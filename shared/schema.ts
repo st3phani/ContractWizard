@@ -61,6 +61,15 @@ export const userProfiles = pgTable("user_profiles", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const contractStatuses = pgTable("contract_statuses", {
+  id: serial("id").primaryKey(),
+  statusCode: text("status_code").notNull().unique(),
+  statusLabel: text("status_label").notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 
 
 export const contracts = pgTable("contracts", {
@@ -73,7 +82,7 @@ export const contracts = pgTable("contracts", {
   startDate: timestamp("start_date"),
   endDate: timestamp("end_date"),
   notes: text("notes"),
-  status: text("status").notNull().default("draft"), // draft, reserved, signed, completed
+  statusId: integer("status_id").notNull().default(1), // references contract_statuses.id
   // Provider/Company details (auto-filled from settings)
   providerName: text("provider_name"),
   providerAddress: text("provider_address"),
@@ -153,7 +162,14 @@ export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({
 export type UserProfile = typeof userProfiles.$inferSelect;
 export type InsertUserProfile = z.infer<typeof insertUserProfileSchema>;
 
+export const insertContractStatusSchema = createInsertSchema(contractStatuses).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
 
+export type ContractStatus = typeof contractStatuses.$inferSelect;
+export type InsertContractStatus = z.infer<typeof insertContractStatusSchema>;
 
 export type Contract = typeof contracts.$inferSelect;
 export type InsertContract = z.infer<typeof insertContractSchema>;
@@ -167,6 +183,10 @@ export const beneficiariesRelations = relations(beneficiaries, ({ many }) => ({
   contracts: many(contracts),
 }));
 
+export const contractStatusesRelations = relations(contractStatuses, ({ many }) => ({
+  contracts: many(contracts),
+}));
+
 export const contractsRelations = relations(contracts, ({ one }) => ({
   template: one(contractTemplates, {
     fields: [contracts.templateId],
@@ -176,9 +196,14 @@ export const contractsRelations = relations(contracts, ({ one }) => ({
     fields: [contracts.beneficiaryId],
     references: [beneficiaries.id],
   }),
+  status: one(contractStatuses, {
+    fields: [contracts.statusId],
+    references: [contractStatuses.id],
+  }),
 }));
 
 export type ContractWithDetails = Contract & {
   template: ContractTemplate;
   beneficiary: Beneficiary;
+  status: ContractStatus;
 };

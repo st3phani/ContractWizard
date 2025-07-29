@@ -5,18 +5,21 @@ import {
   companySettings,
   systemSettings,
   userProfiles,
+  contractStatuses,
   type Contract, 
   type ContractTemplate, 
   type Beneficiary,
   type CompanySettings,
   type SystemSettings,
   type UserProfile,
+  type ContractStatus,
   type InsertContract, 
   type InsertContractTemplate, 
   type InsertBeneficiary,
   type InsertCompanySettings,
   type InsertSystemSettings,
   type InsertUserProfile,
+  type InsertContractStatus,
   type ContractWithDetails
 } from "@shared/schema";
 import { db } from "./db";
@@ -71,6 +74,13 @@ export interface IStorage {
   getUserProfile(): Promise<UserProfile | undefined>;
   updateUserProfile(profile: InsertUserProfile): Promise<UserProfile>;
   updateUserPassword(currentPassword: string, newPassword: string): Promise<{ success: boolean; message: string }>;
+
+  // Contract Statuses
+  getContractStatuses(): Promise<ContractStatus[]>;
+  getContractStatus(id: number): Promise<ContractStatus | undefined>;
+  createContractStatus(status: InsertContractStatus): Promise<ContractStatus>;
+  updateContractStatus(id: number, status: InsertContractStatus): Promise<ContractStatus | undefined>;
+  deleteContractStatus(id: number): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -696,6 +706,7 @@ export class DatabaseStorage implements IStorage {
       with: {
         template: true,
         beneficiary: true,
+        status: true,
       },
       orderBy: (contracts, { desc }) => [desc(contracts.id)],
     });
@@ -728,7 +739,8 @@ export class DatabaseStorage implements IStorage {
         return {
           ...contract,
           template: mockTemplate,
-          beneficiary: mockBeneficiary
+          beneficiary: mockBeneficiary,
+          status: contract.status
         } as ContractWithDetails;
       }
       return contract as ContractWithDetails;
@@ -741,6 +753,7 @@ export class DatabaseStorage implements IStorage {
       with: {
         template: true,
         beneficiary: true,
+        status: true,
       },
     });
     
@@ -786,6 +799,7 @@ export class DatabaseStorage implements IStorage {
       with: {
         template: true,
         beneficiary: true,
+        status: true,
       },
     });
     
@@ -887,10 +901,10 @@ export class DatabaseStorage implements IStorage {
     
     return {
       totalContracts: allContracts.length,
-      pendingContracts: allContracts.filter(c => c.status === "draft").length,
-      signedContracts: allContracts.filter(c => c.status === "signed").length,
-      completedContracts: allContracts.filter(c => c.status === "completed").length,
-      reservedContracts: allContracts.filter(c => c.status === "reserved").length,
+      pendingContracts: allContracts.filter(c => c.statusId === 1).length,
+      signedContracts: allContracts.filter(c => c.statusId === 3).length,
+      completedContracts: allContracts.filter(c => c.statusId === 4).length,
+      reservedContracts: allContracts.filter(c => c.statusId === 2).length,
     };
   }
 
@@ -914,7 +928,7 @@ export class DatabaseStorage implements IStorage {
         startDate: null,
         endDate: null,
         notes: null,
-        status: "reserved",
+        statusId: 2,
         providerName: companySettings.name,
         providerAddress: companySettings.address,
         providerPhone: companySettings.phone,
@@ -1075,6 +1089,39 @@ export class DatabaseStorage implements IStorage {
       .where(eq(userProfiles.id, existing.id));
 
     return { success: true, message: "Password updated successfully" };
+  }
+
+  // Contract Statuses
+  async getContractStatuses(): Promise<ContractStatus[]> {
+    const statuses = await db.select().from(contractStatuses).orderBy(contractStatuses.id);
+    return statuses;
+  }
+
+  async getContractStatus(id: number): Promise<ContractStatus | undefined> {
+    const [status] = await db.select().from(contractStatuses).where(eq(contractStatuses.id, id));
+    return status || undefined;
+  }
+
+  async createContractStatus(statusData: InsertContractStatus): Promise<ContractStatus> {
+    const [newStatus] = await db
+      .insert(contractStatuses)
+      .values(statusData)
+      .returning();
+    return newStatus;
+  }
+
+  async updateContractStatus(id: number, statusData: InsertContractStatus): Promise<ContractStatus | undefined> {
+    const [updated] = await db
+      .update(contractStatuses)
+      .set({ ...statusData, updatedAt: new Date() })
+      .where(eq(contractStatuses.id, id))
+      .returning();
+    return updated || undefined;
+  }
+
+  async deleteContractStatus(id: number): Promise<boolean> {
+    const result = await db.delete(contractStatuses).where(eq(contractStatuses.id, id));
+    return (result.rowCount ?? 0) > 0;
   }
 
 }

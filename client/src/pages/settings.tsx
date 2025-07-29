@@ -8,11 +8,12 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Building, Mail, Phone, MapPin, Save, Database, Bell, Shield } from "lucide-react";
+import { Building, Mail, Phone, MapPin, Save, Database, Bell, Shield, Plus, Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Sidebar from "@/components/sidebar";
-import type { CompanySettings } from "@shared/schema";
+import type { CompanySettings, ContractStatus } from "@shared/schema";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export default function Settings() {
   const { toast } = useToast();
@@ -557,8 +558,236 @@ export default function Settings() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Contract Statuses Management */}
+          <ContractStatusesSection />
         </div>
       </main>
     </div>
+  );
+}
+
+function ContractStatusesSection() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingStatus, setEditingStatus] = useState<ContractStatus | null>(null);
+  const [formData, setFormData] = useState({
+    statusCode: '',
+    statusLabel: '',
+    description: ''
+  });
+
+  // Fetch contract statuses
+  const { data: statuses, isLoading } = useQuery<ContractStatus[]>({
+    queryKey: ["/api/contract-statuses"],
+  });
+
+  // Create/Update mutation
+  const saveStatusMutation = useMutation({
+    mutationFn: (data: typeof formData) => {
+      if (editingStatus) {
+        return apiRequest("PUT", `/api/contract-statuses/${editingStatus.id}`, data);
+      } else {
+        return apiRequest("POST", "/api/contract-statuses", data);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/contract-statuses"] });
+      setIsDialogOpen(false);
+      setEditingStatus(null);
+      setFormData({ statusCode: '', statusLabel: '', description: '' });
+      toast({
+        title: "Success",
+        description: editingStatus ? "Status actualizat cu succes!" : "Status creat cu succes!",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "A apărut o eroare la salvarea statusului.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Delete mutation
+  const deleteStatusMutation = useMutation({
+    mutationFn: (id: number) => apiRequest("DELETE", `/api/contract-statuses/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/contract-statuses"] });
+      toast({
+        title: "Success",
+        description: "Status șters cu succes!",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "A apărut o eroare la ștergerea statusului.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleOpenDialog = (status?: ContractStatus) => {
+    if (status) {
+      setEditingStatus(status);
+      setFormData({
+        statusCode: status.statusCode,
+        statusLabel: status.statusLabel,
+        description: status.description || ''
+      });
+    } else {
+      setEditingStatus(null);
+      setFormData({ statusCode: '', statusLabel: '', description: '' });
+    }
+    setIsDialogOpen(true);
+  };
+
+  const handleSubmit = () => {
+    if (!formData.statusCode || !formData.statusLabel) {
+      toast({
+        title: "Error",
+        description: "Codul și eticheta statusului sunt obligatorii.",
+        variant: "destructive",
+      });
+      return;
+    }
+    saveStatusMutation.mutate(formData);
+  };
+
+  const handleDelete = (status: ContractStatus) => {
+    if (confirm(`Sigur doriți să ștergeți statusul "${status.statusLabel}"?`)) {
+      deleteStatusMutation.mutate(status.id);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Shield className="h-5 w-5 mr-2" />
+            Statusuri Contracte
+          </div>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                onClick={() => handleOpenDialog()}
+                size="sm"
+                className="bg-blue-600 hover:bg-blue-700"
+                title="Adaugă status nou"
+                aria-label="Adaugă status nou de contract"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Adaugă Status
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>
+                  {editingStatus ? 'Editează Status' : 'Adaugă Status Nou'}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 pt-4">
+                <div className="space-y-2">
+                  <Label htmlFor="statusCode">Cod Status *</Label>
+                  <Input
+                    id="statusCode"
+                    value={formData.statusCode}
+                    onChange={(e) => setFormData({ ...formData, statusCode: e.target.value })}
+                    placeholder="ex: draft, signed, completed"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="statusLabel">Etichetă Status *</Label>
+                  <Input
+                    id="statusLabel"
+                    value={formData.statusLabel}
+                    onChange={(e) => setFormData({ ...formData, statusLabel: e.target.value })}
+                    placeholder="ex: Ciornă, Semnat, Finalizat"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="statusDescription">Descriere</Label>
+                  <Textarea
+                    id="statusDescription"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    placeholder="Descrierea statusului..."
+                    rows={3}
+                  />
+                </div>
+                <div className="flex justify-end gap-2 pt-4">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsDialogOpen(false)}
+                    title="Anulează operația"
+                    aria-label="Anulează adăugarea/editarea statusului"
+                  >
+                    Anulează
+                  </Button>
+                  <Button 
+                    onClick={handleSubmit}
+                    disabled={saveStatusMutation.isPending}
+                    className="bg-blue-600 hover:bg-blue-700"
+                    title="Salvează statusul"
+                    aria-label="Salvează statusul de contract"
+                  >
+                    {saveStatusMutation.isPending ? "Se salvează..." : "Salvează"}
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <div className="text-center py-4">Se încarcă statusurile...</div>
+        ) : (
+          <div className="space-y-2">
+            {statuses?.map((status) => (
+              <div key={status.id} className="flex items-center justify-between p-3 border rounded-lg">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3">
+                    <span className="px-2 py-1 bg-gray-100 rounded text-sm font-mono">
+                      {status.statusCode}
+                    </span>
+                    <span className="font-medium">{status.statusLabel}</span>
+                  </div>
+                  {status.description && (
+                    <p className="text-sm text-gray-600 mt-1">{status.description}</p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleOpenDialog(status)}
+                    title="Editează statusul"
+                    aria-label={`Editează statusul ${status.statusLabel}`}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDelete(status)}
+                    disabled={deleteStatusMutation.isPending}
+                    className="text-red-600 hover:text-red-700"
+                    title="Șterge statusul"
+                    aria-label={`Șterge statusul ${status.statusLabel}`}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

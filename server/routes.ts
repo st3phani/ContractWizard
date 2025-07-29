@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema, insertSystemSettingsSchema, insertUserProfileSchema } from "@shared/schema";
+import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema, insertSystemSettingsSchema, insertUserProfileSchema, insertContractStatusSchema } from "@shared/schema";
 import { z } from "zod";
 
 // Helper function to generate sequential order numbers
@@ -584,7 +584,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // In a real implementation, you would use nodemailer here
       // For now, just update the contract status
       await storage.updateContract(id, { 
-        status: "signed", 
+        statusId: 3, 
         sentAt: new Date() 
       });
       
@@ -663,6 +663,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Password updated successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to update password" });
+    }
+  });
+
+  // Contract Statuses routes
+  app.get("/api/contract-statuses", async (req, res) => {
+    try {
+      const statuses = await storage.getContractStatuses();
+      res.json(statuses);
+    } catch (error) {
+      console.error("Error fetching contract statuses:", error);
+      res.status(500).json({ error: "Failed to fetch contract statuses" });
+    }
+  });
+
+  app.post("/api/contract-statuses", async (req, res) => {
+    try {
+      const validatedData = insertContractStatusSchema.parse(req.body);
+      const status = await storage.createContractStatus(validatedData);
+      res.json(status);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid status data", errors: error.errors });
+      }
+      console.error("Error creating contract status:", error);
+      res.status(500).json({ error: "Failed to create contract status" });
+    }
+  });
+
+  app.put("/api/contract-statuses/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertContractStatusSchema.parse(req.body);
+      const status = await storage.updateContractStatus(id, validatedData);
+      if (!status) {
+        return res.status(404).json({ message: "Contract status not found" });
+      }
+      res.json(status);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid status data", errors: error.errors });
+      }
+      console.error("Error updating contract status:", error);
+      res.status(500).json({ error: "Failed to update contract status" });
+    }
+  });
+
+  app.delete("/api/contract-statuses/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteContractStatus(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Contract status not found" });
+      }
+      res.json({ message: "Contract status deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting contract status:", error);
+      res.status(500).json({ error: "Failed to delete contract status" });
     }
   });
 
