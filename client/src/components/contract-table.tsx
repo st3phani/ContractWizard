@@ -59,6 +59,10 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
   };
 
   const canPerformActions = (contract: ContractWithDetails) => {
+    return contract.status?.statusCode !== "reserved";
+  };
+
+  const canSendContract = (contract: ContractWithDetails) => {
     return contract.status?.statusCode !== "reserved" && 
            contract.status?.statusCode !== "signed" && 
            contract.status?.statusCode !== "completed";
@@ -182,9 +186,9 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => canPerformActions(contract) ? onEmail(contract) : undefined}
-                      disabled={!canPerformActions(contract)}
-                      className={!canPerformActions(contract) ? "opacity-30 cursor-not-allowed" : ""}
+                      onClick={() => canSendContract(contract) ? onEmail(contract) : undefined}
+                      disabled={!canSendContract(contract)}
+                      className={!canSendContract(contract) ? "opacity-30 cursor-not-allowed" : ""}
                       title="Trimite la semnat"
                       aria-label="Trimite la semnat"
                     >
