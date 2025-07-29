@@ -6,7 +6,7 @@ import { apiRequest } from "@/lib/queryClient";
 import StatsCards from "@/components/stats-cards";
 import ContractTable from "@/components/contract-table";
 import ContractModal from "@/components/contract-modal";
-import EmailModal from "@/components/email-modal";
+
 import { useLocation } from "wouter";
 import type { ContractWithDetails } from "@shared/schema";
 
@@ -14,7 +14,7 @@ export default function Dashboard() {
   const [, setLocation] = useLocation();
   const [selectedContract, setSelectedContract] = useState<ContractWithDetails | null>(null);
   const [isContractModalOpen, setIsContractModalOpen] = useState(false);
-  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -82,9 +82,37 @@ export default function Dashboard() {
     }
   };
 
-  const handleEmail = (contract: ContractWithDetails) => {
-    setSelectedContract(contract);
-    setIsEmailModalOpen(true);
+  const handleEmail = async (contract: ContractWithDetails) => {
+    try {
+      await apiRequest("POST", `/api/contracts/${contract.id}/email`, {
+        recipient: contract.beneficiary.email,
+        subject: `Contract ${contract.template.name} - Nr. ${contract.orderNumber}`,
+        message: `Bună ziua,
+
+Vă transmitem contractul pentru semnare.
+
+Pentru a semna contractul, vă rugăm să accesați link-ul din emailul pe care îl veți primi.
+
+Mulțumim,
+Echipa Contract Manager`,
+        attachPDF: true,
+      });
+
+      toast({
+        title: "Succes",
+        description: "Emailul cu contractul pentru semnare a fost trimis cu succes!",
+      });
+
+      // Invalidate queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ["/api/contracts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/contracts/stats"] });
+    } catch (error) {
+      toast({
+        title: "Eroare",
+        description: "A apărut o eroare la trimiterea emailului.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDelete = (contract: ContractWithDetails) => {
@@ -137,12 +165,7 @@ export default function Dashboard() {
         onEmail={handleEmail}
       />
 
-      <EmailModal
-        contract={selectedContract}
-        isOpen={isEmailModalOpen}
-        onClose={() => setIsEmailModalOpen(false)}
-        onSent={handleEmailSent}
-      />
+
     </>
   );
 }

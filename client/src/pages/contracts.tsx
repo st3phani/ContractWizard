@@ -5,7 +5,7 @@ import { queryClient } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import ContractTable from "@/components/contract-table";
 import ContractModal from "@/components/contract-modal";
-import EmailModal from "@/components/email-modal";
+
 
 import { Link, useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
@@ -14,7 +14,7 @@ import type { ContractWithDetails } from "@shared/schema";
 export default function ContractsPage() {
   const [, setLocation] = useLocation();
   const [selectedContract, setSelectedContract] = useState<ContractWithDetails | null>(null);
-  const [contractToEmail, setContractToEmail] = useState<ContractWithDetails | null>(null);
+
 
   const {
     data: contracts = [],
@@ -62,8 +62,36 @@ export default function ContractsPage() {
     }
   };
 
-  const handleEmail = (contract: ContractWithDetails) => {
-    setContractToEmail(contract);
+  const handleEmail = async (contract: ContractWithDetails) => {
+    try {
+      await apiRequest("POST", `/api/contracts/${contract.id}/email`, {
+        recipient: contract.beneficiary.email,
+        subject: `Contract ${contract.template.name} - Nr. ${contract.orderNumber}`,
+        message: `Bună ziua,
+
+Vă transmitem contractul pentru semnare.
+
+Pentru a semna contractul, vă rugăm să accesați link-ul din emailul pe care îl veți primi.
+
+Mulțumim,
+Echipa Contract Manager`,
+        attachPDF: true,
+      });
+
+      toast({
+        title: "Succes",
+        description: "Emailul cu contractul pentru semnare a fost trimis cu succes!",
+      });
+
+      // Invalidate queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ["/api/contracts"] });
+    } catch (error) {
+      toast({
+        title: "Eroare",
+        description: "A apărut o eroare la trimiterea emailului.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDelete = (contract: ContractWithDetails) => {
@@ -133,17 +161,7 @@ export default function ContractsPage() {
             />
           )}
 
-          {contractToEmail && (
-            <EmailModal
-              contract={contractToEmail}
-              isOpen={!!contractToEmail}
-              onClose={() => setContractToEmail(null)}
-              onSent={() => {
-                setContractToEmail(null);
-                queryClient.invalidateQueries({ queryKey: ["/api/contracts"] });
-              }}
-            />
-          )}
+
         </div>
     </>
   );
