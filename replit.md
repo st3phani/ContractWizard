@@ -122,6 +122,7 @@ Four main entities:
 ```
 Changelog:
 
+- July 29, 2025. **SETTINGS PAGE CLEANUP** - Removed "Setări Notificări" section from Settings page including notification state, handler function, and entire Card component. Cleaned up Bell icon import. Settings page now focuses on Company Settings, System Settings, and Contract Status management only.
 - July 29, 2025. **COMPLETE STICKY NAVIGATION IMPLEMENTATION SUCCESSFUL** - Successfully implemented header and sidebar sticky positioning across all 7 application pages (Dashboard, Contracts, Beneficiaries, Templates, Profile, Settings, Contract Form). All sidebars wrapped in sticky container with h-screen, all headers use Tailwind classes 'sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm' for reliable sticky positioning. Main containers use 'main-container' CSS class (height: 100vh, overflow-y: auto) to properly support sticky behavior. Navigation now fully consistent and functional across entire application - confirmed working by user.
 - July 29, 2025. **STATUS MANAGEMENT RESTRICTIONS** - Removed "Adaugă Status" button and functionality from Settings page. Users can now only edit and delete existing contract statuses, preventing creation of new status types to maintain system consistency.
 - July 29, 2025. **STATUS COLOR UPDATE** - Modified "În Așteptare" status color to orange (bg-orange-100 text-orange-800) in getStatusColor function. Added compatibility for "pending" and "pandding" status codes to ensure proper color display.

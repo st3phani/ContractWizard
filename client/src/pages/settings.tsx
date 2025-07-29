@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Building, Mail, Phone, MapPin, Save, Database, Bell, Shield, Edit, Trash2 } from "lucide-react";
+import { Building, Mail, Phone, MapPin, Save, Database, Shield, Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Sidebar from "@/components/sidebar";
@@ -49,15 +49,6 @@ export default function Settings() {
       });
     }
   }, [existingSettings]);
-
-  // Notification Settings
-  const [notificationSettings, setNotificationSettings] = useState({
-    emailNotifications: true,
-    contractCreated: true,
-    contractSent: true,
-    contractSigned: false,
-    dailyReports: false,
-  });
 
   // System Settings
   const [systemSettings, setSystemSettings] = useState({
@@ -179,13 +170,6 @@ export default function Settings() {
       });
     },
   });
-
-  const handleSaveNotificationSettings = () => {
-    toast({
-      title: "Success", 
-      description: "Setările de notificări au fost salvate cu succes!",
-    });
-  };
 
   const handleSaveSystemSettings = () => {
     saveSystemSettingsMutation.mutate(systemSettings);
@@ -354,86 +338,6 @@ export default function Settings() {
                 >
                   <Save className="h-4 w-4 mr-2" />
                   {saveCompanySettingsMutation.isPending ? "Se salvează..." : "Salvează Informații Companie"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Notification Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Bell className="h-5 w-5 mr-2" />
-                Setări Notificări
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Notificări Email</Label>
-                  <p className="text-sm text-gray-500">Primiți notificări prin email pentru activități importante</p>
-                </div>
-                <Switch
-                  checked={notificationSettings.emailNotifications}
-                  onCheckedChange={(checked) => 
-                    setNotificationSettings({ ...notificationSettings, emailNotifications: checked })
-                  }
-                />
-              </div>
-
-              <Separator />
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label>Contract Creat</Label>
-                  <Switch
-                    checked={notificationSettings.contractCreated}
-                    onCheckedChange={(checked) => 
-                      setNotificationSettings({ ...notificationSettings, contractCreated: checked })
-                    }
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <Label>Contract Trimis</Label>
-                  <Switch
-                    checked={notificationSettings.contractSent}
-                    onCheckedChange={(checked) => 
-                      setNotificationSettings({ ...notificationSettings, contractSent: checked })
-                    }
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <Label>Contract Semnat</Label>
-                  <Switch
-                    checked={notificationSettings.contractSigned}
-                    onCheckedChange={(checked) => 
-                      setNotificationSettings({ ...notificationSettings, contractSigned: checked })
-                    }
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <Label>Rapoarte Zilnice</Label>
-                  <Switch
-                    checked={notificationSettings.dailyReports}
-                    onCheckedChange={(checked) => 
-                      setNotificationSettings({ ...notificationSettings, dailyReports: checked })
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end">
-                <Button 
-                  onClick={handleSaveNotificationSettings} 
-                  className="bg-blue-600 hover:bg-blue-700"
-                  title="Salvează setările de notificări"
-                  aria-label="Salvează setările de notificări"
-                >
-                  <Save className="h-4 w-4 mr-2" />
-                  Salvează Setări Notificări
                 </Button>
               </div>
             </CardContent>
