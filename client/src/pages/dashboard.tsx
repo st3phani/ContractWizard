@@ -27,14 +27,12 @@ export default function Dashboard() {
   const contracts = allContracts.slice(0, 5);
 
   // Fetch stats
-  const { data: stats = { totalContracts: 0, pendingContracts: 0, signedContracts: 0, completedContracts: 0, reservedContracts: 0, signedContractsTotal: 0, completedContractsTotal: 0 } } = useQuery<{
+  const { data: stats = { totalContracts: 0, pendingContracts: 0, signedContracts: 0, completedContracts: 0, reservedContracts: 0 } } = useQuery<{
     totalContracts: number;
     pendingContracts: number;
     signedContracts: number;
     completedContracts: number;
     reservedContracts: number;
-    signedContractsTotal: number;
-    completedContractsTotal: number;
   }>({
     queryKey: ["/api/contracts/stats"],
   });
