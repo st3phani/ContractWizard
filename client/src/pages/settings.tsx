@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Building, Mail, Phone, MapPin, Save, Database, Bell, Shield, Plus, Edit, Trash2 } from "lucide-react";
+import { Building, Mail, Phone, MapPin, Save, Database, Bell, Shield, Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Sidebar from "@/components/sidebar";
@@ -583,14 +583,10 @@ function ContractStatusesSection() {
     queryKey: ["/api/contract-statuses"],
   });
 
-  // Create/Update mutation
+  // Update mutation (only for editing existing statuses)
   const saveStatusMutation = useMutation({
     mutationFn: (data: typeof formData) => {
-      if (editingStatus) {
-        return apiRequest("PUT", `/api/contract-statuses/${editingStatus.id}`, data);
-      } else {
-        return apiRequest("POST", "/api/contract-statuses", data);
-      }
+      return apiRequest("PUT", `/api/contract-statuses/${editingStatus!.id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/contract-statuses"] });
@@ -599,7 +595,7 @@ function ContractStatusesSection() {
       setFormData({ statusCode: '', statusLabel: '', description: '' });
       toast({
         title: "Success",
-        description: editingStatus ? "Status actualizat cu succes!" : "Status creat cu succes!",
+        description: "Status actualizat cu succes!",
       });
     },
     onError: () => {
@@ -630,18 +626,13 @@ function ContractStatusesSection() {
     },
   });
 
-  const handleOpenDialog = (status?: ContractStatus) => {
-    if (status) {
-      setEditingStatus(status);
-      setFormData({
-        statusCode: status.statusCode,
-        statusLabel: status.statusLabel,
-        description: status.description || ''
-      });
-    } else {
-      setEditingStatus(null);
-      setFormData({ statusCode: '', statusLabel: '', description: '' });
-    }
+  const handleOpenDialog = (status: ContractStatus) => {
+    setEditingStatus(status);
+    setFormData({
+      statusCode: status.statusCode,
+      statusLabel: status.statusLabel,
+      description: status.description || ''
+    });
     setIsDialogOpen(true);
   };
 
@@ -666,81 +657,9 @@ function ContractStatusesSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center">
-            <Shield className="h-5 w-5 mr-2" />
-            Statusuri Contracte
-          </div>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button 
-                onClick={() => handleOpenDialog()}
-                size="sm"
-                className="bg-blue-600 hover:bg-blue-700"
-                title="Adaugă status nou"
-                aria-label="Adaugă status nou de contract"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Adaugă Status
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingStatus ? 'Editează Status' : 'Adaugă Status Nou'}
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 pt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="statusCode">Cod Status *</Label>
-                  <Input
-                    id="statusCode"
-                    value={formData.statusCode}
-                    onChange={(e) => setFormData({ ...formData, statusCode: e.target.value })}
-                    placeholder="ex: draft, signed, completed"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="statusLabel">Etichetă Status *</Label>
-                  <Input
-                    id="statusLabel"
-                    value={formData.statusLabel}
-                    onChange={(e) => setFormData({ ...formData, statusLabel: e.target.value })}
-                    placeholder="ex: Ciornă, Semnat, Finalizat"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="statusDescription">Descriere</Label>
-                  <Textarea
-                    id="statusDescription"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="Descrierea statusului..."
-                    rows={3}
-                  />
-                </div>
-                <div className="flex justify-end gap-2 pt-4">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setIsDialogOpen(false)}
-                    title="Anulează operația"
-                    aria-label="Anulează adăugarea/editarea statusului"
-                  >
-                    Anulează
-                  </Button>
-                  <Button 
-                    onClick={handleSubmit}
-                    disabled={saveStatusMutation.isPending}
-                    className="bg-blue-600 hover:bg-blue-700"
-                    title="Salvează statusul"
-                    aria-label="Salvează statusul de contract"
-                  >
-                    {saveStatusMutation.isPending ? "Se salvează..." : "Salvează"}
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+        <CardTitle className="flex items-center">
+          <Shield className="h-5 w-5 mr-2" />
+          Statusuri Contracte
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -787,6 +706,64 @@ function ContractStatusesSection() {
             ))}
           </div>
         )}
+        
+        {/* Edit Status Dialog */}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Editează Status</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 pt-4">
+              <div className="space-y-2">
+                <Label htmlFor="statusCode">Cod Status *</Label>
+                <Input
+                  id="statusCode"
+                  value={formData.statusCode}
+                  onChange={(e) => setFormData({ ...formData, statusCode: e.target.value })}
+                  placeholder="ex: draft, signed, completed"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="statusLabel">Etichetă Status *</Label>
+                <Input
+                  id="statusLabel"
+                  value={formData.statusLabel}
+                  onChange={(e) => setFormData({ ...formData, statusLabel: e.target.value })}
+                  placeholder="ex: Ciornă, Semnat, Finalizat"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="statusDescription">Descriere</Label>
+                <Textarea
+                  id="statusDescription"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Descrierea statusului..."
+                  rows={3}
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsDialogOpen(false)}
+                  title="Anulează operația"
+                  aria-label="Anulează editarea statusului"
+                >
+                  Anulează
+                </Button>
+                <Button 
+                  onClick={handleSubmit}
+                  disabled={saveStatusMutation.isPending}
+                  className="bg-blue-600 hover:bg-blue-700"
+                  title="Salvează statusul"
+                  aria-label="Salvează statusul de contract"
+                >
+                  {saveStatusMutation.isPending ? "Se salvează..." : "Salvează"}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );

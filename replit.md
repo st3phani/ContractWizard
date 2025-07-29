@@ -122,6 +122,7 @@ Four main entities:
 ```
 Changelog:
 
+- July 29, 2025. **STATUS MANAGEMENT RESTRICTIONS** - Removed "Adaugă Status" button and functionality from Settings page. Users can now only edit and delete existing contract statuses, preventing creation of new status types to maintain system consistency.
 - July 29, 2025. **STATUS COLOR UPDATE** - Modified "În Așteptare" status color to orange (bg-orange-100 text-orange-800) in getStatusColor function. Added compatibility for "pending" and "pandding" status codes to ensure proper color display.
 - July 29, 2025. **CONTRACT STATUS MANAGEMENT SYSTEM COMPLETED** - Implemented complete database-driven contract status system with contract_statuses table, API routes, and Settings page management interface. Migrated all 77 existing contracts from hardcoded status strings to status_id relationships. Fixed frontend components to display status from database relations instead of "Necunoscut".
 - July 29, 2025. **CONTRACT STATUS UPDATE** - Changed contract status from "Trimise" to "Semnate" (sent to signed) across entire application. Updated schema, backend storage methods, frontend components, and UI labels. Status now correctly reflects beneficiary's signed state rather than just email sent status.
