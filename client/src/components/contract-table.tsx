@@ -100,7 +100,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
               <SelectContent>
                 <SelectItem value="all">Toate statusurile</SelectItem>
                 <SelectItem value="draft">În Așteptare</SelectItem>
-                <SelectItem value="sent">Trimis</SelectItem>
+                <SelectItem value="signed">Semnat</SelectItem>
                 <SelectItem value="completed">Finalizat</SelectItem>
                 <SelectItem value="reserved">Rezervat</SelectItem>
               </SelectContent>

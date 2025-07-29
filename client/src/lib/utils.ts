@@ -28,7 +28,7 @@ export function getStatusColor(status: string): string {
   switch (status) {
     case "draft":
       return "bg-orange-100 text-orange-800";
-    case "sent":
+    case "signed":
       return "bg-green-100 text-green-800";
     case "completed":
       return "bg-purple-100 text-purple-800";
@@ -43,8 +43,8 @@ export function getStatusText(status: string): string {
   switch (status) {
     case "draft":
       return "În Așteptare";
-    case "sent":
-      return "Trimis";
+    case "signed":
+      return "Semnat";
     case "completed":
       return "Finalizat";
     case "reserved":

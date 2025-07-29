@@ -5,7 +5,7 @@ interface StatsCardsProps {
   stats: {
     totalContracts: number;
     pendingContracts: number;
-    sentContracts: number;
+    signedContracts: number;
     completedContracts: number;
     reservedContracts: number;
   };
@@ -28,8 +28,8 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       iconColor: "text-orange-600",
     },
     {
-      title: "Trimise",
-      value: stats.sentContracts,
+      title: "Semnate",
+      value: stats.signedContracts,
       icon: Send,
       bgColor: "bg-green-100",
       iconColor: "text-green-600",

@@ -122,6 +122,8 @@ Four main entities:
 ```
 Changelog:
 
+- July 29, 2025. **CONTRACT STATUS UPDATE** - Changed contract status from "Trimise" to "Semnate" (sent to signed) across entire application. Updated schema, backend storage methods, frontend components, and UI labels. Status now correctly reflects beneficiary's signed state rather than just email sent status.
+- July 29, 2025. **TEMPLATE MANAGEMENT ENHANCED** - Added "Duplicare" and "Previzualizare" buttons to template actions. Duplicate creates copy with " - Copie" suffix. Preview shows template content with variable detection, conditional logic indicators, and usage information in comprehensive modal.
 - July 29, 2025. **CONDITIONAL TEMPLATE SYSTEM** - Implemented conditional logic in contract templates allowing different content for Persoană Fizică vs Persoană Juridică. Added support for {{#if isCompany}}, {{#if isIndividual}}, {{#unless}} blocks in templates. Created comprehensive template with conditions demo and documentation guide.
 - July 22, 2025. **REVERTED EU ENTITY CATEGORY** - Reverted implementation of third beneficiary category "Persoană Juridică UE" back to original two-category system (Persoană Fizică / Companie). Database cleaned, schema restored, and all EU-specific fields removed from forms and display logic.
 - July 22, 2025. **USER PROFILE MANAGEMENT SYSTEM COMPLETED** - Implemented complete user profile management with PostgreSQL database storage. Added user_profiles table, API routes (/api/user-profile GET/PUT), and fully functional profile page with form validation, loading states, and success/error messaging. Administrator profile data now persists in database and can be updated through the profile page accessible via sidebar dropdown menu.

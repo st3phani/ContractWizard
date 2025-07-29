@@ -73,7 +73,7 @@ export const contracts = pgTable("contracts", {
   startDate: timestamp("start_date"),
   endDate: timestamp("end_date"),
   notes: text("notes"),
-  status: text("status").notNull().default("draft"), // draft, reserved, sent, completed
+  status: text("status").notNull().default("draft"), // draft, reserved, signed, completed
   // Provider/Company details (auto-filled from settings)
   providerName: text("provider_name"),
   providerAddress: text("provider_address"),

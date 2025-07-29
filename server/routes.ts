@@ -584,7 +584,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // In a real implementation, you would use nodemailer here
       // For now, just update the contract status
       await storage.updateContract(id, { 
-        status: "sent", 
+        status: "signed", 
         sentAt: new Date() 
       });
       

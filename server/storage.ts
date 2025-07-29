@@ -54,7 +54,7 @@ export interface IStorage {
   getContractStats(): Promise<{
     totalContracts: number;
     pendingContracts: number;
-    sentContracts: number;
+    signedContracts: number;
     completedContracts: number;
     reservedContracts: number;
   }>;
@@ -537,7 +537,7 @@ _________________           _________________`,
   async getContractStats(): Promise<{
     totalContracts: number;
     pendingContracts: number;
-    sentContracts: number;
+    signedContracts: number;
     completedContracts: number;
     reservedContracts: number;
   }> {
@@ -546,7 +546,7 @@ _________________           _________________`,
     return {
       totalContracts: contracts.length,
       pendingContracts: contracts.filter(c => c.status === "draft").length,
-      sentContracts: contracts.filter(c => c.status === "sent").length,
+      signedContracts: contracts.filter(c => c.status === "signed").length,
       completedContracts: contracts.filter(c => c.status === "completed").length,
       reservedContracts: contracts.filter(c => c.status === "reserved").length
     };
@@ -879,7 +879,7 @@ export class DatabaseStorage implements IStorage {
   async getContractStats(): Promise<{
     totalContracts: number;
     pendingContracts: number;
-    sentContracts: number;
+    signedContracts: number;
     completedContracts: number;
     reservedContracts: number;
   }> {
@@ -888,7 +888,7 @@ export class DatabaseStorage implements IStorage {
     return {
       totalContracts: allContracts.length,
       pendingContracts: allContracts.filter(c => c.status === "draft").length,
-      sentContracts: allContracts.filter(c => c.status === "sent").length,
+      signedContracts: allContracts.filter(c => c.status === "signed").length,
       completedContracts: allContracts.filter(c => c.status === "completed").length,
       reservedContracts: allContracts.filter(c => c.status === "reserved").length,
     };
