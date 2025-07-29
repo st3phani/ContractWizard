@@ -59,7 +59,9 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
   };
 
   const canPerformActions = (contract: ContractWithDetails) => {
-    return contract.status?.statusCode !== "reserved";
+    return contract.status?.statusCode !== "reserved" && 
+           contract.status?.statusCode !== "signed" && 
+           contract.status?.statusCode !== "completed";
   };
 
   // Reset to first page when filters change

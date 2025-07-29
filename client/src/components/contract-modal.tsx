@@ -17,6 +17,12 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
   const [previewContent, setPreviewContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const canSendContract = (contract: ContractWithDetails) => {
+    return contract.status?.statusCode !== "reserved" && 
+           contract.status?.statusCode !== "signed" && 
+           contract.status?.statusCode !== "completed";
+  };
+
   // Fetch preview from backend API when modal opens
   useEffect(() => {
     if (contract && isOpen) {
@@ -67,7 +73,9 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => onEmail(contract)}
+                onClick={() => canSendContract(contract) ? onEmail(contract) : undefined}
+                disabled={!canSendContract(contract)}
+                className={!canSendContract(contract) ? "opacity-30 cursor-not-allowed" : ""}
                 title="Trimite la semnat"
                 aria-label="Trimite la semnat"
               >
