@@ -927,6 +927,21 @@ export class DatabaseStorage implements IStorage {
     return (result.rowCount ?? 0) > 0;
   }
 
+  async updateContractStatusById(contractId: number, statusId: number): Promise<Contract | undefined> {
+    try {
+      const [updated] = await db
+        .update(contracts)
+        .set({ statusId: statusId })
+        .where(eq(contracts.id, contractId))
+        .returning();
+
+      return updated || undefined;
+    } catch (error) {
+      console.error("Error updating contract status:", error);
+      throw error;
+    }
+  }
+
   async getContractStats(): Promise<{
     totalContracts: number;
     pendingContracts: number;

@@ -691,6 +691,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Signed contract not found" });
       }
 
+      // Auto-update contract status to "completed" (Finalizat) when accessed
+      // Only update if contract is currently "signed" (status ID 3) to avoid multiple updates
+      if (contract.status?.statusCode === 'signed') {
+        try {
+          await storage.updateContractStatusById(contract.id, 4); // Status ID 4 = "completed" (Finalizat)
+          console.log(`✅ Contract #${contract.orderNumber} status automatically updated to "Finalizat" upon signed contract page access`);
+          
+          // Get the updated contract with new status
+          const updatedContract = await storage.getContract(contract.id);
+          if (updatedContract) {
+            return res.json(updatedContract);
+          }
+        } catch (updateError) {
+          console.error("Failed to auto-update contract status:", updateError);
+          // Return original contract if status update fails
+        }
+      }
+
       res.json(contract);
     } catch (error) {
       console.error("Get signed contract error:", error);
