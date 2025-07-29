@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { sendContractEmail, testEmailConnection, sendSignedContractNotification } from "./email";
 import { getEmailLogs, clearEmailLogs, getLatestEmails } from "./email-log";
+import { cronScheduler } from "./cron-scheduler";
 import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema, insertSystemSettingsSchema, insertUserProfileSchema, insertContractStatusSchema, contractSigningSchema } from "@shared/schema";
 import { z } from "zod";
 import { nanoid } from "nanoid";
@@ -657,6 +658,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Email logs cleared successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to clear email logs" });
+    }
+  });
+
+  // Cron management routes
+  app.get("/api/cron/status", (req, res) => {
+    try {
+      const status = cronScheduler.getStatus();
+      res.json({
+        success: true,
+        data: status,
+        message: status.isRunning ? "Cron scheduler is running" : "Cron scheduler is stopped"
+      });
+    } catch (error) {
+      console.error("Error getting cron status:", error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to get cron status",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  app.post("/api/cron/trigger/contracts", async (req, res) => {
+    try {
+      await cronScheduler.manualContractUpdate();
+      res.json({
+        success: true,
+        message: "Contract status update completed successfully"
+      });
+    } catch (error) {
+      console.error("Manual contract update failed:", error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to update contract statuses",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 

@@ -1,7 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { contractStatusUpdater } from "./contract-status-updater";
+import { cronScheduler } from "./cron-scheduler";
 
 const app = express();
 app.set('trust proxy', true); // Enable IP forwarding for proxy environments like Replit
@@ -41,8 +41,8 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
-  // Start automatic contract status updater service
-  contractStatusUpdater.start();
+  // Start cron scheduler for automated tasks
+  cronScheduler.start();
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
