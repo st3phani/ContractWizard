@@ -1,6 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { sendContractEmail, testEmailConnection } from "./email";
+import { getEmailLogs, clearEmailLogs, getLatestEmails } from "./email-log";
 import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema, insertSystemSettingsSchema, insertUserProfileSchema, insertContractStatusSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -581,16 +583,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Contract not found" });
       }
       
-      // In a real implementation, you would use nodemailer here
-      // For now, just update the contract status
+      // Send actual email using nodemailer + MailHog
+      await sendContractEmail({
+        recipient,
+        subject,
+        message,
+        attachPDF,
+        contract: contractToEmail
+      });
+      
+      // Update contract status to "sent"
       await storage.updateContract(id, { 
         statusId: 3, 
         sentAt: new Date() 
       });
       
-      res.json({ message: "Email sent successfully" });
+      res.json({ 
+        message: "Email sent successfully",
+        testingMode: process.env.NODE_ENV === 'development',
+        note: "În modul de dezvoltare, email-urile sunt logged în consolă și fișier"
+      });
     } catch (error) {
+      console.error("Email sending error:", error);
       res.status(500).json({ message: "Failed to send email" });
+    }
+  });
+
+  // Test email connection
+  app.get("/api/email/test", async (req, res) => {
+    try {
+      const isReady = await testEmailConnection();
+      res.json({ 
+        status: isReady ? 'ready' : 'error',
+        testingMode: process.env.NODE_ENV === 'development',
+        message: isReady ? 'Email system is ready (Development Mode - Console Logging)' : 'Email system has errors'
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Email test failed" });
+    }
+  });
+
+  // Get email logs for testing
+  app.get("/api/email/logs", async (req, res) => {
+    try {
+      const logs = getLatestEmails(20);
+      res.json({
+        logs,
+        total: logs.length,
+        testingMode: process.env.NODE_ENV === 'development'
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch email logs" });
+    }
+  });
+
+  // Clear email logs
+  app.delete("/api/email/logs", async (req, res) => {
+    try {
+      clearEmailLogs();
+      res.json({ message: "Email logs cleared successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to clear email logs" });
     }
   });
 

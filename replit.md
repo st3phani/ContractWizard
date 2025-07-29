@@ -122,6 +122,7 @@ Four main entities:
 ```
 Changelog:
 
+- July 29, 2025. **EMAIL TESTING ENVIRONMENT IMPLEMENTED** - Created comprehensive email testing system using nodemailer with console logging and file-based email logs for development. Implemented email-test.tsx component in Settings page, server/email.ts with development transport, API endpoints for email logs management, and detailed documentation. Email system logs all sent emails to console and JSON file, provides testing interface, and works without external dependencies like MailHog.
 - July 29, 2025. **EMAIL BUTTON REBRANDING TO SIGNATURE** - Changed email button text from "Trimite contractul prin email" to "Trimite la semnat" and replaced Mail icon with PenTool icon across all components (contract-table.tsx, email-modal.tsx, contract-modal.tsx). Updated titles, aria-labels, and dialog headers to reflect signing focus rather than generic email sending.
 - July 29, 2025. **SETTINGS PAGE SECTION REORDERING** - Moved "Gestionare Date" (Data Management) section to bottom of Settings page as the last section. New order: Company Settings, System Settings, Contract Statuses (read-only), Data Management.
 - July 29, 2025. **CONTRACT STATUS READ-ONLY MODE** - Removed edit and delete buttons from Contract Status section in Settings page. Eliminated all CRUD functionality including dialog, mutations, handlers, and form state. Contract statuses now display in read-only mode showing only status code, label, and description. Cleaned up imports for Edit, Trash2 icons and Dialog components.

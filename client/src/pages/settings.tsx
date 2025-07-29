@@ -8,11 +8,12 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Building, Mail, Phone, MapPin, Save, Database, Shield } from "lucide-react";
+import { Building, Mail, Phone, MapPin, Save, Database, Shield, TestTube } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Sidebar from "@/components/sidebar";
 import type { CompanySettings, ContractStatus } from "@shared/schema";
+import EmailTest from "@/components/email-test";
 
 
 export default function Settings() {
@@ -463,6 +464,20 @@ export default function Settings() {
               <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
                 <p className="text-sm text-yellow-800">
                   <strong>Atenție:</strong> Operațiunile de export/import pot dura câteva minute în funcție de cantitatea de date.
+                </p>
+              </div>
+
+              {/* Email Testing Section */}
+              <div className="border-t pt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center">
+                    <TestTube className="h-4 w-4 mr-2" />
+                    <span className="font-medium">Test Sistem Email</span>
+                  </div>
+                  <EmailTest />
+                </div>
+                <p className="text-sm text-gray-600">
+                  Testează funcționalitatea de trimitere email folosind MailHog pentru dezvoltare.
                 </p>
               </div>
             </CardContent>
