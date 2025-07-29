@@ -948,15 +948,32 @@ export class DatabaseStorage implements IStorage {
     signedContracts: number;
     completedContracts: number;
     reservedContracts: number;
+    signedContractsTotal: number;
+    completedContractsTotal: number;
   }> {
     const allContracts = await db.select().from(contracts);
+    
+    const signedContracts = allContracts.filter(c => c.statusId === 3);
+    const completedContracts = allContracts.filter(c => c.statusId === 4);
+    
+    const signedContractsTotal = signedContracts.reduce((sum, contract) => {
+      const value = parseFloat(contract.value || '0');
+      return sum + value;
+    }, 0);
+    
+    const completedContractsTotal = completedContracts.reduce((sum, contract) => {
+      const value = parseFloat(contract.value || '0');
+      return sum + value;
+    }, 0);
     
     return {
       totalContracts: allContracts.length,
       pendingContracts: allContracts.filter(c => c.statusId === 1).length,
-      signedContracts: allContracts.filter(c => c.statusId === 3).length,
-      completedContracts: allContracts.filter(c => c.statusId === 4).length,
+      signedContracts: signedContracts.length,
+      completedContracts: completedContracts.length,
       reservedContracts: allContracts.filter(c => c.statusId === 2).length,
+      signedContractsTotal: Math.round(signedContractsTotal * 100) / 100,
+      completedContractsTotal: Math.round(completedContractsTotal * 100) / 100,
     };
   }
 
