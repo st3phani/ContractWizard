@@ -82,10 +82,37 @@ export default function Templates() {
   };
 
   const addVariable = (variable: string) => {
-    // Pentru Rich Text Editor, adaugăm variabila la sfârșitul conținutului curent
     const currentContent = formData.content || '<p></p>';
-    const newContent = currentContent.replace(/<\/p>$/, ` ${variable}</p>`) || `${currentContent} ${variable}`;
+    
+    // Strategii multiple pentru inserarea variabilei
+    let newContent;
+    
+    if (currentContent.trim() === '<p></p>' || currentContent.trim() === '') {
+      // Editor gol - adaugă în primul paragraf
+      newContent = `<p>${variable}</p>`;
+    } else if (currentContent.includes('</p>')) {
+      // Găsește ultimul paragraf și adaugă variabila acolo
+      const lastPIndex = currentContent.lastIndexOf('</p>');
+      if (lastPIndex !== -1) {
+        const beforeClosing = currentContent.substring(0, lastPIndex);
+        const afterClosing = currentContent.substring(lastPIndex);
+        newContent = beforeClosing + ' ' + variable + afterClosing;
+      } else {
+        newContent = currentContent + ' ' + variable;
+      }
+    } else {
+      // Fallback - adaugă la sfârșitul conținutului
+      newContent = currentContent + ' ' + variable;
+    }
+    
     setFormData({ ...formData, content: newContent });
+    
+    // Notificare vizuală
+    toast({
+      title: "Variabilă adăugată",
+      description: `${variable} a fost adăugat în template`,
+      duration: 2000,
+    });
   };
 
   return (
