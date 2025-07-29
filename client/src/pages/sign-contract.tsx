@@ -10,7 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, CheckCircle2, AlertCircle, FileText, User, Building, Calendar, Euro } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Loader2, CheckCircle2, AlertCircle, FileText, User, Building, Calendar, Euro, Eye } from "lucide-react";
 
 const contractSigningSchema = z.object({
   signedBy: z.string().min(1, "Numele este obligatoriu pentru semnare"),
@@ -25,6 +26,7 @@ export default function SignContract() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const form = useForm<ContractSigningData>({
     resolver: zodResolver(contractSigningSchema),
@@ -186,9 +188,79 @@ export default function SignContract() {
           {/* Contract Details */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <FileText className="h-5 w-5 mr-2" />
-                Detalii Contract
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <FileText className="h-5 w-5 mr-2" />
+                  Detalii Contract
+                </div>
+                <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="flex items-center">
+                      <Eye className="h-4 w-4 mr-2" />
+                      Previzualizare
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Previzualizare Contract</DialogTitle>
+                      <DialogDescription>
+                        Conținutul complet al contractului pentru semnare
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="mt-4 p-6 bg-white border rounded-lg">
+                      <div 
+                        className="prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ 
+                          __html: contract.template?.content?.replace(/{{[^}]+}}/g, (match) => {
+                            const field = match.slice(2, -2).trim();
+                            switch (field) {
+                              case 'orderNumber':
+                                return contract.orderNumber?.toString() || '';
+                              case 'currentDate':
+                                return new Date().toLocaleDateString('ro-RO');
+                              case 'beneficiary.name':
+                                return contract.beneficiary?.name || '';
+                              case 'beneficiary.address':
+                                return contract.beneficiary?.address || '';
+                              case 'beneficiary.cnp':
+                                return contract.beneficiary?.cnp || '';
+                              case 'beneficiary.companyName':
+                                return contract.beneficiary?.companyName || '';
+                              case 'beneficiary.companyCui':
+                                return contract.beneficiary?.companyCui || '';
+                              case 'contract.value':
+                                return contract.value || '';
+                              case 'contract.currency':
+                                return contract.currency || '';
+                              case 'contract.startDate':
+                                return contract.startDate ? new Date(contract.startDate).toLocaleDateString('ro-RO') : '';
+                              case 'contract.endDate':
+                                return contract.endDate ? new Date(contract.endDate).toLocaleDateString('ro-RO') : '';
+                              case 'contract.notes':
+                                return contract.notes || '';
+                              case 'provider.name':
+                                return contract.providerName || '';
+                              case 'provider.address':
+                                return contract.providerAddress || '';
+                              case 'provider.cui':
+                                return contract.providerCui || '';
+                              case 'provider.registrationNumber':
+                                return contract.providerRegistrationNumber || '';
+                              case 'provider.legalRepresentative':
+                                return contract.providerLegalRepresentative || '';
+                              case 'provider.phone':
+                                return contract.providerPhone || '';
+                              case 'provider.email':
+                                return contract.providerEmail || '';
+                              default:
+                                return match;
+                            }
+                          }) || '' 
+                        }}
+                      />
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
