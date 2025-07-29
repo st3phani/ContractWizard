@@ -189,11 +189,11 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                       size="sm"
                       onClick={() => canSendContract(contract) ? onEmail(contract) : undefined}
                       disabled={!canSendContract(contract)}
-                      className={!canSendContract(contract) ? "opacity-30 cursor-not-allowed" : "hover:bg-red-50"}
+                      className={!canSendContract(contract) ? "opacity-30 cursor-not-allowed" : "hover:bg-purple-50"}
                       title="Trimite la semnat"
                       aria-label="Trimite la semnat"
                     >
-                      <PenTool className={`h-4 w-4 ${!canSendContract(contract) ? "" : "text-red-600"}`} />
+                      <PenTool className={`h-4 w-4 ${!canSendContract(contract) ? "" : "text-purple-600"}`} />
                     </Button>
                     <Button
                       variant="ghost"
