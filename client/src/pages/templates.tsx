@@ -23,6 +23,7 @@ export default function Templates() {
     content: "",
     fields: "[]",
   });
+  const [editorInstance, setEditorInstance] = useState<any>(null);
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -82,37 +83,43 @@ export default function Templates() {
   };
 
   const addVariable = (variable: string) => {
-    const currentContent = formData.content || '<p></p>';
-    
-    // Strategii multiple pentru inserarea variabilei
-    let newContent;
-    
-    if (currentContent.trim() === '<p></p>' || currentContent.trim() === '') {
-      // Editor gol - adaugă în primul paragraf
-      newContent = `<p>${variable}</p>`;
-    } else if (currentContent.includes('</p>')) {
-      // Găsește ultimul paragraf și adaugă variabila acolo
-      const lastPIndex = currentContent.lastIndexOf('</p>');
-      if (lastPIndex !== -1) {
-        const beforeClosing = currentContent.substring(0, lastPIndex);
-        const afterClosing = currentContent.substring(lastPIndex);
-        newContent = beforeClosing + ' ' + variable + afterClosing;
+    if (editorInstance) {
+      // Utilizează editorul TipTap pentru inserare directă
+      editorInstance.chain().focus().insertContent(' ' + variable).run();
+      
+      toast({
+        title: "Variabilă adăugată",
+        description: `${variable} a fost adăugat în template`,
+        duration: 2000,
+      });
+    } else {
+      // Fallback dacă editorul nu este disponibil
+      const currentContent = formData.content || '<p></p>';
+      let newContent;
+      
+      if (currentContent.trim() === '<p></p>' || currentContent.trim() === '') {
+        newContent = `<p>${variable}</p>`;
+      } else if (currentContent.includes('</p>')) {
+        const lastPIndex = currentContent.lastIndexOf('</p>');
+        if (lastPIndex !== -1) {
+          const beforeClosing = currentContent.substring(0, lastPIndex);
+          const afterClosing = currentContent.substring(lastPIndex);
+          newContent = beforeClosing + ' ' + variable + afterClosing;
+        } else {
+          newContent = currentContent + ' ' + variable;
+        }
       } else {
         newContent = currentContent + ' ' + variable;
       }
-    } else {
-      // Fallback - adaugă la sfârșitul conținutului
-      newContent = currentContent + ' ' + variable;
+      
+      setFormData({ ...formData, content: newContent });
+      
+      toast({
+        title: "Variabilă adăugată", 
+        description: `${variable} a fost adăugat în template`,
+        duration: 2000,
+      });
     }
-    
-    setFormData({ ...formData, content: newContent });
-    
-    // Notificare vizuală
-    toast({
-      title: "Variabilă adăugată",
-      description: `${variable} a fost adăugat în template`,
-      duration: 2000,
-    });
   };
 
   return (
@@ -221,6 +228,7 @@ export default function Templates() {
                 onChange={(content) => setFormData({ ...formData, content })}
                 placeholder="Conținutul contractului cu placeholder-uri (ex: {{beneficiary.name}})"
                 className="min-h-[400px]"
+                onEditorReady={(editor) => setEditorInstance(editor)}
               />
             </div>
             

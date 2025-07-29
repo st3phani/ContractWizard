@@ -106,9 +106,10 @@ interface RichTextEditorProps {
   onChange: (content: string) => void;
   placeholder?: string;
   className?: string;
+  onEditorReady?: (editor: any) => void;
 }
 
-export default function RichTextEditor({ content, onChange, placeholder, className }: RichTextEditorProps) {
+export default function RichTextEditor({ content, onChange, placeholder, className, onEditorReady }: RichTextEditorProps) {
   const [isInTable, setIsInTable] = useState(false)
   const [tableHasBorder, setTableHasBorder] = useState(true)
 
@@ -136,6 +137,11 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
       TableClass,
     ],
     content,
+    onCreate: ({ editor }) => {
+      if (onEditorReady) {
+        onEditorReady(editor);
+      }
+    },
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
       // Check if cursor is in table
