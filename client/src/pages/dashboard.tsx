@@ -105,9 +105,9 @@ export default function Dashboard() {
         <Sidebar />
       </div>
       
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 main-container">
         {/* Header */}
-        <header className="header-sticky p-6">
+        <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
           <div>
             <h2 className="text-2xl font-semibold text-gray-900">Dashboard Contracte</h2>
             <p className="text-gray-600 mt-1">Gestionați contractele dvs. rapid și eficient</p>
