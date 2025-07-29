@@ -429,6 +429,9 @@ export default function Settings() {
             </CardContent>
           </Card>
 
+          {/* Contract Statuses Management */}
+          <ContractStatusesSection />
+
           {/* Data Management */}
           <Card>
             <CardHeader>
@@ -464,9 +467,6 @@ export default function Settings() {
               </div>
             </CardContent>
           </Card>
-
-          {/* Contract Statuses Management */}
-          <ContractStatusesSection />
         </div>
       </main>
     </div>
