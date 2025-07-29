@@ -8,6 +8,12 @@ interface EmailOptions {
   contract?: ContractWithDetails;
 }
 
+interface SignedContractEmailOptions {
+  contract: ContractWithDetails;
+  recipientType: 'beneficiary' | 'administrator';
+  adminEmail?: string;
+}
+
 export async function sendContractEmail(options: EmailOptions): Promise<void> {
   // Simple console logging for development
   if (process.env.NODE_ENV === 'development') {
@@ -81,6 +87,162 @@ export async function sendContractEmail(options: EmailOptions): Promise<void> {
 
   await transporter.sendMail(mailOptions);
   console.log('Production email sent successfully');
+}
+
+export async function sendSignedContractNotification(options: SignedContractEmailOptions): Promise<void> {
+  const { contract, recipientType, adminEmail } = options;
+  
+  const recipientEmail = recipientType === 'beneficiary' 
+    ? contract.beneficiary.email 
+    : (adminEmail || 'admin@contractmanager.ro');
+    
+  const subject = recipientType === 'beneficiary' 
+    ? `Contract #${contract.orderNumber} - Confirmare Semnare`
+    : `Contract #${contract.orderNumber} - Notificare Semnare`;
+    
+  const isForBeneficiary = recipientType === 'beneficiary';
+  
+  // Simple console logging for development
+  if (process.env.NODE_ENV === 'development') {
+    console.log('\n📧 =============== SIGNED CONTRACT EMAIL ===============');
+    console.log('From: Contract Manager <noreply@contractmanager.ro>');
+    console.log('To:', recipientEmail);
+    console.log('Subject:', subject);
+    console.log('Recipient Type:', recipientType);
+    console.log('Contract Details:');
+    console.log(`  - Numărul contractului: ${contract.orderNumber}`);
+    console.log(`  - Template: ${contract.template?.name || 'N/A'}`);
+    console.log(`  - Beneficiar: ${contract.beneficiary.name}`);
+    console.log(`  - Email beneficiar: ${contract.beneficiary.email}`);
+    console.log(`  - Data creării: ${contract.createdAt ? new Date(contract.createdAt).toLocaleDateString('ro-RO') : 'N/A'}`);
+    console.log(`  - Semnat de: ${contract.signedBy || 'N/A'}`);
+    console.log(`  - Data semnării: ${contract.signedAt ? new Date(contract.signedAt).toLocaleDateString('ro-RO') : 'N/A'}`);
+    console.log(`  - IP semnare: ${contract.signedIp || 'N/A'}`);
+    console.log(`  - Token semnat: ${contract.signedToken || 'N/A'}`);
+    console.log(`  - Status: ${contract.status?.statusLabel || 'N/A'}`);
+    if (contract.signedToken) {
+      console.log(`  - Link contract semnat: https://${process.env.REPLIT_DEV_DOMAIN || 'localhost:5000'}/signed-contract/${contract.signedToken}`);
+    }
+    console.log('Timestamp:', new Date().toLocaleString('ro-RO'));
+    console.log('====================================================\n');
+    
+    return Promise.resolve();
+  }
+
+  // Real email implementation for production
+  const transporter = nodemailer.createTransporter({
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT || '587'),
+    secure: false,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #ffffff;">
+      <div style="background-color: #1f2937; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
+        <h1 style="margin: 0; font-size: 24px;">Contract Manager</h1>
+      </div>
+      
+      <div style="padding: 20px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+        <h2 style="color: #1f2937; margin: 0 0 20px 0;">
+          ${isForBeneficiary ? 'Confirmare Semnare Contract' : 'Notificare Semnare Contract'}
+        </h2>
+        
+        <div style="background-color: #10b981; color: white; padding: 15px; border-radius: 6px; margin-bottom: 20px; text-align: center;">
+          <h3 style="margin: 0; font-size: 18px;">✓ Contract Semnat cu Succes</h3>
+        </div>
+        
+        <div style="color: #374151; line-height: 1.6; margin-bottom: 20px;">
+          ${isForBeneficiary 
+            ? `Contractul dumneavoastră a fost semnat cu succes. Vă mulțumim pentru colaborare!`
+            : `Un contract a fost semnat în sistem de către beneficiar.`
+          }
+        </div>
+        
+        <div style="border: 1px solid #e5e7eb; padding: 20px; border-radius: 6px; margin: 20px 0; background-color: #f9fafb;">
+          <h3 style="margin: 0 0 15px 0; color: #374151;">Detalii Contract</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px 0; font-weight: bold; width: 40%;">Numărul contractului:</td>
+              <td style="padding: 8px 0;">${contract.orderNumber}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; font-weight: bold;">Template:</td>
+              <td style="padding: 8px 0;">${contract.template?.name || 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; font-weight: bold;">Beneficiar:</td>
+              <td style="padding: 8px 0;">${contract.beneficiary.name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; font-weight: bold;">Email beneficiar:</td>
+              <td style="padding: 8px 0;">${contract.beneficiary.email}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; font-weight: bold;">Data creării:</td>
+              <td style="padding: 8px 0;">${contract.createdAt ? new Date(contract.createdAt).toLocaleDateString('ro-RO') : 'N/A'}</td>
+            </tr>
+          </table>
+        </div>
+        
+        <div style="border: 1px solid #10b981; padding: 20px; border-radius: 6px; margin: 20px 0; background-color: #f0fdf4;">
+          <h3 style="margin: 0 0 15px 0; color: #059669;">Detalii Semnare</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px 0; font-weight: bold; width: 40%;">Semnat de:</td>
+              <td style="padding: 8px 0;">${contract.signedBy || 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; font-weight: bold;">Data semnării:</td>
+              <td style="padding: 8px 0;">${contract.signedAt ? new Date(contract.signedAt).toLocaleDateString('ro-RO') + ' ' + new Date(contract.signedAt).toLocaleTimeString('ro-RO') : 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; font-weight: bold;">Adresa IP:</td>
+              <td style="padding: 8px 0;">${contract.signedIp || 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; font-weight: bold;">Status:</td>
+              <td style="padding: 8px 0;"><span style="background-color: #10b981; color: white; padding: 3px 8px; border-radius: 12px; font-size: 12px;">${contract.status?.statusLabel || 'Semnat'}</span></td>
+            </tr>
+            ${contract.signedToken ? `
+            <tr>
+              <td style="padding: 8px 0; font-weight: bold;">Token contract:</td>
+              <td style="padding: 8px 0; font-family: monospace; font-size: 12px;">${contract.signedToken}</td>
+            </tr>` : ''}
+          </table>
+        </div>
+        
+        ${contract.signedToken ? `
+        <div style="background-color: #f3f4f6; padding: 20px; border-radius: 6px; margin: 20px 0; text-align: center;">
+          <h3 style="margin: 0 0 15px 0; color: #1f2937;">Acces Contract Semnat</h3>
+          <p style="margin: 0 0 15px 0; color: #374151;">Pentru a accesa contractul semnat, folosiți link-ul de mai jos:</p>
+          <a href="https://${process.env.REPLIT_DEV_DOMAIN || 'localhost:5000'}/signed-contract/${contract.signedToken}" 
+             style="display: inline-block; background-color: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+            Vezi Contractul Semnat
+          </a>
+        </div>` : ''}
+        
+        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+        <p style="color: #6b7280; font-size: 14px;">
+          Acest email a fost trimis automat de sistemul Contract Manager.<br>
+          ${isForBeneficiary ? 'Vă mulțumim pentru colaborare!' : 'Notificare automată pentru administrator.'}
+        </p>
+      </div>
+    </div>
+  `;
+
+  const mailOptions = {
+    from: 'Contract Manager <noreply@contractmanager.ro>',
+    to: recipientEmail,
+    subject: subject,
+    html: htmlContent,
+  };
+
+  await transporter.sendMail(mailOptions);
+  console.log('Production signed contract email sent successfully');
 }
 
 // Test email functionality

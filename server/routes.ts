@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { sendContractEmail, testEmailConnection } from "./email";
+import { sendContractEmail, testEmailConnection, sendSignedContractNotification } from "./email";
 import { getEmailLogs, clearEmailLogs, getLatestEmails } from "./email-log";
 import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema, insertSystemSettingsSchema, insertUserProfileSchema, insertContractStatusSchema, contractSigningSchema } from "@shared/schema";
 import { z } from "zod";
@@ -733,6 +733,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         signedAt: new Date(),
         signedIp: clientIp
       });
+
+      // Send email notifications after successful signing
+      try {
+        // Get user profile for admin email
+        const userProfile = await storage.getUserProfile();
+        const adminEmail = userProfile?.email || 'admin@contractmanager.ro';
+
+        // Send confirmation email to beneficiary
+        await sendSignedContractNotification({
+          contract: signedContract,
+          recipientType: 'beneficiary'
+        });
+
+        // Send notification email to administrator
+        await sendSignedContractNotification({
+          contract: signedContract,
+          recipientType: 'administrator',
+          adminEmail: adminEmail
+        });
+
+        console.log('✅ Signed contract notifications sent to beneficiary and administrator');
+      } catch (emailError) {
+        console.error('❌ Failed to send signed contract notifications:', emailError);
+        // Don't fail the signing process if email fails
+      }
 
       res.json({ 
         message: "Contract signed successfully",
