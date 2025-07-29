@@ -12,6 +12,7 @@ import Beneficiaries from "@/pages/beneficiaries";
 import Profile from "@/pages/profile";
 import Settings from "@/pages/settings";
 import SignContract from "@/pages/sign-contract";
+import SignedContract from "@/pages/signed-contract";
 import NotFound from "@/pages/not-found";
 
 function MainLayout({ children }: { children: React.ReactNode }) {
@@ -28,13 +29,14 @@ function MainLayout({ children }: { children: React.ReactNode }) {
 function Router() {
   const [location] = useLocation();
   
-  // Check if it's the public signing page
-  const isSigningPage = location.startsWith('/sign-contract/');
+  // Check if it's a public page (signing or signed contract)
+  const isPublicPage = location.startsWith('/sign-contract/') || location.startsWith('/signed-contract/');
   
-  if (isSigningPage) {
+  if (isPublicPage) {
     return (
       <Switch>
         <Route path="/sign-contract/:token" component={SignContract} />
+        <Route path="/signed-contract/:token" component={SignedContract} />
       </Switch>
     );
   }
