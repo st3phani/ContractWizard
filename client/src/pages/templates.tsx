@@ -24,6 +24,8 @@ export default function Templates() {
     fields: "[]",
   });
   const [editorInstance, setEditorInstance] = useState<any>(null);
+  const [previewTemplate, setPreviewTemplate] = useState<ContractTemplate | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -96,6 +98,11 @@ export default function Templates() {
       description: `Template-ul "${template.name}" a fost duplicat cu succes!`,
       duration: 3000,
     });
+  };
+
+  const handlePreviewTemplate = (template: ContractTemplate) => {
+    setPreviewTemplate(template);
+    setIsPreviewOpen(true);
   };
 
   const addVariable = (variable: string) => {
@@ -180,6 +187,14 @@ export default function Templates() {
                         <TableCell>{formatDate(template.createdAt)}</TableCell>
                         <TableCell>
                           <div className="flex space-x-1 justify-center">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handlePreviewTemplate(template)}
+                              title="Previzualizare Template"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
                             <Button
                               variant="ghost"
                               size="sm"
@@ -413,6 +428,75 @@ export default function Templates() {
             >
               {(createTemplateMutation.isPending || updateTemplateMutation.isPending) ? "Se salvează..." : (selectedTemplate ? "Actualizează" : "Creează")}
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Template Preview Modal */}
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Previzualizare Template: {previewTemplate?.name}</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <h4 className="font-semibold text-amber-800 mb-2">ℹ️ Informații</h4>
+              <p className="text-sm text-amber-700">
+                Aceasta este o previzualizare a template-ului cu variabilele nepopulate. 
+                În contractele reale, variabilele precum <code>{"{{beneficiary.name}}"}</code> vor fi înlocuite cu datele actuale.
+              </p>
+            </div>
+            
+            <div className="border rounded-lg p-6 bg-white">
+              <div 
+                className="prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: previewTemplate?.content || '' }}
+              />
+            </div>
+            
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h4 className="font-semibold text-blue-800 mb-2">🔧 Variabile utilizate</h4>
+              <div className="text-sm text-blue-700">
+                <p className="mb-2">Template-ul conține următoarele tipuri de variabile:</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="font-medium">Variabile beneficiar:</p>
+                    <ul className="list-disc list-inside space-y-1 text-xs">
+                      {previewTemplate?.content.includes('{{beneficiary.name}}') && <li>Nume beneficiar</li>}
+                      {previewTemplate?.content.includes('{{beneficiary.email}}') && <li>Email beneficiar</li>}
+                      {previewTemplate?.content.includes('{{beneficiary.address}}') && <li>Adresă beneficiar</li>}
+                      {previewTemplate?.content.includes('{{beneficiary.cnp}}') && <li>CNP beneficiar</li>}
+                      {previewTemplate?.content.includes('{{beneficiary.companyName}}') && <li>Nume companie</li>}
+                      {previewTemplate?.content.includes('{{beneficiary.companyCui}}') && <li>CUI companie</li>}
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="font-medium">Variabile contract:</p>
+                    <ul className="list-disc list-inside space-y-1 text-xs">
+                      {previewTemplate?.content.includes('{{orderNumber}}') && <li>Număr contract</li>}
+                      {previewTemplate?.content.includes('{{currentDate}}') && <li>Data curentă</li>}
+                      {previewTemplate?.content.includes('{{contract.value}}') && <li>Valoare contract</li>}
+                      {previewTemplate?.content.includes('{{contract.startDate}}') && <li>Data început</li>}
+                      {previewTemplate?.content.includes('{{contract.endDate}}') && <li>Data sfârșit</li>}
+                      {previewTemplate?.content.includes('{{contract.notes}}') && <li>Observații</li>}
+                    </ul>
+                  </div>
+                </div>
+                {(previewTemplate?.content.includes('{{#if isCompany}}') || previewTemplate?.content.includes('{{#if isIndividual}}')) && (
+                  <div className="mt-3 p-2 bg-green-100 rounded">
+                    <p className="font-medium text-green-800">✨ Template condițional</p>
+                    <p className="text-xs text-green-700">Acest template conține logică condițională pentru afișarea diferită a conținutului pentru persoane fizice vs companii.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="flex justify-end">
+              <Button onClick={() => setIsPreviewOpen(false)}>
+                Închide
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
