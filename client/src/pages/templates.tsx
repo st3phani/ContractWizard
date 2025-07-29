@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Edit, Trash2, Eye } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -82,6 +82,22 @@ export default function Templates() {
     }
   };
 
+  const handleDuplicateTemplate = (template: ContractTemplate) => {
+    const duplicatedData = {
+      name: `${template.name} - Copie`,
+      content: template.content,
+      fields: template.fields,
+    };
+    
+    createTemplateMutation.mutate(duplicatedData);
+    
+    toast({
+      title: "Template duplicat",
+      description: `Template-ul "${template.name}" a fost duplicat cu succes!`,
+      duration: 3000,
+    });
+  };
+
   const addVariable = (variable: string) => {
     if (editorInstance) {
       // Utilizează editorul TipTap pentru inserare directă
@@ -154,7 +170,7 @@ export default function Templates() {
                     <TableRow>
                       <TableHead>Nume Template</TableHead>
                       <TableHead>Data Creării</TableHead>
-                      <TableHead>Acțiuni</TableHead>
+                      <TableHead className="text-center">Acțiuni</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -163,7 +179,7 @@ export default function Templates() {
                         <TableCell className="font-medium">{template.name}</TableCell>
                         <TableCell>{formatDate(template.createdAt)}</TableCell>
                         <TableCell>
-                          <div className="flex space-x-2">
+                          <div className="flex space-x-1 justify-center">
                             <Button
                               variant="ghost"
                               size="sm"
@@ -178,6 +194,14 @@ export default function Templates() {
                               }}
                             >
                               <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDuplicateTemplate(template)}
+                              title="Duplicare Template"
+                            >
+                              <Copy className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="ghost"
