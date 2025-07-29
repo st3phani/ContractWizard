@@ -581,18 +581,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const id = parseInt(req.params.id);
       const { recipient, subject, message, attachPDF } = req.body;
       
-      const contractToEmail = await storage.getContractWithDetails(id);
+      const contractToEmail = await storage.getContract(id);
       if (!contractToEmail) {
         return res.status(404).json({ message: "Contract not found" });
       }
 
       // Generate signing token if not exists
-      if (!contractToEmail.signingToken) {
-        const signingToken = nanoid(32);
+      let signingToken = contractToEmail.signingToken;
+      if (!signingToken) {
+        signingToken = nanoid(32);
         await storage.updateContract(id, { 
           signingToken: signingToken 
         });
-        contractToEmail.signingToken = signingToken;
       }
       
       // Send actual email using nodemailer
@@ -600,7 +600,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         to: recipient,
         subject,
         message,
-        contract: contractToEmail
+        contract: {
+          ...contractToEmail,
+          signingToken: signingToken
+        }
       });
       
       // Update contract status to "sent"
