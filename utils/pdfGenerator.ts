@@ -287,7 +287,7 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
   }
   
   // Add signatures
-  if (y > pageHeight - 50) {
+  if (y > pageHeight - 80) {
     pdf.addPage();
     y = margin + 20;
   } else {
@@ -298,10 +298,40 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
   pdf.text('PRESTATOR', margin, y);
   pdf.text('BENEFICIAR', margin + 90, y);
   
-  y += 15;
+  y += 10;
   pdf.setFont('helvetica', 'normal');
-  pdf.text('_________________', margin, y);
-  pdf.text('_________________', margin + 90, y);
+  
+  // Check if contract is signed and add digital signatures
+  if (contract.status?.statusCode === 'signed' && contract.signedAt && contract.signedBy) {
+    // Prestator signature (from company settings)
+    pdf.text(contract.provider?.name || 'N/A', margin, y);
+    y += 5;
+    pdf.text(contract.provider?.legalRepresentative || 'N/A', margin, y);
+    y += 5;
+    pdf.text(new Date(contract.signedAt).toLocaleDateString('ro-RO'), margin, y);
+    y += 5;
+    pdf.text(contract.signingToken || 'N/A', margin, y);
+    
+    // Reset y for beneficiary signature  
+    y -= 15;
+    
+    // Beneficiar signature
+    const beneficiaryName = contract.beneficiary?.isCompany ? 
+      contract.beneficiary?.companyName : 
+      contract.beneficiary?.name;
+    
+    pdf.text(beneficiaryName || 'N/A', margin + 90, y);
+    y += 5;
+    pdf.text(contract.signedBy, margin + 90, y);
+    y += 5;
+    pdf.text(new Date(contract.signedAt).toLocaleDateString('ro-RO'), margin + 90, y);
+    y += 5;
+    pdf.text(contract.signedToken || 'N/A', margin + 90, y);
+  } else {
+    // Traditional signature lines for unsigned contracts
+    pdf.text('_________________', margin, y);
+    pdf.text('_________________', margin + 90, y);
+  }
   
   return Buffer.from(pdf.output('arraybuffer'));
 }
