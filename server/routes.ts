@@ -595,6 +595,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
+      // Log signing link for debugging
+      console.log(`🔗 CONTRACT SIGNING LINK: https://${process.env.REPLIT_DEV_DOMAIN || 'localhost:5000'}/sign-contract/${signingToken}`);
+      
       // Send actual email using nodemailer
       await sendContractEmail({
         to: recipient,
