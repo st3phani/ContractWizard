@@ -691,21 +691,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Signed contract not found" });
       }
 
-      // Auto-update contract status to "completed" (Finalizat) when accessed
-      // Only update if contract is currently "signed" (status ID 3) to avoid multiple updates
-      if (contract.status?.statusCode === 'signed') {
-        try {
-          await storage.updateContractStatusById(contract.id, 4); // Status ID 4 = "completed" (Finalizat)
-          console.log(`✅ Contract #${contract.orderNumber} status automatically updated to "Finalizat" upon signed contract page access`);
-          
-          // Get the updated contract with new status
-          const updatedContract = await storage.getContract(contract.id);
-          if (updatedContract) {
-            return res.json(updatedContract);
+      // Auto-update contract status to "completed" (Finalizat) when contract period has ended
+      // Only update if contract is currently "signed" and past the end date
+      if (contract.status?.statusCode === 'signed' && contract.endDate) {
+        const currentDate = new Date();
+        const contractEndDate = new Date(contract.endDate);
+        
+        // Check if current date is past the contract end date
+        if (currentDate > contractEndDate) {
+          try {
+            await storage.updateContractStatusById(contract.id, 4); // Status ID 4 = "completed" (Finalizat)
+            console.log(`✅ Contract #${contract.orderNumber} status automatically updated to "Finalizat" - contract period ended on ${contractEndDate.toLocaleDateString('ro-RO')}`);
+            
+            // Get the updated contract with new status
+            const updatedContract = await storage.getContract(contract.id);
+            if (updatedContract) {
+              return res.json(updatedContract);
+            }
+          } catch (updateError) {
+            console.error("Failed to auto-update contract status:", updateError);
+            // Return original contract if status update fails
           }
-        } catch (updateError) {
-          console.error("Failed to auto-update contract status:", updateError);
-          // Return original contract if status update fails
         }
       }
 
