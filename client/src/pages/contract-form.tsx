@@ -601,6 +601,8 @@ export default function ContractForm() {
                               role="combobox"
                               aria-expanded={beneficiarySearchOpen}
                               className="flex-1 justify-start min-w-0"
+                              title="Caută beneficiar existent"
+                              aria-label="Caută beneficiar existent"
                             >
                               {selectedBeneficiary ? (
                                 <div className="flex items-center">
@@ -661,6 +663,8 @@ export default function ContractForm() {
                             "shrink-0 whitespace-nowrap",
                             false && "bg-blue-100 border-blue-300 text-blue-700"
                           )}
+                          title="Creează beneficiar nou"
+                          aria-label="Creează beneficiar nou"
                         >
                           <Plus className="h-4 w-4 mr-1" />
                           Beneficiar Nou
@@ -852,6 +856,8 @@ export default function ContractForm() {
                   type="button"
                   variant="outline"
                   onClick={() => setLocation("/")}
+                  title="Anulează crearea contractului"
+                  aria-label="Anulează crearea contractului"
                 >
                   Anulează
                 </Button>
@@ -861,6 +867,8 @@ export default function ContractForm() {
                   onClick={onReserve}
                   disabled={reserveContractMutation.isPending}
                   className="border-orange-500 text-orange-600 hover:bg-orange-50"
+                  title="Rezervă numărul contractului"
+                  aria-label="Rezervă numărul contractului"
                 >
                   {reserveContractMutation.isPending ? "Se rezervă..." : "Rezervă Contract"}
                 </Button>
@@ -868,6 +876,8 @@ export default function ContractForm() {
                   type="submit" 
                   disabled={contractMutation.isPending}
                   className="bg-blue-600 hover:bg-blue-700"
+                  title={isEditing ? "Actualizează contractul" : "Generează contractul"}
+                  aria-label={isEditing ? "Actualizează contractul" : "Generează contractul"}
                 >
                   {contractMutation.isPending ? 
                     (isEditing ? "Se actualizează..." : "Se creează...") : 

@@ -162,6 +162,8 @@ export default function Templates() {
                     setIsCreateModalOpen(true);
                   }}
                   className="bg-blue-600 hover:bg-blue-700"
+                  title="Creează un template nou"
+                  aria-label="Creează un template nou"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Template Nou
@@ -207,6 +209,8 @@ export default function Templates() {
                                 });
                                 setIsCreateModalOpen(true);
                               }}
+                              title="Editează template-ul"
+                              aria-label="Editează template-ul"
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -222,6 +226,8 @@ export default function Templates() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleDeleteTemplate(template.id)}
+                              title="Șterge template-ul"
+                              aria-label="Șterge template-ul"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>

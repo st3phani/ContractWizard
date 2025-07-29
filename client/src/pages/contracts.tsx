@@ -100,7 +100,11 @@ export default function ContractsPage() {
               <p className="text-gray-600 mt-1">Gestionează toate contractele din sistem</p>
             </div>
             <Link href="/contract-form">
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700"
+                title="Creează un contract nou"
+                aria-label="Creează un contract nou"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Contract Nou
               </Button>

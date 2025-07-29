@@ -195,6 +195,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           size="sm"
           onClick={() => editor.chain().focus().toggleBold().run()}
           className="h-8 w-8 p-0"
+          title="Text îngroșat"
+          aria-label="Text îngroșat"
         >
           <Bold className="h-4 w-4" />
         </Button>
@@ -204,6 +206,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           size="sm"
           onClick={() => editor.chain().focus().toggleItalic().run()}
           className="h-8 w-8 p-0"
+          title="Text italic"
+          aria-label="Text italic"
         >
           <Italic className="h-4 w-4" />
         </Button>
@@ -213,6 +217,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           size="sm"
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           className="h-8 w-8 p-0"
+          title="Text subliniat"
+          aria-label="Text subliniat"
         >
           <UnderlineIcon className="h-4 w-4" />
         </Button>
@@ -224,6 +230,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           size="sm"
           onClick={() => editor.chain().focus().setTextAlign('left').run()}
           className="h-8 w-8 p-0"
+          title="Aliniere la stânga"
+          aria-label="Aliniere la stânga"
         >
           <AlignLeft className="h-4 w-4" />
         </Button>
@@ -233,6 +241,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           size="sm"
           onClick={() => editor.chain().focus().setTextAlign('center').run()}
           className="h-8 w-8 p-0"
+          title="Aliniere centrală"
+          aria-label="Aliniere centrală"
         >
           <AlignCenter className="h-4 w-4" />
         </Button>
@@ -242,6 +252,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           size="sm"
           onClick={() => editor.chain().focus().setTextAlign('right').run()}
           className="h-8 w-8 p-0"
+          title="Aliniere la dreapta"
+          aria-label="Aliniere la dreapta"
         >
           <AlignRight className="h-4 w-4" />
         </Button>
@@ -251,6 +263,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           size="sm"
           onClick={() => editor.chain().focus().setTextAlign('justify').run()}
           className="h-8 w-8 p-0"
+          title="Text justificat"
+          aria-label="Text justificat"
         >
           <AlignJustify className="h-4 w-4" />
         </Button>
@@ -262,6 +276,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           size="sm"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className="h-8 w-8 p-0"
+          title="Listă cu marcatori"
+          aria-label="Listă cu marcatori"
         >
           <List className="h-4 w-4" />
         </Button>
@@ -271,6 +287,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           size="sm"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           className="h-8 w-8 p-0"
+          title="Listă numerotată"
+          aria-label="Listă numerotată"
         >
           <ListOrdered className="h-4 w-4" />
         </Button>
@@ -320,6 +338,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           }}
           className="h-8 w-8 p-0"
           title="Inserare imagine"
+          aria-label="Inserare imagine"
         >
           <ImageIcon className="h-4 w-4" />
         </Button>
@@ -330,6 +349,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
           onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
           className="h-8 w-8 p-0"
           title="Inserare tabel"
+          aria-label="Inserare tabel"
         >
           <TableIcon className="h-4 w-4" />
         </Button>
@@ -344,6 +364,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
               onClick={() => editor.chain().focus().addRowBefore().run()}
               className="h-8 w-8 p-0"
               title="Adaugă rând înainte"
+              aria-label="Adaugă rând înainte"
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -354,6 +375,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
               onClick={() => editor.chain().focus().addRowAfter().run()}
               className="h-8 w-8 p-0"
               title="Adaugă rând după"
+              aria-label="Adaugă rând după"
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -364,6 +386,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
               onClick={() => editor.chain().focus().deleteRow().run()}
               className="h-8 w-8 p-0"
               title="Șterge rând"
+              aria-label="Șterge rând"
             >
               <Minus className="h-4 w-4" />
             </Button>
@@ -374,6 +397,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
               onClick={() => editor.chain().focus().addColumnBefore().run()}
               className="h-8 w-8 p-0"
               title="Adaugă coloană înainte"
+              aria-label="Adaugă coloană înainte"
             >
               <Plus className="h-4 w-4 rotate-90" />
             </Button>
@@ -384,6 +408,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
               onClick={() => editor.chain().focus().addColumnAfter().run()}
               className="h-8 w-8 p-0"
               title="Adaugă coloană după"
+              aria-label="Adaugă coloană după"
             >
               <Plus className="h-4 w-4 rotate-90" />
             </Button>
@@ -394,6 +419,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
               onClick={() => editor.chain().focus().deleteColumn().run()}
               className="h-8 w-8 p-0"
               title="Șterge coloană"
+              aria-label="Șterge coloană"
             >
               <Minus className="h-4 w-4 rotate-90" />
             </Button>
@@ -431,6 +457,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
               }}
               className="h-8 w-8 p-0"
               title="Toggle border tabel"
+              aria-label="Toggle border tabel"
             >
               {tableHasBorder ? <Square className="h-4 w-4" /> : <Grid3X3 className="h-4 w-4" />}
             </Button>
@@ -441,6 +468,7 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
               onClick={() => editor.chain().focus().deleteTable().run()}
               className="h-8 w-8 p-0"
               title="Șterge tabel"
+              aria-label="Șterge tabel"
             >
               <TableIcon className="h-4 w-4 text-red-500" />
             </Button>

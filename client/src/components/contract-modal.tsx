@@ -58,6 +58,8 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
                 variant="outline"
                 size="sm"
                 onClick={() => onDownload(contract)}
+                title="Descarcă contractul ca PDF"
+                aria-label="Descarcă contractul ca PDF"
               >
                 <Download className="h-4 w-4 mr-1" />
                 Descarcă PDF
@@ -66,6 +68,8 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
                 variant="outline"
                 size="sm"
                 onClick={() => onEmail(contract)}
+                title="Trimite contractul prin email"
+                aria-label="Trimite contractul prin email"
               >
                 <Mail className="h-4 w-4 mr-1" />
                 Trimite Email

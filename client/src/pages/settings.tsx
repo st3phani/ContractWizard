@@ -423,7 +423,12 @@ export default function Settings() {
               </div>
 
               <div className="flex justify-end">
-                <Button onClick={handleSaveNotificationSettings} className="bg-blue-600 hover:bg-blue-700">
+                <Button 
+                  onClick={handleSaveNotificationSettings} 
+                  className="bg-blue-600 hover:bg-blue-700"
+                  title="Salvează setările de notificări"
+                  aria-label="Salvează setările de notificări"
+                >
                   <Save className="h-4 w-4 mr-2" />
                   Salvează Setări Notificări
                 </Button>
@@ -507,6 +512,8 @@ export default function Settings() {
                   onClick={handleSaveSystemSettings} 
                   disabled={saveSystemSettingsMutation.isPending}
                   className="bg-blue-600 hover:bg-blue-700"
+                  title="Salvează setările de sistem"
+                  aria-label="Salvează setările de sistem"
                 >
                   <Save className="h-4 w-4 mr-2" />
                   {saveSystemSettingsMutation.isPending ? "Se salvează..." : "Salvează Setări Sistem"}
@@ -525,10 +532,20 @@ export default function Settings() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Button onClick={handleExportData} variant="outline">
+                <Button 
+                  onClick={handleExportData} 
+                  variant="outline"
+                  title="Exportă toate datele aplicației"
+                  aria-label="Exportă toate datele aplicației"
+                >
                   Export Date
                 </Button>
-                <Button onClick={handleImportData} variant="outline">
+                <Button 
+                  onClick={handleImportData} 
+                  variant="outline"
+                  title="Importă date în aplicație"
+                  aria-label="Importă date în aplicație"
+                >
                   Import Date
                 </Button>
               </div>

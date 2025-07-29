@@ -79,7 +79,13 @@ Echipa Contract Manager`);
         <DialogHeader>
           <div className="flex justify-between items-center">
             <DialogTitle>Trimite Contract prin Email</DialogTitle>
-            <Button variant="ghost" size="sm" onClick={onClose}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onClose}
+              title="Închide"
+              aria-label="Închide"
+            >
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -129,10 +135,20 @@ Echipa Contract Manager`);
         </div>
         
         <div className="flex justify-end space-x-3 pt-4">
-          <Button variant="outline" onClick={onClose}>
+          <Button 
+            variant="outline" 
+            onClick={onClose}
+            title="Anulează trimiterea"
+            aria-label="Anulează trimiterea"
+          >
             Anulează
           </Button>
-          <Button onClick={handleSend} disabled={isSending}>
+          <Button 
+            onClick={handleSend} 
+            disabled={isSending}
+            title="Trimite emailul cu contractul"
+            aria-label="Trimite emailul cu contractul"
+          >
             <Send className="h-4 w-4 mr-1" />
             {isSending ? "Se trimite..." : "Trimite Email"}
           </Button>

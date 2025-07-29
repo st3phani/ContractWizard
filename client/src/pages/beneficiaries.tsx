@@ -272,6 +272,8 @@ export default function Beneficiaries() {
             <Button 
               onClick={() => setIsCreateModalOpen(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white"
+              title="Adaugă un beneficiar nou"
+              aria-label="Adaugă un beneficiar nou"
             >
               <Plus className="h-4 w-4 mr-2" />
               Beneficiar Nou
@@ -372,6 +374,8 @@ export default function Beneficiaries() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleEdit(beneficiary)}
+                              title="Editează beneficiarul"
+                              aria-label="Editează beneficiarul"
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -379,6 +383,8 @@ export default function Beneficiaries() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleDelete(beneficiary)}
+                              title="Șterge beneficiarul"
+                              aria-label="Șterge beneficiarul"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -429,6 +435,8 @@ export default function Beneficiaries() {
                       size="sm"
                       onClick={() => setCurrentPage(currentPage - 1)}
                       disabled={!hasPreviousPage}
+                      title="Pagina anterioară"
+                      aria-label="Pagina anterioară"
                     >
                       <ChevronLeft className="h-4 w-4" />
                       Anterior
@@ -442,6 +450,8 @@ export default function Beneficiaries() {
                           size="sm"
                           onClick={() => setCurrentPage(pageNum)}
                           className="w-8 h-8 p-0"
+                          title={`Mergi la pagina ${pageNum}`}
+                          aria-label={`Mergi la pagina ${pageNum}`}
                         >
                           {pageNum}
                         </Button>
@@ -453,6 +463,8 @@ export default function Beneficiaries() {
                       size="sm"
                       onClick={() => setCurrentPage(currentPage + 1)}
                       disabled={!hasNextPage}
+                      title="Pagina următoare"
+                      aria-label="Pagina următoare"
                     >
                       Următor
                       <ChevronRight className="h-4 w-4" />

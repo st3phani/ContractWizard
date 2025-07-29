@@ -401,6 +401,8 @@ export default function Profile() {
                   onClick={handleSave}
                   disabled={updateProfileMutation.isPending || isLoading}
                   className="bg-blue-600 hover:bg-blue-700"
+                  title="Salvează informațiile profilului"
+                  aria-label="Salvează informațiile profilului"
                 >
                   <Save className="h-4 w-4 mr-2" />
                   {updateProfileMutation.isPending ? "Se salvează..." : "Salvează Profil"}
@@ -438,6 +440,8 @@ export default function Profile() {
                     type="button"
                     onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
                     className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    title={showPasswords.current ? "Ascunde parola" : "Arată parola"}
+                    aria-label={showPasswords.current ? "Ascunde parola" : "Arată parola"}
                   >
                     {showPasswords.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -501,6 +505,8 @@ export default function Profile() {
                   onClick={handlePasswordSave}
                   disabled={updatePasswordMutation.isPending}
                   className="bg-green-600 hover:bg-green-700"
+                  title="Actualizează parola contului"
+                  aria-label="Actualizează parola contului"
                 >
                   <Save className="h-4 w-4 mr-2" />
                   {updatePasswordMutation.isPending ? "Se actualizează..." : "Actualizează Parola"}
