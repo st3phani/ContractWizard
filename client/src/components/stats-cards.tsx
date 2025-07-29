@@ -14,14 +14,14 @@ interface StatsCardsProps {
 export default function StatsCards({ stats }: StatsCardsProps) {
   const cards = [
     {
-      title: "Total Contracte",
+      title: "Contracte",
       value: stats.totalContracts,
       icon: File,
       bgColor: "bg-blue-100",
       iconColor: "text-blue-600",
     },
     {
-      title: "În Așteptare",
+      title: "Așteptare",
       value: stats.pendingContracts,
       icon: Clock,
       bgColor: "bg-orange-100",
