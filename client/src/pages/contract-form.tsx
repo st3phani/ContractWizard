@@ -555,7 +555,12 @@ export default function ContractForm() {
   };
 
   return (
-    <>
+    <div className="flex h-screen bg-gray-50">
+      <div className="sticky top-0 h-screen">
+        <Sidebar />
+      </div>
+      
+      <main className="flex-1 main-container">
         {/* Header */}
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
           <div className="flex items-center justify-between">
@@ -885,7 +890,6 @@ export default function ContractForm() {
             </form>
           </Form>
         </div>
-      </main>
 
       {/* Beneficiary Modal - Same as in Beneficiaries page */}
       <Dialog open={showNewBeneficiaryModal} onOpenChange={(open) => {
@@ -1072,6 +1076,7 @@ export default function ContractForm() {
           </div>
         </DialogContent>
       </Dialog>
+      </main>
     </div>
   );
 }

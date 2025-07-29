@@ -191,7 +191,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
+    <div className="flex h-screen bg-gray-50">
       <div className="sticky top-0 h-screen">
         <Sidebar />
       </div>
@@ -483,7 +483,8 @@ export default function Settings() {
             </CardContent>
           </Card>
         </div>
-    </>
+      </main>
+    </div>
   );
 }
 
