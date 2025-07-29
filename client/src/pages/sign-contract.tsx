@@ -25,6 +25,7 @@ export default function SignContract() {
   const token = params?.token;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [signedContract, setSignedContract] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
 
@@ -71,7 +72,8 @@ export default function SignContract() {
 
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      setSignedContract(data.contract);
       setSuccess(true);
       setError(null);
     },
@@ -160,12 +162,12 @@ export default function SignContract() {
             <div className="bg-gray-50 p-4 rounded-lg mb-6">
               <h3 className="font-medium text-gray-900 mb-2">Detalii Contract</h3>
               <div className="space-y-1 text-sm text-gray-600">
-                <p><strong>Numărul contractului:</strong> {contract.orderNumber}</p>
-                <p><strong>Template:</strong> {contract.template?.name}</p>
-                <p><strong>Semnat de:</strong> {form.getValues('signedBy')}</p>
-                <p><strong>Data semnării:</strong> {new Date().toLocaleDateString('ro-RO')}</p>
-                <p><strong>IP:</strong> {contract.signedIp || 'N/A'}</p>
-                <p><strong>Token semnat:</strong> <span className="font-mono text-xs">{contract.signedToken || 'N/A'}</span></p>
+                <p><strong>Numărul contractului:</strong> {(signedContract || contract).orderNumber}</p>
+                <p><strong>Template:</strong> {(signedContract || contract).template?.name}</p>
+                <p><strong>Semnat de:</strong> {(signedContract || contract).signedBy || form.getValues('signedBy')}</p>
+                <p><strong>Data semnării:</strong> {(signedContract || contract).signedAt ? new Date((signedContract || contract).signedAt).toLocaleDateString('ro-RO') : new Date().toLocaleDateString('ro-RO')}</p>
+                <p><strong>IP:</strong> {(signedContract || contract).signedIp || 'Se procesează...'}</p>
+                <p><strong>Token semnat:</strong> <span className="font-mono text-xs">{(signedContract || contract).signedToken || 'Se procesează...'}</span></p>
               </div>
             </div>
             <p className="text-sm text-gray-500">
