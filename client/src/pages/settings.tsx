@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Building, Mail, Phone, MapPin, Save, Database, Shield, TestTube } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import Sidebar from "@/components/sidebar";
+
 import type { CompanySettings, ContractStatus } from "@shared/schema";
 import EmailTest from "@/components/email-test";
 
@@ -483,8 +483,7 @@ export default function Settings() {
             </CardContent>
           </Card>
         </div>
-      </main>
-    </div>
+    </>
   );
 }
 

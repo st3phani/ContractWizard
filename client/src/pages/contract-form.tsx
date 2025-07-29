@@ -20,7 +20,7 @@ import { useLocation } from "wouter";
 import { Search, Check, Plus, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDate, parseDate, getDateInputFormat, type DateFormat } from "@/lib/dateUtils";
-import Sidebar from "@/components/sidebar";
+
 import type { ContractTemplate, Beneficiary, InsertBeneficiary } from "@shared/schema";
 import { insertBeneficiarySchema } from "@shared/schema";
 import { Label } from "@/components/ui/label";
@@ -555,12 +555,7 @@ export default function ContractForm() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
-      <div className="sticky top-0 h-screen">
-        <Sidebar />
-      </div>
-      
-      <main className="flex-1 main-container">
+    <>
         {/* Header */}
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
           <div className="flex items-center justify-between">

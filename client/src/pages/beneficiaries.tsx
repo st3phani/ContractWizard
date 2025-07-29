@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { formatDate, getInitials, getAvatarColor } from "@/lib/utils";
-import Sidebar from "@/components/sidebar";
+
 import { BeneficiaryFormFields } from "@/components/beneficiary-form-fields";
 import type { Beneficiary, InsertBeneficiary } from "@shared/schema";
 import { paginateItems, type PaginationConfig } from "@/utils/paginationUtils";
@@ -258,12 +258,7 @@ export default function Beneficiaries() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
-      <div className="sticky top-0 h-screen">
-        <Sidebar />
-      </div>
-      
-      <main className="flex-1 main-container">
+    <>
         {/* Header */}
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
           <div className="flex items-center justify-between">
@@ -477,7 +472,6 @@ export default function Beneficiaries() {
             </CardContent>
           </Card>
         </div>
-      </main>
 
       {/* Create/Edit Beneficiary Modal */}
       <Dialog open={isCreateModalOpen} onOpenChange={resetForm}>
@@ -654,6 +648,6 @@ export default function Beneficiaries() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }

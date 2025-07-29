@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import ContractTable from "@/components/contract-table";
 import ContractModal from "@/components/contract-modal";
 import EmailModal from "@/components/email-modal";
-import Sidebar from "@/components/sidebar";
+
 import { Link, useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
 import type { ContractWithDetails } from "@shared/schema";
@@ -89,15 +89,10 @@ export default function ContractsPage() {
   }
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
-      <div className="sticky top-0 h-screen">
-        <Sidebar />
-      </div>
-      
-      <main className="flex-1 main-container">
-        {/* Header */}
-        <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
-          <div className="flex items-center justify-between">
+    <>
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
+        <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-semibold text-gray-900">Contracte</h2>
               <p className="text-gray-600 mt-1">Gestionează toate contractele din sistem</p>
@@ -115,9 +110,9 @@ export default function ContractsPage() {
           </div>
         </header>
 
-        {/* Content */}
-        <div className="p-6">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
+      {/* Content */}
+      <div className="p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
             <ContractTable 
               contracts={contracts}
               onView={handleView}
@@ -150,7 +145,6 @@ export default function ContractsPage() {
             />
           )}
         </div>
-      </main>
-    </div>
+    </>
   );
 }

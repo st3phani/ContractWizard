@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import type { UserProfile, InsertUserProfile } from "@shared/schema";
-import Sidebar from "@/components/sidebar";
+
 
 export default function Profile() {
   const { toast } = useToast();
@@ -518,7 +518,6 @@ export default function Profile() {
             </Card>
           </div>
         </div>
-      </main>
-    </div>
+    </>
   );
 }

@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { formatDate } from "@/lib/utils";
-import Sidebar from "@/components/sidebar";
+
 import RichTextEditor from "@/components/rich-text-editor";
 import type { ContractTemplate, InsertContractTemplate } from "@shared/schema";
 
@@ -146,12 +146,7 @@ export default function Templates() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      <div className="sticky top-0 h-screen">
-        <Sidebar />
-      </div>
-      
-      <main className="flex-1 main-container">
+    <>
         {/* Header */}
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
           <div className="flex items-center justify-between">
@@ -256,7 +251,6 @@ export default function Templates() {
             </CardContent>
           </Card>
         </div>
-      </main>
 
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
