@@ -92,6 +92,12 @@ export async function sendContractEmail(options: EmailOptions): Promise<void> {
 export async function sendSignedContractNotification(options: SignedContractEmailOptions): Promise<void> {
   const { contract, recipientType, adminEmail } = options;
   
+  // Safety check for contract structure
+  if (!contract || !contract.beneficiary) {
+    console.error('❌ Invalid contract structure for email notification:', contract);
+    throw new Error('Contract or beneficiary data is missing');
+  }
+  
   const recipientEmail = recipientType === 'beneficiary' 
     ? contract.beneficiary.email 
     : (adminEmail || 'admin@contractmanager.ro');

@@ -728,11 +728,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
                       'Unknown';
 
       // Sign the contract
-      const signedContract = await storage.signContract(contract.id, {
+      await storage.signContract(contract.id, {
         signedBy: validation.data.signedBy,
         signedAt: new Date(),
         signedIp: clientIp
       });
+
+      // Get the complete signed contract with all relations
+      const signedContract = await storage.getContract(contract.id);
+      if (!signedContract) {
+        return res.status(500).json({ message: "Failed to retrieve signed contract" });
+      }
 
       // Send email notifications after successful signing
       try {
