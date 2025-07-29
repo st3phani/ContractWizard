@@ -55,10 +55,16 @@ export default function ContractsPage() {
       
       // Use the appropriate filename format for signed contracts
       let filename: string;
+      console.log('Contract status:', contract.status?.statusCode);
+      console.log('Contract signedToken:', contract.signedToken);
+      console.log('Contract orderNumber:', contract.orderNumber);
+      
       if (contract.status?.statusCode === 'signed' && contract.signedToken) {
         filename = `CTR_${contract.orderNumber}_${contract.signedToken}.pdf`;
+        console.log('Using signed contract filename:', filename);
       } else {
         filename = `contract-${contract.orderNumber}.pdf`;
+        console.log('Using standard filename:', filename);
       }
       
       a.download = filename;
