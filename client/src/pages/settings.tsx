@@ -16,6 +16,7 @@ import type { CompanySettings, ContractStatus } from "@shared/schema";
 import EmailTest from "@/components/email-test";
 
 
+
 export default function Settings() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -191,12 +192,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      <div className="sticky top-0 h-screen">
-        <Sidebar />
-      </div>
-      
-      <main className="flex-1 main-container">
+    <>
         {/* Header */}
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
           <div className="flex items-center justify-between">
@@ -483,8 +479,7 @@ export default function Settings() {
             </CardContent>
           </Card>
         </div>
-      </main>
-    </div>
+    </>
   );
 }
 
