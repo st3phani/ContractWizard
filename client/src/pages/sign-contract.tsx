@@ -164,6 +164,7 @@ export default function SignContract() {
                 <p><strong>Template:</strong> {contract.template?.name}</p>
                 <p><strong>Semnat de:</strong> {form.getValues('signedBy')}</p>
                 <p><strong>Data semnării:</strong> {new Date().toLocaleDateString('ro-RO')}</p>
+                <p><strong>IP:</strong> {contract.signedIp || 'N/A'}</p>
               </div>
             </div>
             <p className="text-sm text-gray-500">

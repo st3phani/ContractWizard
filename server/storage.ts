@@ -1186,13 +1186,14 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async signContract(id: number, signData: { signedBy: string; signedAt: Date }): Promise<Contract> {
+  async signContract(id: number, signData: { signedBy: string; signedAt: Date; signedIp?: string }): Promise<Contract> {
     try {
       const [updated] = await db
         .update(contracts)
         .set({
           signedBy: signData.signedBy,
           signedAt: signData.signedAt,
+          signedIp: signData.signedIp,
           statusId: 4, // Change status to "signed"
         })
         .where(eq(contracts.id, id))

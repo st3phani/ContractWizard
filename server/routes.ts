@@ -703,10 +703,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Contract has already been signed" });
       }
 
+      // Get client IP address
+      const clientIp = req.ip || 
+                      req.connection.remoteAddress || 
+                      req.socket.remoteAddress ||
+                      (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+                      'Unknown';
+
       // Sign the contract
       const signedContract = await storage.signContract(contract.id, {
         signedBy: validation.data.signedBy,
-        signedAt: new Date()
+        signedAt: new Date(),
+        signedIp: clientIp
       });
 
       res.json({ 
