@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { formatDate, getStatusColor, getStatusText, getInitials, getAvatarColor } from "@/lib/utils";
 import type { ContractWithDetails } from "@shared/schema";
 import { paginateItems, type PaginationConfig } from "@/utils/paginationUtils";
@@ -25,7 +26,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-
+  const [confirmSendContract, setConfirmSendContract] = useState<ContractWithDetails | null>(null);
   // Find the highest order number to determine which contract can be deleted
   const maxOrderNumber = Math.max(...contracts.map(c => c.orderNumber || 0));
 
@@ -68,6 +69,13 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
            contract.status?.statusCode !== "completed";
   };
 
+  const handleConfirmSend = () => {
+    if (confirmSendContract) {
+      onEmail(confirmSendContract);
+      setConfirmSendContract(null);
+    }
+  };
+
   // Reset to first page when filters change
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
@@ -85,6 +93,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
   };
 
   return (
+    <>
     <Card className="shadow-sm">
       <CardHeader>
         <div className="flex items-center justify-between">
@@ -187,7 +196,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => canSendContract(contract) ? onEmail(contract) : undefined}
+                      onClick={() => canSendContract(contract) ? setConfirmSendContract(contract) : undefined}
                       disabled={!canSendContract(contract)}
                       className={!canSendContract(contract) ? "opacity-30 cursor-not-allowed" : "hover:bg-purple-50"}
                       title="Trimite la semnat"
@@ -288,5 +297,42 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
         )}
       </CardContent>
     </Card>
+
+    {/* Confirmation Dialog for Sending Contract */}
+    <Dialog open={!!confirmSendContract} onOpenChange={() => setConfirmSendContract(null)}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Confirmă Trimiterea la Semnare</DialogTitle>
+          <DialogDescription>
+            Ești sigur că vrei să trimiți contractul {confirmSendContract?.orderNumber} la semnare pentru beneficiarul {confirmSendContract?.beneficiary.name}?
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-3">
+          <div className="bg-amber-50 border border-amber-200 rounded-md p-3">
+            <p className="text-sm text-amber-800">
+              <strong>Ce se va întâmpla:</strong><br />
+              • Un email cu link-ul de semnare va fi trimis către {confirmSendContract?.beneficiary.email}<br />
+              • Statusul contractului va fi schimbat în "În Așteptare"<br />
+              • Beneficiarul va putea semna contractul digital
+            </p>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button 
+            variant="outline" 
+            onClick={() => setConfirmSendContract(null)}
+          >
+            Anulează
+          </Button>
+          <Button 
+            onClick={handleConfirmSend}
+            className="bg-purple-600 hover:bg-purple-700 text-white"
+          >
+            Trimite la Semnare
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  </>
   );
 }
