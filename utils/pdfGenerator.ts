@@ -311,11 +311,12 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     // Prestator signature box
     pdf.rect(margin - boxPadding, y - boxPadding, boxWidth, boxHeight);
     
-    // Add signature icon (simple handwritten-style line)
+    // Add signature icon in the right side of the box
     pdf.setLineWidth(0.8);
-    pdf.line(margin + 2, y + 2, margin + 25, y + 4); // Signature line 1
-    pdf.line(margin + 8, y + 4, margin + 30, y + 6); // Signature line 2
-    pdf.line(margin + 15, y + 6, margin + 22, y + 8); // Signature line 3
+    const prestatorSignX = margin + boxWidth - 30; // Right side positioning
+    pdf.line(prestatorSignX, y + 2, prestatorSignX + 20, y + 4); // Signature line 1
+    pdf.line(prestatorSignX + 5, y + 4, prestatorSignX + 25, y + 6); // Signature line 2
+    pdf.line(prestatorSignX + 10, y + 6, prestatorSignX + 18, y + 8); // Signature line 3
     pdf.setLineWidth(0.2); // Reset line width
     
     y += 3;
@@ -335,11 +336,12 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     // Beneficiar signature box
     pdf.rect(margin + 90 - boxPadding, y - boxPadding, boxWidth, boxHeight);
     
-    // Add signature icon for beneficiary
+    // Add signature icon for beneficiary in the right side of the box
     pdf.setLineWidth(0.8);
-    pdf.line(margin + 92, y + 2, margin + 115, y + 4); // Signature line 1
-    pdf.line(margin + 98, y + 4, margin + 120, y + 6); // Signature line 2
-    pdf.line(margin + 105, y + 6, margin + 112, y + 8); // Signature line 3
+    const beneficiarySignX = margin + 90 + boxWidth - 30; // Right side positioning
+    pdf.line(beneficiarySignX, y + 2, beneficiarySignX + 20, y + 4); // Signature line 1
+    pdf.line(beneficiarySignX + 5, y + 4, beneficiarySignX + 25, y + 6); // Signature line 2
+    pdf.line(beneficiarySignX + 10, y + 6, beneficiarySignX + 18, y + 8); // Signature line 3
     pdf.setLineWidth(0.2); // Reset line width
     
     y += 3;
