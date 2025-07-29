@@ -293,12 +293,32 @@ export default function Templates() {
                   <div className="border-t border-yellow-200 pt-2">
                     <p><strong>Condiții pentru tip beneficiar:</strong></p>
                     <div className="mt-1 space-y-1">
-                      <code className="block bg-white px-2 py-1 rounded text-xs">
-                        {"{{#if isCompany}}"}Conținut pentru companii{"{{/if}}"}
-                      </code>
-                      <code className="block bg-white px-2 py-1 rounded text-xs">
-                        {"{{#if isIndividual}}"}Conținut pentru PF{"{{/if}}"}
-                      </code>
+                      <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
+                        <code className="text-yellow-700 text-xs">
+                          {"{{#if isCompany}}"}Conținut pentru companii{"{{/if}}"}
+                        </code>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => addVariable("{{#if isCompany}}Conținut pentru companii{{/if}}")}
+                          className="text-xs h-6 px-2"
+                        >
+                          Adaugă
+                        </Button>
+                      </div>
+                      <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
+                        <code className="text-yellow-700 text-xs">
+                          {"{{#if isIndividual}}"}Conținut pentru PF{"{{/if}}"}
+                        </code>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => addVariable("{{#if isIndividual}}Conținut pentru PF{{/if}}")}
+                          className="text-xs h-6 px-2"
+                        >
+                          Adaugă
+                        </Button>
+                      </div>
                     </div>
                   </div>
                   

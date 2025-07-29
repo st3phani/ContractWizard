@@ -854,12 +854,32 @@ export default function ContractForm() {
                       <div>
                         <h5 className="font-semibold text-blue-800 mb-2">Condiții pentru tip beneficiar:</h5>
                         <div className="space-y-1 text-sm text-blue-700">
-                          <code className="block bg-white px-2 py-1 rounded text-xs">
-                            {"{{#if isCompany}}"}Conținut companii{"{{/if}}"}
-                          </code>
-                          <code className="block bg-white px-2 py-1 rounded text-xs">
-                            {"{{#if isIndividual}}"}Conținut PF{"{{/if}}"}
-                          </code>
+                          <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
+                            <code className="text-blue-700 text-xs">
+                              {"{{#if isCompany}}"}Conținut companii{"{{/if}}"}
+                            </code>
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              onClick={() => navigator.clipboard.writeText("{{#if isCompany}}Conținut companii{{/if}}")}
+                              className="text-xs h-6 px-2"
+                            >
+                              Copiază
+                            </Button>
+                          </div>
+                          <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
+                            <code className="text-blue-700 text-xs">
+                              {"{{#if isIndividual}}"}Conținut PF{"{{/if}}"}
+                            </code>
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              onClick={() => navigator.clipboard.writeText("{{#if isIndividual}}Conținut PF{{/if}}")}
+                              className="text-xs h-6 px-2"
+                            >
+                              Copiază
+                            </Button>
+                          </div>
                           <p className="text-xs mt-2 italic">Template-urile pot afișa conținut diferit pentru persoane fizice vs companii</p>
                         </div>
                       </div>
