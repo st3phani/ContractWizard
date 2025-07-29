@@ -83,14 +83,6 @@ export const contracts = pgTable("contracts", {
   endDate: timestamp("end_date"),
   notes: text("notes"),
   statusId: integer("status_id").notNull().default(1), // references contract_statuses.id
-  // Provider/Company details (auto-filled from settings)
-  providerName: text("provider_name"),
-  providerAddress: text("provider_address"),
-  providerPhone: text("provider_phone"),
-  providerEmail: text("provider_email"),
-  providerCui: text("provider_cui"),
-  providerRegistrationNumber: text("provider_registration_number"),
-  providerLegalRepresentative: text("provider_legal_representative"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   sentAt: timestamp("sent_at"),
   completedAt: timestamp("completed_at"),
@@ -138,6 +130,7 @@ export const insertContractSchema = createInsertSchema(contracts).omit({
   sentAt: true,
   completedAt: true,
   signedAt: true,
+  signedBy: true,
   signingToken: true,
 }).extend({
   templateId: z.number().min(1, "Template-ul este obligatoriu"),
@@ -217,4 +210,5 @@ export type ContractWithDetails = Contract & {
   template: ContractTemplate | null;
   beneficiary: Beneficiary | null;
   status: ContractStatus | null;
+  provider?: CompanySettings | null;
 };

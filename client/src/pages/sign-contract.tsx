@@ -239,19 +239,19 @@ export default function SignContract() {
                               case 'contract.notes':
                                 return contract.notes || '';
                               case 'provider.name':
-                                return contract.providerName || '';
+                                return contract.provider?.name || '';
                               case 'provider.address':
-                                return contract.providerAddress || '';
+                                return contract.provider?.address || '';
                               case 'provider.cui':
-                                return contract.providerCui || '';
+                                return contract.provider?.cui || '';
                               case 'provider.registrationNumber':
-                                return contract.providerRegistrationNumber || '';
+                                return contract.provider?.registrationNumber || '';
                               case 'provider.legalRepresentative':
-                                return contract.providerLegalRepresentative || '';
+                                return contract.provider?.legalRepresentative || '';
                               case 'provider.phone':
-                                return contract.providerPhone || '';
+                                return contract.provider?.phone || '';
                               case 'provider.email':
-                                return contract.providerEmail || '';
+                                return contract.provider?.email || '';
                               default:
                                 return match;
                             }

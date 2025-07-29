@@ -715,6 +715,9 @@ export class DatabaseStorage implements IStorage {
         .leftJoin(contractStatuses, eq(contracts.statusId, contractStatuses.id))
         .orderBy(desc(contracts.id));
 
+      // Get company settings once for all contracts
+      const companySettings = await this.getCompanySettings();
+
       return result.map(row => {
         const contract = row.contracts;
         
@@ -747,6 +750,7 @@ export class DatabaseStorage implements IStorage {
             template: row.contract_templates || mockTemplate,
             beneficiary: row.beneficiaries || mockBeneficiary,
             status: row.contract_statuses || null,
+            provider: companySettings,
           };
         }
         
@@ -755,6 +759,7 @@ export class DatabaseStorage implements IStorage {
           template: row.contract_templates || null,
           beneficiary: row.beneficiaries || null,
           status: row.contract_statuses || null,
+          provider: companySettings,
         };
       });
     } catch (error) {
@@ -775,6 +780,9 @@ export class DatabaseStorage implements IStorage {
     
     if (!contract) return undefined;
     
+    // Get company settings for provider data
+    const companySettings = await this.getCompanySettings();
+    
     // Handle reserved contracts with beneficiaryId = 0 or templateId = 0
     if (contract.beneficiaryId === 0 || contract.templateId === 0) {
       const mockTemplate: ContractTemplate = {
@@ -803,11 +811,15 @@ export class DatabaseStorage implements IStorage {
         ...contract,
         template: contract.template || mockTemplate,
         beneficiary: contract.beneficiary || mockBeneficiary,
-        status: contract.status
+        status: contract.status,
+        provider: companySettings
       } as ContractWithDetails;
     }
     
-    return contract as ContractWithDetails;
+    return {
+      ...contract,
+      provider: companySettings
+    } as ContractWithDetails;
   }
 
   async getContractByOrderNumber(orderNumber: number): Promise<ContractWithDetails | undefined> {
@@ -822,6 +834,9 @@ export class DatabaseStorage implements IStorage {
     
     if (!contract) return undefined;
     
+    // Get company settings for provider data
+    const companySettings = await this.getCompanySettings();
+    
     // Handle reserved contracts with beneficiaryId = 0 or templateId = 0
     if (contract.beneficiaryId === 0 || contract.templateId === 0) {
       const mockTemplate: ContractTemplate = {
@@ -850,11 +865,15 @@ export class DatabaseStorage implements IStorage {
         ...contract,
         template: contract.template || mockTemplate,
         beneficiary: contract.beneficiary || mockBeneficiary,
-        status: contract.status
+        status: contract.status,
+        provider: companySettings
       } as ContractWithDetails;
     }
     
-    return contract as ContractWithDetails;
+    return {
+      ...contract,
+      provider: companySettings
+    } as ContractWithDetails;
   }
 
   async createContract(contractData: InsertContract): Promise<ContractWithDetails> {
@@ -947,13 +966,6 @@ export class DatabaseStorage implements IStorage {
         endDate: null,
         notes: null,
         statusId: 2,
-        providerName: companySettings.name,
-        providerAddress: companySettings.address,
-        providerPhone: companySettings.phone,
-        providerEmail: companySettings.email,
-        providerCui: companySettings.cui,
-        providerRegistrationNumber: companySettings.registrationNumber,
-        providerLegalRepresentative: companySettings.legalRepresentative,
         createdAt,
       })
       .returning();
@@ -985,7 +997,8 @@ export class DatabaseStorage implements IStorage {
     return {
       ...reservedContract,
       template: mockTemplate,
-      beneficiary: mockBeneficiary
+      beneficiary: mockBeneficiary,
+      provider: companySettings
     };
   }
 
@@ -1156,12 +1169,16 @@ export class DatabaseStorage implements IStorage {
         return undefined;
       }
 
+      // Get company settings for provider data
+      const companySettings = await this.getCompanySettings();
+
       const row = result[0];
       return {
         ...row.contracts,
         template: row.contract_templates || null,
         beneficiary: row.beneficiaries || null,
         status: row.contract_statuses || null,
+        provider: companySettings,
       };
     } catch (error) {
       console.error("Error getting contract by signing token:", error);

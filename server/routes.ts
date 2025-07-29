@@ -362,15 +362,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         notes: contractData.notes || null,
         createdAt: contractData.createdDate ? new Date(contractData.createdDate) : existingContract.createdAt,
         // Change status from "reserved" to "draft" (In Așteptare) when updating
-        status: existingContract.status === "reserved" ? "draft" : existingContract.status,
-        // Auto-populate provider/company data
-        providerName: companySettings?.name || existingContract.providerName,
-        providerAddress: companySettings?.address || existingContract.providerAddress,
-        providerPhone: companySettings?.phone || existingContract.providerPhone,
-        providerEmail: companySettings?.email || existingContract.providerEmail,
-        providerCui: companySettings?.cui || existingContract.providerCui,
-        providerRegistrationNumber: companySettings?.registrationNumber || existingContract.providerRegistrationNumber,
-        providerLegalRepresentative: companySettings?.legalRepresentative || existingContract.providerLegalRepresentative,
+        statusId: existingContract.statusId === 2 ? 1 : existingContract.statusId,
       };
       
       // Debug log the update data
@@ -449,13 +441,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           notes: contract.notes || ''
         },
         provider: {
-          name: companySettings?.name || contract.providerName || '',
-          address: companySettings?.address || contract.providerAddress || '',
-          phone: companySettings?.phone || contract.providerPhone || '',
-          email: companySettings?.email || contract.providerEmail || '',
-          cui: companySettings?.cui || contract.providerCui || '',
-          registrationNumber: companySettings?.registrationNumber || contract.providerRegistrationNumber || '',
-          legalRepresentative: companySettings?.legalRepresentative || contract.providerLegalRepresentative || '',
+          name: contract.provider?.name || '',
+          address: contract.provider?.address || '',
+          phone: contract.provider?.phone || '',
+          email: contract.provider?.email || '',
+          cui: contract.provider?.cui || '',
+          registrationNumber: contract.provider?.registrationNumber || '',
+          legalRepresentative: contract.provider?.legalRepresentative || '',
         }
       };
       
@@ -487,6 +479,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const { populateTemplate, generatePDF } = await import('../utils/pdfGenerator');
       
+      if (!contract.template?.content || !contract.beneficiary) {
+        return res.status(400).json({ message: "Contract template or beneficiary data missing" });
+      }
+
       const populatedContent = populateTemplate(contract.template.content, {
         orderNumber: contract.orderNumber,
         currentDate: new Date().toLocaleDateString('ro-RO'),
@@ -511,13 +507,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           notes: contract.notes || ''
         },
         provider: {
-          name: contract.providerName || '',
-          address: contract.providerAddress || '',
-          phone: contract.providerPhone || '',
-          email: contract.providerEmail || '',
-          cui: contract.providerCui || '',
-          registrationNumber: contract.providerRegistrationNumber || '',
-          legalRepresentative: contract.providerLegalRepresentative || '',
+          name: contract.provider?.name || '',
+          address: contract.provider?.address || '',
+          phone: contract.provider?.phone || '',
+          email: contract.provider?.email || '',
+          cui: contract.provider?.cui || '',
+          registrationNumber: contract.provider?.registrationNumber || '',
+          legalRepresentative: contract.provider?.legalRepresentative || '',
         }
       });
       
