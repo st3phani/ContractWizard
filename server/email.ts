@@ -17,6 +17,7 @@ export async function sendContractEmail(options: EmailOptions): Promise<void> {
     console.log('Subject:', options.subject);
     console.log('Message:', options.message);
     console.log('Contract:', options.contract ? `#${options.contract.orderNumber} - ${options.contract.template.name}` : 'N/A');
+    console.log('Signing Link:', options.contract?.signingToken ? `http://localhost:5000/sign-contract/${options.contract.signingToken}` : 'No signing token');
     console.log('Timestamp:', new Date().toLocaleString('ro-RO'));
     console.log('==============================================\n');
     
