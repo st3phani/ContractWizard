@@ -230,6 +230,7 @@ export default function ContractForm() {
   // Create or update contract mutation
   const contractMutation = useMutation({
     mutationFn: (data: ContractFormData) => {
+      console.log("=== MUTATION DEBUG ===");
       console.log("Frontend mutation called with:", JSON.stringify(data, null, 2));
       console.log("Is editing:", isEditing, "Edit contract ID:", editContractId);
       
@@ -248,6 +249,7 @@ export default function ContractForm() {
           },
         };
         console.log("UPDATE payload being sent:", JSON.stringify(updatePayload, null, 2));
+        console.log("Making PUT request to:", `/api/contracts/${editContractId}`);
         return apiRequest("PUT", `/api/contracts/${editContractId}`, updatePayload);
       } else {
         // Create new contract
@@ -266,7 +268,9 @@ export default function ContractForm() {
         });
       }
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
+      console.log("=== MUTATION SUCCESS ===");
+      console.log("Mutation result:", result);
       queryClient.invalidateQueries({ queryKey: ["/api/contracts"] });
       queryClient.invalidateQueries({ queryKey: ["/api/contracts/stats"] });
       toast({
@@ -275,7 +279,9 @@ export default function ContractForm() {
       });
       setLocation("/contracts");
     },
-    onError: () => {
+    onError: (error) => {
+      console.log("=== MUTATION ERROR ===");
+      console.log("Mutation error:", error);
       toast({
         title: "Error",
         description: isEditing ? "A apărut o eroare la actualizarea contractului." : "A apărut o eroare la crearea contractului.",
@@ -319,13 +325,17 @@ export default function ContractForm() {
   });
 
   const onSubmit = (data: ContractFormData) => {
+    console.log("=== onSubmit DEBUG ===");
     console.log("onSubmit called with data:", JSON.stringify(data, null, 2));
     console.log("Form errors before submit:", JSON.stringify(form.formState.errors, null, 2));
     console.log("Is editing mode:", isEditing);
+    console.log("Edit contract ID:", editContractId);
+    console.log("Contract mutation pending:", contractMutation.isPending);
     
     // In edit mode, skip strict validation to allow updates
     if (isEditing) {
       console.log("Edit mode - proceeding with mutation without strict validation");
+      console.log("About to call contractMutation.mutate with:", JSON.stringify(data, null, 2));
       contractMutation.mutate(data);
       return;
     }
