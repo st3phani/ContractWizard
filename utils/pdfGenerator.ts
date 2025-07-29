@@ -308,16 +308,18 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     const boxWidth = 80;
     const boxHeight = 25;
     
-    // Prestator signature box
+    // Prestator signature box with orange-red border
+    pdf.setDrawColor(255, 102, 51); // Orange-red color (RGB: 255, 102, 51)
+    pdf.setLineWidth(1);
     pdf.rect(margin - boxPadding, y - boxPadding, boxWidth, boxHeight);
     
-    // Add signature icon in the right side of the box
-    pdf.setLineWidth(0.8);
+    // Add signature icon in blue color (same as Contract Nou button - bg-blue-600)
+    pdf.setDrawColor(37, 99, 235); // Blue color (RGB: 37, 99, 235 - blue-600)
+    pdf.setLineWidth(1.2);
     const prestatorSignX = margin + boxWidth - 30; // Right side positioning
     pdf.line(prestatorSignX, y + 2, prestatorSignX + 20, y + 4); // Signature line 1
     pdf.line(prestatorSignX + 5, y + 4, prestatorSignX + 25, y + 6); // Signature line 2
     pdf.line(prestatorSignX + 10, y + 6, prestatorSignX + 18, y + 8); // Signature line 3
-    pdf.setLineWidth(0.2); // Reset line width
     
     y += 3;
     pdf.setFontSize(9);
@@ -333,16 +335,22 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     // Reset y for beneficiary signature  
     y -= 15;
     
-    // Beneficiar signature box
+    // Beneficiar signature box with orange-red border
+    pdf.setDrawColor(255, 102, 51); // Orange-red color (RGB: 255, 102, 51)
+    pdf.setLineWidth(1);
     pdf.rect(margin + 90 - boxPadding, y - boxPadding, boxWidth, boxHeight);
     
-    // Add signature icon for beneficiary in the right side of the box
-    pdf.setLineWidth(0.8);
+    // Add signature icon for beneficiary in blue color
+    pdf.setDrawColor(37, 99, 235); // Blue color (RGB: 37, 99, 235 - blue-600)
+    pdf.setLineWidth(1.2);
     const beneficiarySignX = margin + 90 + boxWidth - 30; // Right side positioning
     pdf.line(beneficiarySignX, y + 2, beneficiarySignX + 20, y + 4); // Signature line 1
     pdf.line(beneficiarySignX + 5, y + 4, beneficiarySignX + 25, y + 6); // Signature line 2
     pdf.line(beneficiarySignX + 10, y + 6, beneficiarySignX + 18, y + 8); // Signature line 3
-    pdf.setLineWidth(0.2); // Reset line width
+    
+    // Reset colors and line width
+    pdf.setDrawColor(0, 0, 0); // Black
+    pdf.setLineWidth(0.2);
     
     y += 3;
     pdf.setFontSize(9);
