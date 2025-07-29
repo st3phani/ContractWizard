@@ -24,8 +24,8 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       title: "Rezervate",
       value: stats.reservedContracts,
       icon: Calendar,
-      bgColor: "bg-gray-100",
-      iconColor: "text-gray-600",
+      bgColor: "bg-blue-100",
+      iconColor: "text-blue-600",
     },
     {
       title: "Așteptare",
