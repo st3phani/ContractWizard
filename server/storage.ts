@@ -1230,7 +1230,7 @@ export class DatabaseStorage implements IStorage {
           signedAt: signData.signedAt,
           signedIp: signData.signedIp,
           signedToken: signedToken,
-          statusId: 4, // Change status to "signed"
+          statusId: 3, // Change status to "signed" (Semnat)
         })
         .where(eq(contracts.id, id))
         .returning();
