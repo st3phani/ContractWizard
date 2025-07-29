@@ -681,6 +681,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get signed contract by signed token (public endpoint)
+  app.get("/api/contracts/signed/:token", async (req, res) => {
+    try {
+      const { token } = req.params;
+      const contract = await storage.getContractBySignedToken(token);
+      
+      if (!contract) {
+        return res.status(404).json({ message: "Signed contract not found" });
+      }
+
+      res.json(contract);
+    } catch (error) {
+      console.error("Get signed contract error:", error);
+      res.status(500).json({ message: "Failed to get signed contract" });
+    }
+  });
+
   // Sign contract (public endpoint)
   app.post("/api/contracts/sign/:token", async (req, res) => {
     try {

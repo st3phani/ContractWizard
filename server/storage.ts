@@ -1155,6 +1155,37 @@ export class DatabaseStorage implements IStorage {
     return (result.rowCount ?? 0) > 0;
   }
 
+  async getContractBySignedToken(token: string): Promise<ContractWithDetails | undefined> {
+    try {
+      const result = await db
+        .select()
+        .from(contracts)
+        .leftJoin(contractTemplates, eq(contracts.templateId, contractTemplates.id))
+        .leftJoin(beneficiaries, eq(contracts.beneficiaryId, beneficiaries.id))
+        .leftJoin(contractStatuses, eq(contracts.statusId, contractStatuses.id))
+        .where(eq(contracts.signedToken, token));
+
+      if (result.length === 0) {
+        return undefined;
+      }
+
+      // Get company settings for provider data
+      const companySettings = await this.getCompanySettings();
+
+      const row = result[0];
+      return {
+        ...row.contracts,
+        template: row.contract_templates || null,
+        beneficiary: row.beneficiaries || null,
+        status: row.contract_statuses || null,
+        provider: companySettings,
+      };
+    } catch (error) {
+      console.error("Error getting contract by signed token:", error);
+      return undefined;
+    }
+  }
+
   async getContractBySigningToken(token: string): Promise<ContractWithDetails | undefined> {
     try {
       const result = await db
@@ -1188,12 +1219,17 @@ export class DatabaseStorage implements IStorage {
 
   async signContract(id: number, signData: { signedBy: string; signedAt: Date; signedIp?: string }): Promise<Contract> {
     try {
+      // Generate unique signed token
+      const { nanoid } = await import('nanoid');
+      const signedToken = nanoid(32);
+
       const [updated] = await db
         .update(contracts)
         .set({
           signedBy: signData.signedBy,
           signedAt: signData.signedAt,
           signedIp: signData.signedIp,
+          signedToken: signedToken,
           statusId: 4, // Change status to "signed"
         })
         .where(eq(contracts.id, id))

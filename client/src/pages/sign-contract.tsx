@@ -165,6 +165,7 @@ export default function SignContract() {
                 <p><strong>Semnat de:</strong> {form.getValues('signedBy')}</p>
                 <p><strong>Data semnării:</strong> {new Date().toLocaleDateString('ro-RO')}</p>
                 <p><strong>IP:</strong> {contract.signedIp || 'N/A'}</p>
+                <p><strong>Token semnat:</strong> <span className="font-mono text-xs">{contract.signedToken || 'N/A'}</span></p>
               </div>
             </div>
             <p className="text-sm text-gray-500">

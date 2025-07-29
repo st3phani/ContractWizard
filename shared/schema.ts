@@ -89,6 +89,7 @@ export const contracts = pgTable("contracts", {
   signedAt: timestamp("signed_at"),
   signedBy: text("signed_by"),
   signedIp: text("signed_ip"),
+  signedToken: varchar("signed_token", { length: 100 }).unique(),
   signingToken: varchar("signing_token", { length: 100 }).unique(),
 });
 
