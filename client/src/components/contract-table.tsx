@@ -35,7 +35,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
       contract.beneficiary.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contract.template.name.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesStatus = statusFilter === "all" || contract.status === statusFilter;
+    const matchesStatus = statusFilter === "all" || contract.status?.statusCode === statusFilter;
     
     return matchesSearch && matchesStatus;
   });
@@ -59,7 +59,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
   };
 
   const canPerformActions = (contract: ContractWithDetails) => {
-    return contract.status !== "reserved";
+    return contract.status?.statusCode !== "reserved";
   };
 
   // Reset to first page when filters change
@@ -140,8 +140,8 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                 <TableCell>{contract.template?.name || 'Template șters'}</TableCell>
                 <TableCell>{formatDate(contract.createdAt)}</TableCell>
                 <TableCell>
-                  <Badge className={getStatusColor(contract.status)}>
-                    {getStatusText(contract.status)}
+                  <Badge className={getStatusColor(contract.status?.statusCode || "")}>
+                    {contract.status?.statusLabel || "Necunoscut"}
                   </Badge>
                 </TableCell>
                 <TableCell>

@@ -786,11 +786,12 @@ export class DatabaseStorage implements IStorage {
       return {
         ...contract,
         template: contract.template || mockTemplate,
-        beneficiary: contract.beneficiary || mockBeneficiary
-      };
+        beneficiary: contract.beneficiary || mockBeneficiary,
+        status: contract.status
+      } as ContractWithDetails;
     }
     
-    return contract;
+    return contract as ContractWithDetails;
   }
 
   async getContractByOrderNumber(orderNumber: number): Promise<ContractWithDetails | undefined> {
@@ -832,11 +833,12 @@ export class DatabaseStorage implements IStorage {
       return {
         ...contract,
         template: contract.template || mockTemplate,
-        beneficiary: contract.beneficiary || mockBeneficiary
-      };
+        beneficiary: contract.beneficiary || mockBeneficiary,
+        status: contract.status
+      } as ContractWithDetails;
     }
     
-    return contract;
+    return contract as ContractWithDetails;
   }
 
   async createContract(contractData: InsertContract): Promise<ContractWithDetails> {
