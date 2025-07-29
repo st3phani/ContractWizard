@@ -21,6 +21,13 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       iconColor: "text-blue-600",
     },
     {
+      title: "Rezervate",
+      value: stats.reservedContracts,
+      icon: Calendar,
+      bgColor: "bg-gray-100",
+      iconColor: "text-gray-600",
+    },
+    {
       title: "Așteptare",
       value: stats.pendingContracts,
       icon: Clock,
@@ -40,13 +47,6 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       icon: CheckCircle,
       bgColor: "bg-green-100",
       iconColor: "text-green-600",
-    },
-    {
-      title: "Rezervate",
-      value: stats.reservedContracts,
-      icon: Calendar,
-      bgColor: "bg-gray-100",
-      iconColor: "text-gray-600",
     },
   ];
 
