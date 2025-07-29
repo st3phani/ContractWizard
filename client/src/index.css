@@ -80,7 +80,6 @@
   .contract-content, .prose, .ProseMirror {
     font-family: Arial, sans-serif !important;
     font-feature-settings: "rlig" 1, "calt" 1;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   }
 }
 
@@ -91,6 +90,16 @@
   
   .custom-shadow-lg {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Force sticky positioning for headers */
+  .header-sticky {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 50 !important;
+    background-color: white !important;
+    border-bottom: 1px solid rgba(229, 231, 235, 1) !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
   }
 
   /* Error field styling */
