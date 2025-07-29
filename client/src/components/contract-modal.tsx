@@ -76,11 +76,11 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
                 size="sm"
                 onClick={() => canSendContract(contract) ? onEmail(contract) : undefined}
                 disabled={!canSendContract(contract)}
-                className={!canSendContract(contract) ? "opacity-30 cursor-not-allowed" : "hover:bg-orange-50 border-orange-200"}
+                className={!canSendContract(contract) ? "opacity-30 cursor-not-allowed" : "hover:bg-red-50 border-red-200"}
                 title="Trimite la semnat"
                 aria-label="Trimite la semnat"
               >
-                <PenTool className={`h-4 w-4 mr-1 ${!canSendContract(contract) ? "" : "text-orange-600"}`} />
+                <PenTool className={`h-4 w-4 mr-1 ${!canSendContract(contract) ? "" : "text-red-600"}`} />
                 Trimite la Semnat
               </Button>
             </div>
