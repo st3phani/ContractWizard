@@ -3,8 +3,9 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { sendContractEmail, testEmailConnection } from "./email";
 import { getEmailLogs, clearEmailLogs, getLatestEmails } from "./email-log";
-import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema, insertSystemSettingsSchema, insertUserProfileSchema, insertContractStatusSchema } from "@shared/schema";
+import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema, insertSystemSettingsSchema, insertUserProfileSchema, insertContractStatusSchema, contractSigningSchema } from "@shared/schema";
 import { z } from "zod";
+import { nanoid } from "nanoid";
 
 // Helper function to generate sequential order numbers
 async function generateOrderNumber(): Promise<number> {
@@ -578,17 +579,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const id = parseInt(req.params.id);
       const { recipient, subject, message, attachPDF } = req.body;
       
-      const contractToEmail = await storage.getContract(id);
+      const contractToEmail = await storage.getContractWithDetails(id);
       if (!contractToEmail) {
         return res.status(404).json({ message: "Contract not found" });
       }
+
+      // Generate signing token if not exists
+      if (!contractToEmail.signingToken) {
+        const signingToken = nanoid(32);
+        await storage.updateContract(id, { 
+          signingToken: signingToken 
+        });
+        contractToEmail.signingToken = signingToken;
+      }
       
-      // Send actual email using nodemailer + MailHog
+      // Send actual email using nodemailer
       await sendContractEmail({
-        recipient,
+        to: recipient,
         subject,
         message,
-        attachPDF,
         contract: contractToEmail
       });
       
@@ -644,6 +653,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Email logs cleared successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to clear email logs" });
+    }
+  });
+
+  // Get contract for signing (public endpoint)
+  app.get("/api/contracts/sign/:token", async (req, res) => {
+    try {
+      const { token } = req.params;
+      const contract = await storage.getContractBySigningToken(token);
+      
+      if (!contract) {
+        return res.status(404).json({ message: "Contract not found or invalid signing link" });
+      }
+
+      if (contract.signedAt) {
+        return res.status(400).json({ message: "Contract has already been signed" });
+      }
+
+      res.json(contract);
+    } catch (error) {
+      console.error("Get contract for signing error:", error);
+      res.status(500).json({ message: "Failed to get contract" });
+    }
+  });
+
+  // Sign contract (public endpoint)
+  app.post("/api/contracts/sign/:token", async (req, res) => {
+    try {
+      const { token } = req.params;
+      
+      const validation = contractSigningSchema.safeParse(req.body);
+      if (!validation.success) {
+        return res.status(400).json({ 
+          message: "Invalid signing data",
+          errors: validation.error.issues 
+        });
+      }
+
+      const contract = await storage.getContractBySigningToken(token);
+      if (!contract) {
+        return res.status(404).json({ message: "Contract not found or invalid signing link" });
+      }
+
+      if (contract.signedAt) {
+        return res.status(400).json({ message: "Contract has already been signed" });
+      }
+
+      // Sign the contract
+      const signedContract = await storage.signContract(contract.id, {
+        signedBy: validation.data.signedBy,
+        signedAt: new Date()
+      });
+
+      res.json({ 
+        message: "Contract signed successfully",
+        contract: signedContract
+      });
+    } catch (error) {
+      console.error("Sign contract error:", error);
+      res.status(500).json({ message: "Failed to sign contract" });
     }
   });
 

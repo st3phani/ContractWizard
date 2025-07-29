@@ -81,6 +81,10 @@ export interface IStorage {
   createContractStatus(status: InsertContractStatus): Promise<ContractStatus>;
   updateContractStatus(id: number, status: InsertContractStatus): Promise<ContractStatus | undefined>;
   deleteContractStatus(id: number): Promise<boolean>;
+
+  // Contract Signing
+  getContractBySigningToken(token: string): Promise<ContractWithDetails | undefined>;
+  signContract(id: number, signData: { signedBy: string; signedAt: Date }): Promise<Contract>;
 }
 
 export class MemStorage implements IStorage {
@@ -1124,6 +1128,52 @@ export class DatabaseStorage implements IStorage {
   async deleteContractStatus(id: number): Promise<boolean> {
     const result = await db.delete(contractStatuses).where(eq(contractStatuses.id, id));
     return (result.rowCount ?? 0) > 0;
+  }
+
+  async getContractBySigningToken(token: string): Promise<ContractWithDetails | undefined> {
+    try {
+      const result = await db
+        .select()
+        .from(contracts)
+        .leftJoin(contractTemplates, eq(contracts.templateId, contractTemplates.id))
+        .leftJoin(beneficiaries, eq(contracts.beneficiaryId, beneficiaries.id))
+        .leftJoin(contractStatuses, eq(contracts.statusId, contractStatuses.id))
+        .where(eq(contracts.signingToken, token));
+
+      if (result.length === 0) {
+        return undefined;
+      }
+
+      const row = result[0];
+      return {
+        ...row.contracts,
+        template: row.contract_templates || null,
+        beneficiary: row.beneficiaries || null,
+        status: row.contract_statuses || null,
+      };
+    } catch (error) {
+      console.error("Error getting contract by signing token:", error);
+      return undefined;
+    }
+  }
+
+  async signContract(id: number, signData: { signedBy: string; signedAt: Date }): Promise<Contract> {
+    try {
+      const [updated] = await db
+        .update(contracts)
+        .set({
+          signedBy: signData.signedBy,
+          signedAt: signData.signedAt,
+          statusId: 4, // Change status to "signed"
+        })
+        .where(eq(contracts.id, id))
+        .returning();
+
+      return updated;
+    } catch (error) {
+      console.error("Error signing contract:", error);
+      throw error;
+    }
   }
 
 }

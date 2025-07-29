@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, timestamp, decimal, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, timestamp, decimal, boolean, varchar, date } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -94,6 +94,9 @@ export const contracts = pgTable("contracts", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   sentAt: timestamp("sent_at"),
   completedAt: timestamp("completed_at"),
+  signedAt: timestamp("signed_at"),
+  signedBy: text("signed_by"),
+  signingToken: varchar("signing_token", { length: 100 }).unique(),
 });
 
 export const insertContractTemplateSchema = createInsertSchema(contractTemplates).omit({
@@ -134,12 +137,20 @@ export const insertContractSchema = createInsertSchema(contracts).omit({
   createdAt: true,
   sentAt: true,
   completedAt: true,
+  signedAt: true,
+  signingToken: true,
 }).extend({
   templateId: z.number().min(1, "Template-ul este obligatoriu"),
   beneficiaryId: z.number().min(1, "Beneficiarul este obligatoriu"),
   value: z.union([z.string(), z.number()]).optional().nullable(),
   startDate: z.date().optional().nullable(),
   endDate: z.date().optional().nullable(),
+});
+
+// Schema for contract signing
+export const contractSigningSchema = z.object({
+  signedBy: z.string().min(1, "Numele este obligatoriu pentru semnare"),
+  agreed: z.boolean().refine(val => val === true, "Trebuie să fiți de acord cu termenii contractului"),
 });
 
 export type ContractTemplate = typeof contractTemplates.$inferSelect;

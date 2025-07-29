@@ -58,6 +58,15 @@ export async function sendContractEmail(options: EmailOptions): Promise<void> {
             <p><strong>Template:</strong> ${options.contract.template.name}</p>
             <p><strong>Beneficiar:</strong> ${options.contract.beneficiary.name}</p>
             <p><strong>Data creării:</strong> ${new Date(options.contract.createdAt || '').toLocaleDateString('ro-RO')}</p>
+          </div>
+          
+          <div style="background-color: #f3f4f6; padding: 20px; border-radius: 6px; margin: 20px 0; text-align: center;">
+            <h3 style="margin: 0 0 15px 0; color: #1f2937;">Semnare Contract</h3>
+            <p style="margin: 0 0 15px 0; color: #374151;">Pentru a semna contractul, accesați link-ul de mai jos:</p>
+            <a href="${process.env.NODE_ENV === 'development' ? 'http://localhost:5000' : 'https://your-domain.com'}/sign-contract/${options.contract.signingToken}" 
+               style="display: inline-block; background-color: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+              Semnează Contractul
+            </a>
           </div>` : ''}
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
         <p style="color: #6b7280; font-size: 14px;">
