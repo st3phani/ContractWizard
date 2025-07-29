@@ -17,7 +17,7 @@ export async function sendContractEmail(options: EmailOptions): Promise<void> {
     console.log('Subject:', options.subject);
     console.log('Message:', options.message);
     console.log('Contract:', options.contract ? `#${options.contract.orderNumber} - ${options.contract.template.name}` : 'N/A');
-    console.log('Signing Link:', options.contract?.signingToken ? `http://localhost:5000/sign-contract/${options.contract.signingToken}` : 'No signing token');
+    console.log('Signing Link:', options.contract?.signingToken ? `https://${process.env.REPLIT_DEV_DOMAIN || 'localhost:5000'}/sign-contract/${options.contract.signingToken}` : 'No signing token');
     console.log('Timestamp:', new Date().toLocaleString('ro-RO'));
     console.log('==============================================\n');
     
@@ -64,7 +64,7 @@ export async function sendContractEmail(options: EmailOptions): Promise<void> {
           <div style="background-color: #f3f4f6; padding: 20px; border-radius: 6px; margin: 20px 0; text-align: center;">
             <h3 style="margin: 0 0 15px 0; color: #1f2937;">Semnare Contract</h3>
             <p style="margin: 0 0 15px 0; color: #374151;">Pentru a semna contractul, accesați link-ul de mai jos:</p>
-            <a href="${process.env.NODE_ENV === 'development' ? 'http://localhost:5000' : 'https://your-domain.com'}/sign-contract/${options.contract.signingToken}" 
+            <a href="https://${process.env.REPLIT_DEV_DOMAIN || 'localhost:5000'}/sign-contract/${options.contract.signingToken}" 
                style="display: inline-block; background-color: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
               Semnează Contractul
             </a>
