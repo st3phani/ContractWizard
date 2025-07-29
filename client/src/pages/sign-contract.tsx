@@ -270,8 +270,8 @@ export default function SignContract() {
                   <p className="text-lg font-semibold">{contract.orderNumber}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-500">Template</Label>
-                  <p className="text-lg">{contract.template?.name}</p>
+                  <Label className="text-sm font-medium text-gray-500">Data creării</Label>
+                  <p className="text-lg">{contract.createdAt ? new Date(contract.createdAt).toLocaleDateString('ro-RO') : 'N/A'}</p>
                 </div>
               </div>
 
