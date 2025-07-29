@@ -101,11 +101,13 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen flex bg-gray-50">
-      <Sidebar />
+      <div className="sticky top-0 h-screen">
+        <Sidebar />
+      </div>
       
       <main className="flex-1 overflow-auto">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 p-6">
+        <header className="sticky top-0 z-10 bg-white shadow-sm border-b border-gray-200 p-6">
           <div>
             <h2 className="text-2xl font-semibold text-gray-900">Dashboard Contracte</h2>
             <p className="text-gray-600 mt-1">Gestionați contractele dvs. rapid și eficient</p>

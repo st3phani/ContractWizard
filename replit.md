@@ -122,6 +122,7 @@ Four main entities:
 ```
 Changelog:
 
+- July 29, 2025. **STICKY NAVIGATION IMPLEMENTATION** - Made header and sidebar sticky across all application pages (Dashboard, Contracts, Beneficiaries, Templates, Profile, Settings, Contract Form). Sidebar wrapped in sticky container with h-screen, headers use sticky top-0 z-10 for proper positioning and visibility during scroll.
 - July 29, 2025. **STATUS MANAGEMENT RESTRICTIONS** - Removed "Adaugă Status" button and functionality from Settings page. Users can now only edit and delete existing contract statuses, preventing creation of new status types to maintain system consistency.
 - July 29, 2025. **STATUS COLOR UPDATE** - Modified "În Așteptare" status color to orange (bg-orange-100 text-orange-800) in getStatusColor function. Added compatibility for "pending" and "pandding" status codes to ensure proper color display.
 - July 29, 2025. **CONTRACT STATUS MANAGEMENT SYSTEM COMPLETED** - Implemented complete database-driven contract status system with contract_statuses table, API routes, and Settings page management interface. Migrated all 77 existing contracts from hardcoded status strings to status_id relationships. Fixed frontend components to display status from database relations instead of "Necunoscut".

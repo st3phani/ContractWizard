@@ -90,10 +90,12 @@ export default function ContractsPage() {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar />
+      <div className="sticky top-0 h-screen">
+        <Sidebar />
+      </div>
       <div className="flex-1 overflow-auto">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-semibold text-gray-900">Contracte</h1>

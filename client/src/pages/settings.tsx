@@ -207,11 +207,13 @@ export default function Settings() {
 
   return (
     <div className="min-h-screen flex bg-gray-50">
-      <Sidebar />
+      <div className="sticky top-0 h-screen">
+        <Sidebar />
+      </div>
       
       <main className="flex-1 overflow-auto">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200 p-6">
+        <header className="sticky top-0 z-10 bg-white shadow-sm border-b border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-semibold text-gray-900">Setări</h2>

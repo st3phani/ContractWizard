@@ -147,7 +147,9 @@ export default function Templates() {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar />
+      <div className="sticky top-0 h-screen">
+        <Sidebar />
+      </div>
       
       <main className="flex-1 overflow-auto">
         <div className="p-8">
