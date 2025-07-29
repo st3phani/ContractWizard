@@ -64,10 +64,11 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
                 variant="outline"
                 size="sm"
                 onClick={() => onDownload(contract)}
+                className="hover:bg-indigo-50 border-indigo-200"
                 title="Descarcă contractul ca PDF"
                 aria-label="Descarcă contractul ca PDF"
               >
-                <Download className="h-4 w-4 mr-1" />
+                <Download className="h-4 w-4 mr-1 text-indigo-600" />
                 Descarcă PDF
               </Button>
               <Button
@@ -75,11 +76,11 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
                 size="sm"
                 onClick={() => canSendContract(contract) ? onEmail(contract) : undefined}
                 disabled={!canSendContract(contract)}
-                className={!canSendContract(contract) ? "opacity-30 cursor-not-allowed" : ""}
+                className={!canSendContract(contract) ? "opacity-30 cursor-not-allowed" : "hover:bg-orange-50 border-orange-200"}
                 title="Trimite la semnat"
                 aria-label="Trimite la semnat"
               >
-                <PenTool className="h-4 w-4 mr-1" />
+                <PenTool className={`h-4 w-4 mr-1 ${!canSendContract(contract) ? "" : "text-orange-600"}`} />
                 Trimite la Semnat
               </Button>
             </div>

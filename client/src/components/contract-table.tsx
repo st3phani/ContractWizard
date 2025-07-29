@@ -157,53 +157,54 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                       size="sm"
                       onClick={() => canPerformActions(contract) ? onView(contract) : undefined}
                       disabled={!canPerformActions(contract)}
-                      className={!canPerformActions(contract) ? "opacity-30 cursor-not-allowed" : ""}
+                      className={!canPerformActions(contract) ? "opacity-30 cursor-not-allowed" : "hover:bg-blue-50"}
                       title="Previzualizează contractul"
                       aria-label="Previzualizează contractul"
                     >
-                      <Eye className="h-4 w-4" />
+                      <Eye className={`h-4 w-4 ${!canPerformActions(contract) ? "" : "text-blue-600"}`} />
                     </Button>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => onEdit(contract)}
+                      className="hover:bg-green-50"
                       title="Editează contractul"
                       aria-label="Editează contractul"
                     >
-                      <Edit className="h-4 w-4" />
+                      <Edit className="h-4 w-4 text-green-600" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => canPerformActions(contract) ? onDownload(contract) : undefined}
                       disabled={!canPerformActions(contract)}
-                      className={!canPerformActions(contract) ? "opacity-30 cursor-not-allowed" : ""}
+                      className={!canPerformActions(contract) ? "opacity-30 cursor-not-allowed" : "hover:bg-indigo-50"}
                       title="Descarcă contractul ca PDF"
                       aria-label="Descarcă contractul ca PDF"
                     >
-                      <Download className="h-4 w-4" />
+                      <Download className={`h-4 w-4 ${!canPerformActions(contract) ? "" : "text-indigo-600"}`} />
                     </Button>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => canSendContract(contract) ? onEmail(contract) : undefined}
                       disabled={!canSendContract(contract)}
-                      className={!canSendContract(contract) ? "opacity-30 cursor-not-allowed" : ""}
+                      className={!canSendContract(contract) ? "opacity-30 cursor-not-allowed" : "hover:bg-orange-50"}
                       title="Trimite la semnat"
                       aria-label="Trimite la semnat"
                     >
-                      <PenTool className="h-4 w-4" />
+                      <PenTool className={`h-4 w-4 ${!canSendContract(contract) ? "" : "text-orange-600"}`} />
                     </Button>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => canDeleteContract(contract) ? onDelete(contract) : undefined}
                       disabled={!canDeleteContract(contract)}
-                      className={!canDeleteContract(contract) ? "opacity-30 cursor-not-allowed" : ""}
+                      className={!canDeleteContract(contract) ? "opacity-30 cursor-not-allowed" : "hover:bg-red-50"}
                       title="Șterge contractul"
                       aria-label="Șterge contractul"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className={`h-4 w-4 ${!canDeleteContract(contract) ? "" : "text-red-600"}`} />
                     </Button>
                   </div>
                 </TableCell>
