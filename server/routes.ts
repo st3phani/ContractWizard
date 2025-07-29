@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { sendContractEmail, testEmailConnection, sendSignedContractNotification } from "./email";
 import { getEmailLogs, clearEmailLogs, getLatestEmails } from "./email-log";
-import { cronScheduler } from "./cron-scheduler";
+import { contractStatusUpdater } from "./contract-status-updater";
 import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema, insertSystemSettingsSchema, insertUserProfileSchema, insertContractStatusSchema, contractSigningSchema } from "@shared/schema";
 import { z } from "zod";
 import { nanoid } from "nanoid";
@@ -252,6 +252,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Contracts
   app.get("/api/contracts", async (req, res) => {
     try {
+      // Check for contract status updates when loading contracts
+      await contractStatusUpdater.checkAndUpdateContracts();
+      
       const contracts = await storage.getContracts();
       res.json(contracts);
     } catch (error) {
@@ -661,20 +664,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Cron management routes
+  // Contract status management routes
   app.get("/api/cron/status", (req, res) => {
     try {
-      const status = cronScheduler.getStatus();
       res.json({
         success: true,
-        data: status,
-        message: status.isRunning ? "Cron scheduler is running" : "Cron scheduler is stopped"
+        data: {
+          isRunning: true,
+          type: "on-demand",
+          updateInterval: "1 hour rate limit"
+        },
+        message: "Contract status updater is active (on-demand mode)"
       });
     } catch (error) {
-      console.error("Error getting cron status:", error);
+      console.error("Error getting status:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to get cron status",
+        message: "Failed to get status",
         error: error instanceof Error ? error.message : "Unknown error"
       });
     }
@@ -682,10 +688,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/cron/trigger/contracts", async (req, res) => {
     try {
-      await cronScheduler.manualContractUpdate();
+      const updatedCount = await contractStatusUpdater.forceUpdate();
       res.json({
         success: true,
-        message: "Contract status update completed successfully"
+        message: `Contract status update completed successfully. Updated ${updatedCount} contracts.`
       });
     } catch (error) {
       console.error("Manual contract update failed:", error);

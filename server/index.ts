@@ -41,8 +41,8 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
-  // Start cron scheduler for automated tasks
-  cronScheduler.start();
+  // Start cron scheduler for automated tasks (disabled temporarily)
+  // cronScheduler.start();
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

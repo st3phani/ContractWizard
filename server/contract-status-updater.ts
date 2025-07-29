@@ -1,12 +1,13 @@
 import { storage } from "./storage";
 
 /**
- * Automatic contract status updater service
- * Updates signed contracts to "completed" status when their end date has passed
+ * Simple contract status updater that runs on-demand
+ * This is a lightweight alternative to the heavy cron scheduler
  */
 export class ContractStatusUpdater {
   private static instance: ContractStatusUpdater;
-  private intervalId: NodeJS.Timeout | null = null;
+  private lastUpdateTime: number = 0;
+  private readonly UPDATE_INTERVAL = 60 * 60 * 1000; // 1 hour in milliseconds
 
   private constructor() {}
 
@@ -18,41 +19,16 @@ export class ContractStatusUpdater {
   }
 
   /**
-   * Start the automatic status updater
-   * Runs every hour to check for contracts that need status updates
+   * Check if contracts need status updates (rate-limited to once per hour)
    */
-  public start(): void {
-    if (this.intervalId) {
-      console.log("Contract status updater is already running");
+  public async checkAndUpdateContracts(): Promise<void> {
+    const now = Date.now();
+    
+    // Rate limiting - only run once per hour
+    if (now - this.lastUpdateTime < this.UPDATE_INTERVAL) {
       return;
     }
 
-    console.log("🕐 Starting automatic contract status updater service");
-    
-    // Run immediately on start
-    this.checkAndUpdateContracts();
-    
-    // Then run every hour (3600000 ms)
-    this.intervalId = setInterval(() => {
-      this.checkAndUpdateContracts();
-    }, 3600000);
-  }
-
-  /**
-   * Stop the automatic status updater
-   */
-  public stop(): void {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
-      console.log("🛑 Contract status updater service stopped");
-    }
-  }
-
-  /**
-   * Check all signed contracts and update to completed if past end date
-   */
-  private async checkAndUpdateContracts(): Promise<void> {
     try {
       console.log("🔍 Checking contracts for automatic status updates...");
       
@@ -80,20 +56,47 @@ export class ContractStatusUpdater {
 
       if (updatedCount > 0) {
         console.log(`📋 Contract status update completed: ${updatedCount} contracts updated to "Finalizat"`);
-      } else {
-        console.log("📋 No contracts needed status updates");
       }
+
+      this.lastUpdateTime = now;
     } catch (error) {
-      console.error("❌ Error during automatic contract status update:", error);
+      console.error("❌ Error during contract status update:", error);
     }
   }
 
   /**
-   * Manual trigger for status updates (for debugging/testing)
+   * Force update contracts immediately (ignoring rate limit)
    */
-  public async manualUpdate(): Promise<void> {
-    console.log("🔧 Manual contract status update triggered");
-    await this.checkAndUpdateContracts();
+  public async forceUpdate(): Promise<number> {
+    try {
+      console.log("🔧 Forcing contract status update...");
+      
+      const contracts = await storage.getContracts();
+      const currentDate = new Date();
+      let updatedCount = 0;
+
+      for (const contract of contracts) {
+        if (contract.status?.statusCode === 'signed' && contract.endDate) {
+          const contractEndDate = new Date(contract.endDate);
+          
+          if (currentDate > contractEndDate) {
+            try {
+              await storage.updateContractStatusById(contract.id, 4);
+              console.log(`✅ Force-updated Contract #${contract.orderNumber} to "Finalizat"`);
+              updatedCount++;
+            } catch (error) {
+              console.error(`❌ Failed to force-update Contract #${contract.orderNumber}:`, error);
+            }
+          }
+        }
+      }
+
+      this.lastUpdateTime = Date.now();
+      return updatedCount;
+    } catch (error) {
+      console.error("❌ Error during forced contract status update:", error);
+      return 0;
+    }
   }
 }
 

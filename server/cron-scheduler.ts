@@ -32,29 +32,13 @@ export class CronScheduler {
     console.log("   • Weekly cleanup: Every Sunday at 02:00");
     console.log("   • Monthly statistics: First day of month at 01:00");
 
-    // Run contract status updates every 6 hours (21,600,000 ms)
-    // This checks 4 times per day for expired contracts
+    // Run contract status updates every 24 hours (86,400,000 ms)
+    // This checks once per day for expired contracts
     this.scheduleJob(
       "Contract Status Update",
       updateExpiredContracts,
-      6 * 60 * 60 * 1000, // 6 hours
+      24 * 60 * 60 * 1000, // 24 hours
       true // Run immediately on start
-    );
-
-    // Run weekly cleanup every Sunday (604,800,000 ms = 7 days)
-    this.scheduleJob(
-      "Weekly Cleanup",
-      weeklyCleanup,
-      7 * 24 * 60 * 60 * 1000, // 7 days
-      false // Don't run immediately
-    );
-
-    // Run monthly statistics every 30 days (2,592,000,000 ms)
-    this.scheduleJob(
-      "Monthly Statistics",
-      monthlyStatsUpdate,
-      30 * 24 * 60 * 60 * 1000, // 30 days
-      false // Don't run immediately
     );
 
     this.isRunning = true;
