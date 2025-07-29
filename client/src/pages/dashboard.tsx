@@ -1,15 +1,11 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Eye, Download, Edit } from "lucide-react";
+import { User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import StatsCards from "@/components/stats-cards";
+import ContractTable from "@/components/contract-table";
 import ContractModal from "@/components/contract-modal";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { formatDate, getStatusColor, getStatusText, getInitials, getAvatarColor } from "@/lib/utils";
 
 import { useLocation } from "wouter";
 import type { ContractWithDetails } from "@shared/schema";
@@ -157,83 +153,21 @@ Echipa Contract Manager`,
         {/* Stats Cards */}
         <StatsCards stats={stats} />
 
-        {/* Recent Contracts */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Contracte Recente</CardTitle>
-            <p className="text-sm text-gray-600">Ultimele 5 contracte create</p>
-          </CardHeader>
-          <CardContent>
-            {contractsLoading ? (
-              <div className="text-center py-8">Se încarcă...</div>
-            ) : contracts.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">Nu există contracte</div>
-            ) : (
-              <div className="space-y-4">
-                {contracts.map((contract) => (
-                  <div key={contract.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                    <div className="flex items-center space-x-4">
-                      <Avatar className="h-10 w-10" style={{ backgroundColor: getAvatarColor(contract.beneficiary.name) }}>
-                        <AvatarFallback className="text-white font-medium">
-                          {getInitials(contract.beneficiary.name)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="font-medium">Contract Nr. {contract.orderNumber}</div>
-                        <div className="text-sm text-gray-500">{contract.beneficiary.name}</div>
-                        <div className="text-xs text-gray-400">{formatDate(contract.createdAt)}</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <Badge variant="secondary" className={getStatusColor(contract.status?.statusCode || '')}>
-                        {getStatusText(contract.status?.statusCode || '')}
-                      </Badge>
-                      <div className="flex space-x-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleView(contract)}
-                          className="hover:bg-blue-50"
-                          title="Previzualizează contractul"
-                        >
-                          <Eye className="h-4 w-4 text-blue-600" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEdit(contract)}
-                          className="hover:bg-green-50"
-                          title="Editează contractul"
-                        >
-                          <Edit className="h-4 w-4 text-green-600" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDownload(contract)}
-                          className="hover:bg-indigo-50"
-                          title="Descarcă contractul ca PDF"
-                        >
-                          <Download className="h-4 w-4 text-indigo-600" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                {contracts.length >= 5 && (
-                  <div className="text-center pt-4">
-                    <Button
-                      variant="outline"
-                      onClick={() => setLocation("/contracts")}
-                    >
-                      Vezi toate contractele
-                    </Button>
-                  </div>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {/* Contracts Table */}
+        {contractsLoading ? (
+          <div className="text-center py-8">Se încarcă...</div>
+        ) : (
+          <ContractTable
+            contracts={contracts}
+            onView={handleView}
+            onEdit={handleEdit}
+            onDownload={handleDownload}
+            onEmail={handleEmail}
+            onDelete={handleDelete}
+            showPagination={false}
+            title="Contracte Recente (Ultimele 5)"
+          />
+        )}
       </div>
 
       {/* Modals */}

@@ -19,9 +19,11 @@ interface ContractTableProps {
   onDownload: (contract: ContractWithDetails) => void;
   onEmail: (contract: ContractWithDetails) => void;
   onDelete: (contract: ContractWithDetails) => void;
+  showPagination?: boolean;
+  title?: string;
 }
 
-export default function ContractTable({ contracts, onView, onEdit, onDownload, onEmail, onDelete }: ContractTableProps) {
+export default function ContractTable({ contracts, onView, onEdit, onDownload, onEmail, onDelete, showPagination = true, title }: ContractTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,19 +43,27 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
     return matchesSearch && matchesStatus;
   });
 
-  // Apply pagination using utils
-  const paginationConfig: PaginationConfig = { currentPage, itemsPerPage };
-  const paginationResult = paginateItems(filteredContracts, paginationConfig);
-  
-  const {
-    items: paginatedContracts,
-    totalItems,
-    totalPages,
-    hasNextPage,
-    hasPreviousPage,
-    startIndex,
-    endIndex
-  } = paginationResult;
+  // Apply pagination using utils (only if showPagination is true)
+  let paginatedContracts = filteredContracts;
+  let totalItems = filteredContracts.length;
+  let totalPages = 1;
+  let hasNextPage = false;
+  let hasPreviousPage = false;
+  let startIndex = 0;
+  let endIndex = filteredContracts.length;
+
+  if (showPagination) {
+    const paginationConfig: PaginationConfig = { currentPage, itemsPerPage };
+    const paginationResult = paginateItems(filteredContracts, paginationConfig);
+    
+    paginatedContracts = paginationResult.items;
+    totalItems = paginationResult.totalItems;
+    totalPages = paginationResult.totalPages;
+    hasNextPage = paginationResult.hasNextPage;
+    hasPreviousPage = paginationResult.hasPreviousPage;
+    startIndex = paginationResult.startIndex;
+    endIndex = paginationResult.endIndex;
+  }
 
   const canDeleteContract = (contract: ContractWithDetails) => {
     return contract.orderNumber === maxOrderNumber;
@@ -98,30 +108,32 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
     <Card className="shadow-sm">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>Contracte Recente</CardTitle>
-          <div className="flex items-center space-x-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Caută contracte..."
-                value={searchTerm}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="pl-10"
-              />
+          <CardTitle>{title || "Contracte"}</CardTitle>
+          {showPagination && (
+            <div className="flex items-center space-x-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Caută contracte..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Select value={statusFilter} onValueChange={handleStatusChange}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Toate statusurile" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Toate statusurile</SelectItem>
+                  <SelectItem value="draft">În Așteptare</SelectItem>
+                  <SelectItem value="signed">Semnat</SelectItem>
+                  <SelectItem value="completed">Finalizat</SelectItem>
+                  <SelectItem value="reserved">Rezervat</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <Select value={statusFilter} onValueChange={handleStatusChange}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Toate statusurile" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Toate statusurile</SelectItem>
-                <SelectItem value="draft">În Așteptare</SelectItem>
-                <SelectItem value="signed">Semnat</SelectItem>
-                <SelectItem value="completed">Finalizat</SelectItem>
-                <SelectItem value="reserved">Rezervat</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          )}
         </div>
       </CardHeader>
       <CardContent>
@@ -230,7 +242,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
         )}
 
         {/* Pagination Controls */}
-        {totalPages > 1 && (
+        {showPagination && totalPages > 1 && (
           <div className="flex items-center justify-between px-6 py-4 border-t">
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-700">Afișare:</span>
