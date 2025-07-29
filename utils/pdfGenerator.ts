@@ -303,30 +303,61 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
   
   // Check if contract is signed and add digital signatures
   if (contract.status?.statusCode === 'signed' && contract.signedAt && contract.signedBy) {
-    // Prestator signature (from company settings)
+    // Add signature boxes with padding (10px = ~3.5mm)
+    const boxPadding = 3.5;
+    const boxWidth = 80;
+    const boxHeight = 25;
+    
+    // Prestator signature box
+    pdf.rect(margin - boxPadding, y - boxPadding, boxWidth, boxHeight);
+    
+    // Add signature icon (simple handwritten-style line)
+    pdf.setLineWidth(0.8);
+    pdf.line(margin + 2, y + 2, margin + 25, y + 4); // Signature line 1
+    pdf.line(margin + 8, y + 4, margin + 30, y + 6); // Signature line 2
+    pdf.line(margin + 15, y + 6, margin + 22, y + 8); // Signature line 3
+    pdf.setLineWidth(0.2); // Reset line width
+    
+    y += 3;
+    pdf.setFontSize(9);
     pdf.text(contract.provider?.name || 'N/A', margin, y);
-    y += 5;
+    y += 4;
     pdf.text(contract.provider?.legalRepresentative || 'N/A', margin, y);
-    y += 5;
+    y += 4;
     pdf.text(new Date(contract.signedAt).toLocaleDateString('ro-RO'), margin, y);
-    y += 5;
-    pdf.text(contract.signingToken || 'N/A', margin, y);
+    y += 4;
+    pdf.setFontSize(7);
+    pdf.text(`Token: ${contract.signingToken || 'N/A'}`, margin, y);
     
     // Reset y for beneficiary signature  
     y -= 15;
     
-    // Beneficiar signature
+    // Beneficiar signature box
+    pdf.rect(margin + 90 - boxPadding, y - boxPadding, boxWidth, boxHeight);
+    
+    // Add signature icon for beneficiary
+    pdf.setLineWidth(0.8);
+    pdf.line(margin + 92, y + 2, margin + 115, y + 4); // Signature line 1
+    pdf.line(margin + 98, y + 4, margin + 120, y + 6); // Signature line 2
+    pdf.line(margin + 105, y + 6, margin + 112, y + 8); // Signature line 3
+    pdf.setLineWidth(0.2); // Reset line width
+    
+    y += 3;
+    pdf.setFontSize(9);
     const beneficiaryName = contract.beneficiary?.isCompany ? 
       contract.beneficiary?.companyName : 
       contract.beneficiary?.name;
     
     pdf.text(beneficiaryName || 'N/A', margin + 90, y);
-    y += 5;
+    y += 4;
     pdf.text(contract.signedBy, margin + 90, y);
-    y += 5;
+    y += 4;
     pdf.text(new Date(contract.signedAt).toLocaleDateString('ro-RO'), margin + 90, y);
-    y += 5;
-    pdf.text(contract.signedToken || 'N/A', margin + 90, y);
+    y += 4;
+    pdf.setFontSize(7);
+    pdf.text(`Token: ${contract.signedToken || 'N/A'}`, margin + 90, y);
+    
+    pdf.setFontSize(12); // Reset font size
   } else {
     // Traditional signature lines for unsigned contracts
     pdf.text('_________________', margin, y);
