@@ -20,7 +20,8 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
   const canSendContract = (contract: ContractWithDetails) => {
     return contract.status?.statusCode !== "reserved" && 
            contract.status?.statusCode !== "signed" && 
-           contract.status?.statusCode !== "completed";
+           contract.status?.statusCode !== "completed" &&
+           contract.status?.statusCode !== "sent";
   };
 
   // Fetch preview from backend API when modal opens

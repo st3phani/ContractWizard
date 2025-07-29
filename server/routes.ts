@@ -607,7 +607,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Update contract status to "sent"
       await storage.updateContract(id, { 
-        statusId: 3, 
+        statusId: 5, 
         sentAt: new Date() 
       });
       

@@ -66,7 +66,8 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
   const canSendContract = (contract: ContractWithDetails) => {
     return contract.status?.statusCode !== "reserved" && 
            contract.status?.statusCode !== "signed" && 
-           contract.status?.statusCode !== "completed";
+           contract.status?.statusCode !== "completed" &&
+           contract.status?.statusCode !== "sent";
   };
 
   const handleConfirmSend = () => {
@@ -312,7 +313,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
             <p className="text-sm text-amber-800">
               <strong>Ce se va întâmpla:</strong><br />
               • Un email cu link-ul de semnare va fi trimis către {confirmSendContract?.beneficiary.email}<br />
-              • Statusul contractului va fi schimbat în "În Așteptare"<br />
+              • Statusul contractului va fi schimbat în "Trimis"<br />
               • Beneficiarul va putea semna contractul digital
             </p>
           </div>
