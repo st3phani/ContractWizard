@@ -282,11 +282,35 @@ export default function Templates() {
               </div>
 
               <div className="bg-yellow-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-yellow-900 mb-2">💡 Exemple</h4>
-                <div className="text-sm text-yellow-800 space-y-1">
-                  <p><strong>Prestator:</strong> {"{{provider.name}}"}, CIF {"{{provider.cui}}"}</p>
-                  <p><strong>Beneficiar:</strong> {"{{beneficiary.name}}"}, {"{{beneficiary.email}}"}</p>
-                  <p><strong>Contract:</strong> Nr. {"{{orderNumber}}"} din {"{{currentDate}}"}</p>
+                <h4 className="font-semibold text-yellow-900 mb-2">💡 Exemple & Condiții</h4>
+                <div className="text-sm text-yellow-800 space-y-2">
+                  <div>
+                    <p><strong>Variabile de bază:</strong></p>
+                    <p>{"{{provider.name}}"}, CIF {"{{provider.cui}}"}</p>
+                    <p>{"{{beneficiary.name}}"}, {"{{beneficiary.email}}"}</p>
+                  </div>
+                  
+                  <div className="border-t border-yellow-200 pt-2">
+                    <p><strong>Condiții pentru tip beneficiar:</strong></p>
+                    <div className="mt-1 space-y-1">
+                      <code className="block bg-white px-2 py-1 rounded text-xs">
+                        {"{{#if isCompany}}"}Conținut pentru companii{"{{/if}}"}
+                      </code>
+                      <code className="block bg-white px-2 py-1 rounded text-xs">
+                        {"{{#if isIndividual}}"}Conținut pentru PF{"{{/if}}"}
+                      </code>
+                    </div>
+                  </div>
+                  
+                  <div className="border-t border-yellow-200 pt-2">
+                    <p><strong>Exemplu complet:</strong></p>
+                    <code className="block bg-white px-2 py-1 rounded text-xs">
+                      {"{{#if isCompany}}"}{"{{beneficiary.companyName}}"}, CUI {"{{beneficiary.companyCui}}"}{"{{/if}}"}
+                    </code>
+                    <code className="block bg-white px-2 py-1 rounded text-xs">
+                      {"{{#if isIndividual}}"}{"{{beneficiary.name}}"}, CNP {"{{beneficiary.cnp}}"}{"{{/if}}"}
+                    </code>
+                  </div>
                 </div>
               </div>
             </div>

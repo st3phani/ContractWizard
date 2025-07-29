@@ -833,6 +833,39 @@ export default function ContractForm() {
                     />
                   </CardContent>
                 </Card>
+
+                {/* Template Help Section */}
+                <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-blue-900 flex items-center">
+                      💡 Ajutor Template-uri
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <div>
+                        <h5 className="font-semibold text-blue-800 mb-2">Variabile de bază:</h5>
+                        <div className="space-y-1 text-sm text-blue-700">
+                          <code className="block bg-white px-2 py-1 rounded">{"{{beneficiary.name}}"}</code>
+                          <code className="block bg-white px-2 py-1 rounded">{"{{contract.value}} {{contract.currency}}"}</code>
+                          <code className="block bg-white px-2 py-1 rounded">{"{{orderNumber}} din {{currentDate}}"}</code>
+                        </div>
+                      </div>
+                      <div>
+                        <h5 className="font-semibold text-blue-800 mb-2">Condiții pentru tip beneficiar:</h5>
+                        <div className="space-y-1 text-sm text-blue-700">
+                          <code className="block bg-white px-2 py-1 rounded text-xs">
+                            {"{{#if isCompany}}"}Conținut companii{"{{/if}}"}
+                          </code>
+                          <code className="block bg-white px-2 py-1 rounded text-xs">
+                            {"{{#if isIndividual}}"}Conținut PF{"{{/if}}"}
+                          </code>
+                          <p className="text-xs mt-2 italic">Template-urile pot afișa conținut diferit pentru persoane fizice vs companii</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
 
               <div className="flex justify-end space-x-3">
