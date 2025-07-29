@@ -108,7 +108,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
     <Card className="shadow-sm">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-blue-600">{title || "Contracte"}</CardTitle>
+          <CardTitle>{title || "Contracte"}</CardTitle>
           {showPagination && (
             <div className="flex items-center space-x-3">
               <div className="relative">
