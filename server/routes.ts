@@ -14,9 +14,38 @@ async function generateOrderNumber(): Promise<number> {
   return maxOrderNumber + 1;
 }
 
-// Helper function to populate contract template
+// Helper function to populate contract template with conditional logic
 function populateContractTemplate(template: string, data: any): string {
   let populated = template;
+  
+  // Process conditional blocks first
+  if (data.beneficiary) {
+    const isCompany = data.beneficiary.isCompany;
+    
+    // Process {{#if isCompany}} blocks
+    const companyIfRegex = /\{\{#if\s+isCompany\}\}([\s\S]*?)\{\{\/if\}\}/g;
+    populated = populated.replace(companyIfRegex, (match, content) => {
+      return isCompany ? content : '';
+    });
+    
+    // Process {{#if isIndividual}} blocks
+    const individualIfRegex = /\{\{#if\s+isIndividual\}\}([\s\S]*?)\{\{\/if\}\}/g;
+    populated = populated.replace(individualIfRegex, (match, content) => {
+      return !isCompany ? content : '';
+    });
+    
+    // Process {{#unless isCompany}} blocks (opposite of isCompany)
+    const unlessCompanyRegex = /\{\{#unless\s+isCompany\}\}([\s\S]*?)\{\{\/unless\}\}/g;
+    populated = populated.replace(unlessCompanyRegex, (match, content) => {
+      return !isCompany ? content : '';
+    });
+    
+    // Process {{#unless isIndividual}} blocks (opposite of isIndividual) 
+    const unlessIndividualRegex = /\{\{#unless\s+isIndividual\}\}([\s\S]*?)\{\{\/unless\}\}/g;
+    populated = populated.replace(unlessIndividualRegex, (match, content) => {
+      return isCompany ? content : '';
+    });
+  }
   
   // Provider fields
   if (data.provider) {

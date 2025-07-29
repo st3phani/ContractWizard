@@ -122,6 +122,7 @@ Four main entities:
 ```
 Changelog:
 
+- July 29, 2025. **CONDITIONAL TEMPLATE SYSTEM** - Implemented conditional logic in contract templates allowing different content for Persoană Fizică vs Persoană Juridică. Added support for {{#if isCompany}}, {{#if isIndividual}}, {{#unless}} blocks in templates. Created comprehensive template with conditions demo and documentation guide.
 - July 22, 2025. **REVERTED EU ENTITY CATEGORY** - Reverted implementation of third beneficiary category "Persoană Juridică UE" back to original two-category system (Persoană Fizică / Companie). Database cleaned, schema restored, and all EU-specific fields removed from forms and display logic.
 - July 22, 2025. **USER PROFILE MANAGEMENT SYSTEM COMPLETED** - Implemented complete user profile management with PostgreSQL database storage. Added user_profiles table, API routes (/api/user-profile GET/PUT), and fully functional profile page with form validation, loading states, and success/error messaging. Administrator profile data now persists in database and can be updated through the profile page accessible via sidebar dropdown menu.
 - July 22, 2025. **ADMINISTRATOR PROFILE MOVED TO SIDEBAR** - Moved administrator profile from header to left sidebar bottom section in same format as menu items. Profile includes avatar with "AD" initials, name, email, and dropdown with Profil/Setări/Deconectare options. Removed profile from dashboard and settings headers for cleaner UI. Settings accessible only through profile dropdown, removed from main navigation menu.
