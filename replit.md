@@ -122,6 +122,7 @@ Four main entities:
 ```
 Changelog:
 
+- July 29, 2025. **EMAIL BUTTON REBRANDING TO SIGNATURE** - Changed email button text from "Trimite contractul prin email" to "Trimite la semnat" and replaced Mail icon with PenTool icon across all components (contract-table.tsx, email-modal.tsx, contract-modal.tsx). Updated titles, aria-labels, and dialog headers to reflect signing focus rather than generic email sending.
 - July 29, 2025. **SETTINGS PAGE SECTION REORDERING** - Moved "Gestionare Date" (Data Management) section to bottom of Settings page as the last section. New order: Company Settings, System Settings, Contract Statuses (read-only), Data Management.
 - July 29, 2025. **CONTRACT STATUS READ-ONLY MODE** - Removed edit and delete buttons from Contract Status section in Settings page. Eliminated all CRUD functionality including dialog, mutations, handlers, and form state. Contract statuses now display in read-only mode showing only status code, label, and description. Cleaned up imports for Edit, Trash2 icons and Dialog components.
 - July 29, 2025. **SETTINGS PAGE CLEANUP** - Removed "Setări Notificări" section from Settings page including notification state, handler function, and entire Card component. Cleaned up Bell icon import. Settings page now focuses on Company Settings, System Settings, and Contract Status management only.

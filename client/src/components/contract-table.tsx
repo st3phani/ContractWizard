@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, Download, Mail, Trash2, Search, Edit, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, Download, PenTool, Trash2, Search, Edit, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -183,10 +183,10 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                       onClick={() => canPerformActions(contract) ? onEmail(contract) : undefined}
                       disabled={!canPerformActions(contract)}
                       className={!canPerformActions(contract) ? "opacity-30 cursor-not-allowed" : ""}
-                      title="Trimite contractul prin email"
-                      aria-label="Trimite contractul prin email"
+                      title="Trimite la semnat"
+                      aria-label="Trimite la semnat"
                     >
-                      <Mail className="h-4 w-4" />
+                      <PenTool className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="ghost"

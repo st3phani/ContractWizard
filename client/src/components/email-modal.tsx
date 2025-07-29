@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Send, X } from "lucide-react";
+import { PenTool, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { ContractWithDetails } from "@shared/schema";
@@ -78,7 +78,7 @@ Echipa Contract Manager`);
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <div className="flex justify-between items-center">
-            <DialogTitle>Trimite Contract prin Email</DialogTitle>
+            <DialogTitle>Trimite la Semnat</DialogTitle>
             <Button 
               variant="ghost" 
               size="sm" 
@@ -146,11 +146,11 @@ Echipa Contract Manager`);
           <Button 
             onClick={handleSend} 
             disabled={isSending}
-            title="Trimite emailul cu contractul"
-            aria-label="Trimite emailul cu contractul"
+            title="Trimite la semnat"
+            aria-label="Trimite la semnat"
           >
-            <Send className="h-4 w-4 mr-1" />
-            {isSending ? "Se trimite..." : "Trimite Email"}
+            <PenTool className="h-4 w-4 mr-1" />
+            {isSending ? "Se trimite..." : "Trimite la Semnat"}
           </Button>
         </div>
       </DialogContent>

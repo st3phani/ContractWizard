@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Download, Mail, X } from "lucide-react";
+import { Download, PenTool, X } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import type { ContractWithDetails } from "@shared/schema";
 
@@ -68,11 +68,11 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
                 variant="outline"
                 size="sm"
                 onClick={() => onEmail(contract)}
-                title="Trimite contractul prin email"
-                aria-label="Trimite contractul prin email"
+                title="Trimite la semnat"
+                aria-label="Trimite la semnat"
               >
-                <Mail className="h-4 w-4 mr-1" />
-                Trimite Email
+                <PenTool className="h-4 w-4 mr-1" />
+                Trimite la Semnat
               </Button>
             </div>
           </div>
