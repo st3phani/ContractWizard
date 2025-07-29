@@ -310,7 +310,7 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     
     // Prestator signature box with orange-red border
     pdf.setDrawColor(255, 102, 51); // Orange-red color (RGB: 255, 102, 51)
-    pdf.setLineWidth(1);
+    pdf.setLineWidth(0.5);
     pdf.rect(margin - boxPadding, y - boxPadding, boxWidth, boxHeight);
     
     // Add signature icon in blue color (same as Contract Nou button - bg-blue-600)
@@ -337,7 +337,7 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     
     // Beneficiar signature box with orange-red border
     pdf.setDrawColor(255, 102, 51); // Orange-red color (RGB: 255, 102, 51)
-    pdf.setLineWidth(1);
+    pdf.setLineWidth(0.5);
     pdf.rect(margin + 90 - boxPadding, y - boxPadding, boxWidth, boxHeight);
     
     // Add signature icon for beneficiary in blue color
