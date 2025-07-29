@@ -27,6 +27,8 @@ export function formatCurrency(amount: number | string | null | undefined, curre
 export function getStatusColor(status: string): string {
   switch (status) {
     case "draft":
+    case "pending":
+    case "pandding": // Handle typo in database
       return "bg-orange-100 text-orange-800";
     case "signed":
       return "bg-purple-100 text-purple-800";
