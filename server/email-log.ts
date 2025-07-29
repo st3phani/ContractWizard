@@ -18,14 +18,8 @@ export interface EmailLogEntry {
 const EMAIL_LOG_FILE = path.join(process.cwd(), 'email-test-log.json');
 
 export function getEmailLogs(): EmailLogEntry[] {
-  try {
-    if (fs.existsSync(EMAIL_LOG_FILE)) {
-      const data = fs.readFileSync(EMAIL_LOG_FILE, 'utf8');
-      return JSON.parse(data);
-    }
-  } catch (error) {
-    console.error('Error reading email logs:', error);
-  }
+  // Simplified version - just return empty array for now
+  // We'll use console logging instead of file logging
   return [];
 }
 
