@@ -31,8 +31,8 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       title: "Semnate",
       value: stats.signedContracts,
       icon: Send,
-      bgColor: "bg-green-100",
-      iconColor: "text-green-600",
+      bgColor: "bg-purple-100",
+      iconColor: "text-purple-600",
     },
     {
       title: "Finalizate",

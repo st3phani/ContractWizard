@@ -29,9 +29,9 @@ export function getStatusColor(status: string): string {
     case "draft":
       return "bg-orange-100 text-orange-800";
     case "signed":
-      return "bg-green-100 text-green-800";
-    case "completed":
       return "bg-purple-100 text-purple-800";
+    case "completed":
+      return "bg-green-100 text-green-800";
     case "reserved":
       return "bg-blue-100 text-blue-800";
     default:
