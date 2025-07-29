@@ -371,19 +371,21 @@ export default function Beneficiaries() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleEdit(beneficiary)}
+                              className="hover:bg-green-50"
                               title="Editează beneficiarul"
                               aria-label="Editează beneficiarul"
                             >
-                              <Edit className="h-4 w-4" />
+                              <Edit className="h-4 w-4 text-green-600" />
                             </Button>
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => handleDelete(beneficiary)}
+                              className="hover:bg-red-50"
                               title="Șterge beneficiarul"
                               aria-label="Șterge beneficiarul"
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <Trash2 className="h-4 w-4 text-red-600" />
                             </Button>
                           </div>
                         </TableCell>
