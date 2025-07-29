@@ -214,7 +214,7 @@ export const contractsRelations = relations(contracts, ({ one }) => ({
 }));
 
 export type ContractWithDetails = Contract & {
-  template: ContractTemplate;
-  beneficiary: Beneficiary;
-  status: ContractStatus;
+  template: ContractTemplate | null;
+  beneficiary: Beneficiary | null;
+  status: ContractStatus | null;
 };

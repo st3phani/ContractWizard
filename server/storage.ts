@@ -23,7 +23,7 @@ import {
   type ContractWithDetails
 } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   // Contract Templates
@@ -706,49 +706,61 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getContracts(): Promise<ContractWithDetails[]> {
-    const contractsWithDetails = await db.query.contracts.findMany({
-      with: {
-        template: true,
-        beneficiary: true,
-        status: true,
-      },
-      orderBy: (contracts, { desc }) => [desc(contracts.id)],
-    });
-    
-    // Handle reserved contracts with beneficiaryId = 0 and templateId = 0
-    return contractsWithDetails.map(contract => {
-      if (contract.beneficiaryId === 0 || contract.templateId === 0) {
-        const mockTemplate: ContractTemplate = {
-          id: 0,
-          name: "Template Rezervat",
-          content: "",
-          fields: "[]",
-          createdAt: new Date()
-        };
-        const mockBeneficiary: Beneficiary = {
-          id: 0,
-          name: "Rezervat",
-          email: "",
-          phone: null,
-          address: null,
-          cnp: null,
-          companyName: null,
-          companyAddress: null,
-          companyCui: null,
-          companyRegistrationNumber: null,
-          companyLegalRepresentative: null,
-          isCompany: false,
-          createdAt: new Date()
-        };
+    try {
+      const result = await db
+        .select()
+        .from(contracts)
+        .leftJoin(contractTemplates, eq(contracts.templateId, contractTemplates.id))
+        .leftJoin(beneficiaries, eq(contracts.beneficiaryId, beneficiaries.id))
+        .leftJoin(contractStatuses, eq(contracts.statusId, contractStatuses.id))
+        .orderBy(desc(contracts.id));
+
+      return result.map(row => {
+        const contract = row.contracts;
+        
+        // Handle reserved contracts with beneficiaryId = 0 or templateId = 0
+        if (contract.beneficiaryId === 0 || contract.templateId === 0) {
+          const mockTemplate: ContractTemplate = {
+            id: 0,
+            name: "Template Rezervat",
+            content: "", 
+            fields: "[]",
+            createdAt: new Date()
+          };
+          const mockBeneficiary: Beneficiary = {
+            id: 0,
+            name: "Rezervat",
+            email: "",
+            phone: null,
+            address: null,
+            cnp: null,
+            companyName: null,
+            companyAddress: null,
+            companyCui: null,
+            companyRegistrationNumber: null,
+            companyLegalRepresentative: null,
+            isCompany: false,
+            createdAt: new Date()
+          };
+          return {
+            ...contract,
+            template: row.contract_templates || mockTemplate,
+            beneficiary: row.beneficiaries || mockBeneficiary,
+            status: row.contract_statuses || null,
+          };
+        }
+        
         return {
           ...contract,
-          template: mockTemplate,
-          beneficiary: mockBeneficiary,
-          status: contract.status
-        } as ContractWithDetails;
-      }
-      return contract as ContractWithDetails;
-    });
+          template: row.contract_templates || null,
+          beneficiary: row.beneficiaries || null,
+          status: row.contract_statuses || null,
+        };
+      });
+    } catch (error) {
+      console.error("Error getting contracts:", error);
+      return [];
+    }
   }
 
   async getContract(id: number): Promise<ContractWithDetails | undefined> {

@@ -243,6 +243,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const stats = await storage.getContractStats();
       res.json(stats);
     } catch (error) {
+      console.error("Error fetching contract stats:", error);
       res.status(500).json({ message: "Failed to fetch contract stats" });
     }
   });
@@ -253,6 +254,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const contracts = await storage.getContracts();
       res.json(contracts);
     } catch (error) {
+      console.error("Error fetching contracts:", error);
       res.status(500).json({ message: "Failed to fetch contracts" });
     }
   });

@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import Sidebar from "@/components/sidebar";
 import StatsCards from "@/components/stats-cards";
 import ContractTable from "@/components/contract-table";
 import ContractModal from "@/components/contract-modal";
@@ -100,40 +99,34 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
-      <div className="sticky top-0 h-screen">
-        <Sidebar />
-      </div>
-      
-      <main className="flex-1 main-container">
-        {/* Header */}
-        <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900">Dashboard Contracte</h2>
-            <p className="text-gray-600 mt-1">Gestionați contractele dvs. rapid și eficient</p>
-          </div>
-        </header>
-
-        {/* Content */}
-        <div className="p-6 space-y-6">
-          {/* Stats Cards */}
-          <StatsCards stats={stats} />
-
-          {/* Contracts Table */}
-          {contractsLoading ? (
-            <div className="text-center py-8">Se încarcă...</div>
-          ) : (
-            <ContractTable
-              contracts={contracts}
-              onView={handleView}
-              onEdit={handleEdit}
-              onDownload={handleDownload}
-              onEmail={handleEmail}
-              onDelete={handleDelete}
-            />
-          )}
+    <>
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
+        <div>
+          <h2 className="text-2xl font-semibold text-gray-900">Dashboard Contracte</h2>
+          <p className="text-gray-600 mt-1">Gestionați contractele dvs. rapid și eficient</p>
         </div>
-      </main>
+      </header>
+
+      {/* Content */}
+      <div className="p-6 space-y-6">
+        {/* Stats Cards */}
+        <StatsCards stats={stats} />
+
+        {/* Contracts Table */}
+        {contractsLoading ? (
+          <div className="text-center py-8">Se încarcă...</div>
+        ) : (
+          <ContractTable
+            contracts={contracts}
+            onView={handleView}
+            onEdit={handleEdit}
+            onDownload={handleDownload}
+            onEmail={handleEmail}
+            onDelete={handleDelete}
+          />
+        )}
+      </div>
 
       {/* Modals */}
       <ContractModal
@@ -150,6 +143,6 @@ export default function Dashboard() {
         onClose={() => setIsEmailModalOpen(false)}
         onSent={handleEmailSent}
       />
-    </div>
+    </>
   );
 }
