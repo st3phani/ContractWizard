@@ -523,8 +523,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const pdfBuffer = generatePDF(populatedContent, contract);
       
+      // Generate filename based on contract status
+      let filename: string;
+      if (contract.status?.statusCode === 'signed' && contract.signedToken) {
+        filename = `CTR_${contract.orderNumber}_${contract.signedToken}.pdf`;
+      } else {
+        filename = `contract-${contract.orderNumber}.pdf`;
+      }
+      
       res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="contract-${contract.orderNumber}.pdf"`);
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
       res.send(pdfBuffer);
       
     } catch (error) {

@@ -42,7 +42,16 @@ export default function SignedContractPage() {
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
-      a.download = `Contract-${contract.orderNumber}.pdf`;
+      
+      // Use the appropriate filename format for signed contracts
+      let filename: string;
+      if (contract.status?.statusCode === 'signed' && contract.signedToken) {
+        filename = `CTR_${contract.orderNumber}_${contract.signedToken}.pdf`;
+      } else {
+        filename = `Contract-${contract.orderNumber}.pdf`;
+      }
+      
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
