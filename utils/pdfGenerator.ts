@@ -42,6 +42,41 @@ interface PDFGenerationData {
 export function populateTemplate(template: string, data: PDFGenerationData): string {
   let result = template;
   
+  // Handle conditional logic first
+  const processConditionals = (text: string, isCompany: boolean): string => {
+    // Remove {{#if isCompany}} blocks if not a company
+    if (!isCompany) {
+      text = text.replace(/\{\{#if isCompany\}\}([\s\S]*?)\{\{\/if\}\}/g, '');
+    } else {
+      // Keep content inside {{#if isCompany}} blocks and remove the tags
+      text = text.replace(/\{\{#if isCompany\}\}([\s\S]*?)\{\{\/if\}\}/g, '$1');
+    }
+    
+    // Remove {{#if isIndividual}} blocks if company
+    if (isCompany) {
+      text = text.replace(/\{\{#if isIndividual\}\}([\s\S]*?)\{\{\/if\}\}/g, '');
+    } else {
+      // Keep content inside {{#if isIndividual}} blocks and remove the tags
+      text = text.replace(/\{\{#if isIndividual\}\}([\s\S]*?)\{\{\/if\}\}/g, '$1');
+    }
+    
+    // Handle {{#unless}} blocks
+    text = text.replace(/\{\{#unless isCompany\}\}([\s\S]*?)\{\{\/unless\}\}/g, isCompany ? '' : '$1');
+    text = text.replace(/\{\{#unless isIndividual\}\}([\s\S]*?)\{\{\/unless\}\}/g, !isCompany ? '' : '$1');
+    
+    // Clean up any remaining conditional tags that might be malformed
+    text = text.replace(/\{\{#if\s+\w+\}\}/g, '');
+    text = text.replace(/\{\{\/if\}\}/g, '');
+    text = text.replace(/\{\{#unless\s+\w+\}\}/g, '');
+    text = text.replace(/\{\{\/unless\}\}/g, '');
+    
+    return text;
+  };
+
+  // Process conditionals based on beneficiary type
+  const isCompany = data.beneficiary.isCompany || false;
+  result = processConditionals(result, isCompany);
+  
   // Replace all variables with actual data
   const replacements = {
     '{{orderNumber}}': data.orderNumber,
