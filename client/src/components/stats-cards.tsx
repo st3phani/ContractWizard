@@ -17,8 +17,8 @@ export default function StatsCards({ stats }: StatsCardsProps) {
       title: "Contracte",
       value: stats.totalContracts,
       icon: File,
-      bgColor: "bg-blue-100",
-      iconColor: "text-blue-600",
+      bgColor: "bg-yellow-100",
+      iconColor: "text-yellow-700",
     },
     {
       title: "Rezervate",
