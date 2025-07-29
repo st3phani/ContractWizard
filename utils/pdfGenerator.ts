@@ -327,7 +327,13 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     y += 4;
     pdf.text(contract.provider?.legalRepresentative || 'N/A', margin, y);
     y += 4;
-    pdf.text(new Date(contract.signedAt).toLocaleDateString('ro-RO'), margin, y);
+    pdf.text(new Date(contract.signedAt).toLocaleString('ro-RO', { 
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit', 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    }), margin, y);
     y += 4;
     pdf.setFontSize(7);
     pdf.text(`Token: ${contract.signingToken || 'N/A'}`, margin, y);
@@ -362,7 +368,13 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     y += 4;
     pdf.text(contract.signedBy, margin + 90, y);
     y += 4;
-    pdf.text(new Date(contract.signedAt).toLocaleDateString('ro-RO'), margin + 90, y);
+    pdf.text(new Date(contract.signedAt).toLocaleString('ro-RO', { 
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit', 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    }), margin + 90, y);
     y += 4;
     pdf.setFontSize(7);
     pdf.text(`Token: ${contract.signedToken || 'N/A'}`, margin + 90, y);
