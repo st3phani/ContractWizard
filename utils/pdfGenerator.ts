@@ -8,7 +8,7 @@ import type { ContractWithDetails } from '../shared/schema';
 interface PDFGenerationData {
   orderNumber: number | string;
   currentDate: string;
-  beneficiary: {
+  partenery: {
     name: string;
     email: string;
     phone: string;
@@ -73,24 +73,24 @@ export function populateTemplate(template: string, data: PDFGenerationData): str
     return text;
   };
 
-  // Process conditionals based on beneficiary type
-  const isCompany = data.beneficiary.isCompany || false;
+  // Process conditionals based on partenery type
+  const isCompany = data.partenery.isCompany || false;
   result = processConditionals(result, isCompany);
   
   // Replace all variables with actual data
   const replacements = {
     '{{orderNumber}}': data.orderNumber,
     '{{currentDate}}': data.currentDate,
-    '{{beneficiary.name}}': data.beneficiary.name,
-    '{{beneficiary.email}}': data.beneficiary.email,
-    '{{beneficiary.phone}}': data.beneficiary.phone,
-    '{{beneficiary.address}}': data.beneficiary.address,
-    '{{beneficiary.cnp}}': data.beneficiary.cnp || '',
-    '{{beneficiary.companyName}}': data.beneficiary.companyName || '',
-    '{{beneficiary.companyAddress}}': data.beneficiary.companyAddress || '',
-    '{{beneficiary.companyCui}}': data.beneficiary.companyCui || '',
-    '{{beneficiary.companyRegistrationNumber}}': data.beneficiary.companyRegistrationNumber || '',
-    '{{beneficiary.companyLegalRepresentative}}': data.beneficiary.name || '',
+    '{{partenery.name}}': data.partenery.name,
+    '{{partenery.email}}': data.partenery.email,
+    '{{partenery.phone}}': data.partenery.phone,
+    '{{partenery.address}}': data.partenery.address,
+    '{{partenery.cnp}}': data.partenery.cnp || '',
+    '{{partenery.companyName}}': data.partenery.companyName || '',
+    '{{partenery.companyAddress}}': data.partenery.companyAddress || '',
+    '{{partenery.companyCui}}': data.partenery.companyCui || '',
+    '{{partenery.companyRegistrationNumber}}': data.partenery.companyRegistrationNumber || '',
+    '{{partenery.companyLegalRepresentative}}': data.partenery.name || '',
     '{{contract.startDate}}': data.contract.startDate,
     '{{contract.endDate}}': data.contract.endDate,
     '{{contract.value}}': data.contract.value,
@@ -373,7 +373,7 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     pdf.setFontSize(7);
     pdf.text(`Token: ${contract.signingToken || 'N/A'}`, margin, y);
     
-    // Reset y for beneficiary signature  
+    // Reset y for partenery signature  
     y -= 15;
     
     // Beneficiar signature box with orange-red border
@@ -381,13 +381,13 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     pdf.setLineWidth(0.5);
     pdf.rect(margin + 90 - boxPadding, y - boxPadding, boxWidth, boxHeight);
     
-    // Add signature icon for beneficiary in blue color
+    // Add signature icon for partenery in blue color
     pdf.setDrawColor(37, 99, 235); // Blue color (RGB: 37, 99, 235 - blue-600)
     pdf.setLineWidth(1.2);
-    const beneficiarySignX = margin + 90 + boxWidth - 30; // Right side positioning
-    pdf.line(beneficiarySignX, y + 2, beneficiarySignX + 20, y + 4); // Signature line 1
-    pdf.line(beneficiarySignX + 5, y + 4, beneficiarySignX + 25, y + 6); // Signature line 2
-    pdf.line(beneficiarySignX + 10, y + 6, beneficiarySignX + 18, y + 8); // Signature line 3
+    const partenerySignX = margin + 90 + boxWidth - 30; // Right side positioning
+    pdf.line(partenerySignX, y + 2, partenerySignX + 20, y + 4); // Signature line 1
+    pdf.line(partenerySignX + 5, y + 4, partenerySignX + 25, y + 6); // Signature line 2
+    pdf.line(partenerySignX + 10, y + 6, partenerySignX + 18, y + 8); // Signature line 3
     
     // Reset colors and line width
     pdf.setDrawColor(0, 0, 0); // Black
@@ -395,11 +395,11 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     
     y += 3;
     pdf.setFontSize(9);
-    const beneficiaryName = contract.beneficiary?.isCompany ? 
-      contract.beneficiary?.companyName : 
-      contract.beneficiary?.name;
+    const parteneryName = contract.partenery?.isCompany ? 
+      contract.partenery?.companyName : 
+      contract.partenery?.name;
     
-    pdf.text(beneficiaryName || 'N/A', margin + 90, y);
+    pdf.text(parteneryName || 'N/A', margin + 90, y);
     y += 4;
     pdf.text(contract.signedBy, margin + 90, y);
     y += 4;

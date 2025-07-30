@@ -98,14 +98,14 @@ export default function SignContract() {
     }
   };
 
-  // Pre-fill signedBy field based on beneficiary info
+  // Pre-fill signedBy field based on partenery info
   useEffect(() => {
-    if (contract?.beneficiary && !form.getValues('signedBy')) {
-      let defaultName = contract.beneficiary.name;
+    if (contract?.partenery && !form.getValues('signedBy')) {
+      let defaultName = contract.partenery.name;
       
       // If it's a company, use the legal representative
-      if (contract.beneficiary.isCompany && contract.beneficiary.name) {
-        defaultName = contract.beneficiary.name;
+      if (contract.partenery.isCompany && contract.partenery.name) {
+        defaultName = contract.partenery.name;
       }
       
       form.setValue('signedBy', defaultName);
@@ -224,16 +224,16 @@ export default function SignContract() {
                                 return contract.orderNumber?.toString() || '';
                               case 'currentDate':
                                 return formatDate(new Date());
-                              case 'beneficiary.name':
-                                return contract.beneficiary?.name || '';
-                              case 'beneficiary.address':
-                                return contract.beneficiary?.address || '';
-                              case 'beneficiary.cnp':
-                                return contract.beneficiary?.cnp || '';
-                              case 'beneficiary.companyName':
-                                return contract.beneficiary?.companyName || '';
-                              case 'beneficiary.companyCui':
-                                return contract.beneficiary?.companyCui || '';
+                              case 'partenery.name':
+                                return contract.partenery?.name || '';
+                              case 'partenery.address':
+                                return contract.partenery?.address || '';
+                              case 'partenery.cnp':
+                                return contract.partenery?.cnp || '';
+                              case 'partenery.companyName':
+                                return contract.partenery?.companyName || '';
+                              case 'partenery.companyCui':
+                                return contract.partenery?.companyCui || '';
                               case 'contract.value':
                                 return contract.value || '';
                               case 'contract.currency':
@@ -302,27 +302,27 @@ export default function SignContract() {
                 </div>
               )}
 
-              {/* Beneficiary Information */}
+              {/* Partenery Information */}
               <div className="border-t pt-4">
                 <div className="flex items-center mb-3">
-                  {contract.beneficiary?.isCompany ? (
+                  {contract.partenery?.isCompany ? (
                     <Building className="h-4 w-4 text-gray-500 mr-2" />
                   ) : (
                     <User className="h-4 w-4 text-gray-500 mr-2" />
                   )}
                   <Label className="text-sm font-medium text-gray-500">
-                    {contract.beneficiary?.isCompany ? "Companie" : "Persoană Fizică"}
+                    {contract.partenery?.isCompany ? "Companie" : "Persoană Fizică"}
                   </Label>
                 </div>
                 
                 <div className="space-y-2">
-                  <p className="font-medium">{contract.beneficiary?.name}</p>
-                  {contract.beneficiary?.email && (
-                    <p className="text-sm text-gray-600">{contract.beneficiary.email}</p>
+                  <p className="font-medium">{contract.partenery?.name}</p>
+                  {contract.partenery?.email && (
+                    <p className="text-sm text-gray-600">{contract.partenery.email}</p>
                   )}
-                  {contract.beneficiary?.isCompany && contract.beneficiary.name && (
+                  {contract.partenery?.isCompany && contract.partenery.name && (
                     <p className="text-sm text-gray-600">
-                      <strong>Reprezentant legal:</strong> {contract.beneficiary.name}
+                      <strong>Reprezentant legal:</strong> {contract.partenery.name}
                     </p>
                   )}
                 </div>
@@ -354,7 +354,7 @@ export default function SignContract() {
                     </p>
                   )}
                   <p className="text-xs text-gray-500 mt-1">
-                    {contract.beneficiary?.isCompany 
+                    {contract.partenery?.isCompany 
                       ? "Pentru companii, introduceți numele reprezentantului legal"
                       : "Introduceți numele dumneavoastră complet"
                     }

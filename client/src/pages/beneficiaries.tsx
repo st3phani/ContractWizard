@@ -15,17 +15,17 @@ import { apiRequest } from "@/lib/queryClient";
 import { getInitials, getAvatarColor } from "@/lib/utils";
 import { useDateFormat } from "@/hooks/use-date-format";
 
-import { BeneficiaryFormFields } from "@/components/beneficiary-form-fields";
-import type { Beneficiary, InsertBeneficiary } from "@shared/schema";
+import { ParteneryFormFields } from "@/components/partenery-form-fields";
+import type { Partenery, InsertBeneficiaryy } from "@shared/schema";
 import { paginateItems, type PaginationConfig } from "@/utils/paginationUtils";
 
-export default function Beneficiaries() {
+export default function Parteneries() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
+  const [selectedPartenery, setSelectedPartenery] = useState<Partenery | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [formData, setFormData] = useState<InsertBeneficiary>({
+  const [formData, setFormData] = useState<InsertBeneficiaryy>({
     name: "",
     email: "",
     phone: "",
@@ -42,28 +42,28 @@ export default function Beneficiaries() {
   const queryClient = useQueryClient();
   const { formatDate } = useDateFormat();
 
-  // Fetch beneficiaries
-  const { data: beneficiaries = [], isLoading } = useQuery<Beneficiary[]>({
-    queryKey: ["/api/beneficiaries"],
+  // Fetch parteneries
+  const { data: parteneries = [], isLoading } = useQuery<Partenery[]>({
+    queryKey: ["/api/parteneries"],
   });
 
-  // Filter and sort beneficiaries based on search query and ID descending
-  const filteredBeneficiaries = beneficiaries
-    .filter(beneficiary =>
-      beneficiary.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      beneficiary.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      beneficiary.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      beneficiary.cnp?.includes(searchQuery) ||
-      beneficiary.companyCui?.includes(searchQuery)
+  // Filter and sort parteneries based on search query and ID descending
+  const filteredParteneries = parteneries
+    .filter(partenery =>
+      partenery.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      partenery.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      partenery.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      partenery.cnp?.includes(searchQuery) ||
+      partenery.companyCui?.includes(searchQuery)
     )
     .sort((a, b) => b.id - a.id); // Sort by ID descending
 
   // Apply pagination using utils
   const paginationConfig: PaginationConfig = { currentPage, itemsPerPage };
-  const paginationResult = paginateItems(filteredBeneficiaries, paginationConfig);
+  const paginationResult = paginateItems(filteredParteneries, paginationConfig);
   
   const {
-    items: paginatedBeneficiaries,
+    items: paginatedParteneries,
     totalItems,
     totalPages,
     hasNextPage,
@@ -76,64 +76,64 @@ export default function Beneficiaries() {
     setCurrentPage(1);
   };
 
-  // Create beneficiary mutation
-  const createBeneficiaryMutation = useMutation({
-    mutationFn: (data: InsertBeneficiary) => {
+  // Create partenery mutation
+  const createParteneryMutation = useMutation({
+    mutationFn: (data: InsertBeneficiaryy) => {
       console.log("Sending to API:", data);
-      return apiRequest("POST", "/api/beneficiaries", data);
+      return apiRequest("POST", "/api/parteneries", data);
     },
     onSuccess: (result) => {
       console.log("API Response:", result);
-      queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/parteneries"] });
       setIsCreateModalOpen(false);
       setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
-      setSelectedBeneficiary(null);
+      setSelectedPartenery(null);
     },
     onError: (error) => {
       console.error("API Error:", error);
       toast({
         title: "Error",
-        description: "A apărut o eroare la crearea beneficiarului.",
+        description: "A apărut o eroare la crearea partenerului.",
         variant: "destructive",
       });
     },
   });
 
-  // Update beneficiary mutation
-  const updateBeneficiaryMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<InsertBeneficiary> }) => 
-      apiRequest("PUT", `/api/beneficiaries/${id}`, data),
+  // Update partenery mutation
+  const updateParteneryMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<InsertBeneficiaryy> }) => 
+      apiRequest("PUT", `/api/parteneries/${id}`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/parteneries"] });
       setIsCreateModalOpen(false);
       setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
-      setSelectedBeneficiary(null);
+      setSelectedPartenery(null);
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "A apărut o eroare la actualizarea beneficiarului.",
+        description: "A apărut o eroare la actualizarea partenerului.",
         variant: "destructive",
       });
     },
   });
 
-  // Delete beneficiary mutation
-  const deleteBeneficiaryMutation = useMutation({
-    mutationFn: (id: number) => apiRequest("DELETE", `/api/beneficiaries/${id}`),
+  // Delete partenery mutation
+  const deleteParteneryMutation = useMutation({
+    mutationFn: (id: number) => apiRequest("DELETE", `/api/parteneries/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/parteneries"] });
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "A apărut o eroare la ștergerea beneficiarului.",
+        description: "A apărut o eroare la ștergerea partenerului.",
         variant: "destructive",
       });
     },
   });
 
-  const handleCreateBeneficiary = () => {
+  const handleCreatePartenery = () => {
     // Validation for required fields
     const missingFields = [];
     const fieldsToFocus = [];
@@ -221,41 +221,41 @@ export default function Beneficiaries() {
 
     console.log("Form data before mutation:", JSON.stringify(formData, null, 2));
     
-    if (selectedBeneficiary) {
-      // Update existing beneficiary
-      updateBeneficiaryMutation.mutate({ id: selectedBeneficiary.id, data: formData });
+    if (selectedPartenery) {
+      // Update existing partenery
+      updateParteneryMutation.mutate({ id: selectedPartenery.id, data: formData });
     } else {
-      // Create new beneficiary
-      createBeneficiaryMutation.mutate(formData);
+      // Create new partenery
+      createParteneryMutation.mutate(formData);
     }
   };
 
-  const handleEdit = (beneficiary: Beneficiary) => {
-    setSelectedBeneficiary(beneficiary);
+  const handleEdit = (partenery: Partenery) => {
+    setSelectedPartenery(partenery);
     setFormData({
-      name: beneficiary.name,
-      email: beneficiary.email,
-      phone: beneficiary.phone ?? "",
-      address: beneficiary.address ?? "",
-      cnp: beneficiary.cnp ?? "",
-      companyName: beneficiary.companyName ?? "",
-      companyAddress: beneficiary.companyAddress ?? "",
-      companyCui: beneficiary.companyCui ?? "",
-      companyRegistrationNumber: beneficiary.companyRegistrationNumber ?? "",
-      isCompany: beneficiary.isCompany ?? false,
+      name: partenery.name,
+      email: partenery.email,
+      phone: partenery.phone ?? "",
+      address: partenery.address ?? "",
+      cnp: partenery.cnp ?? "",
+      companyName: partenery.companyName ?? "",
+      companyAddress: partenery.companyAddress ?? "",
+      companyCui: partenery.companyCui ?? "",
+      companyRegistrationNumber: partenery.companyRegistrationNumber ?? "",
+      isCompany: partenery.isCompany ?? false,
     });
     setIsCreateModalOpen(true);
   };
 
-  const handleDelete = (beneficiary: Beneficiary) => {
-    if (window.confirm("Sunteți sigur că doriți să ștergeți acest beneficiar?")) {
-      deleteBeneficiaryMutation.mutate(beneficiary.id);
+  const handleDelete = (partenery: Partenery) => {
+    if (window.confirm("Sunteți sigur că doriți să ștergeți acest partener?")) {
+      deleteParteneryMutation.mutate(partenery.id);
     }
   };
 
   const resetForm = () => {
     setIsCreateModalOpen(false);
-    setSelectedBeneficiary(null);
+    setSelectedPartenery(null);
     setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
   };
 
@@ -265,17 +265,17 @@ export default function Beneficiaries() {
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900">Beneficiari</h2>
-              <p className="text-gray-600 mt-1">Gestionați lista de beneficiari pentru contracte</p>
+              <h2 className="text-2xl font-semibold text-gray-900">Parteneri</h2>
+              <p className="text-gray-600 mt-1">Gestionați lista de parteneri pentru contracte</p>
             </div>
             <Button 
               onClick={() => setIsCreateModalOpen(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white"
-              title="Adaugă un beneficiar nou"
-              aria-label="Adaugă un beneficiar nou"
+              title="Adaugă un partener nou"
+              aria-label="Adaugă un partener nou"
             >
               <Plus className="h-4 w-4 mr-2" />
-              Beneficiar Nou
+              Partener Nou
             </Button>
           </div>
         </header>
@@ -285,11 +285,11 @@ export default function Beneficiaries() {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Lista Beneficiari</CardTitle>
+                <CardTitle>Lista Parteneri</CardTitle>
                 <div className="relative w-64">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
-                    placeholder="Căutare beneficiari..."
+                    placeholder="Căutare parteneri..."
                     value={searchQuery}
                     onChange={(e) => handleSearchChange(e.target.value)}
                     className="pl-10"
@@ -305,7 +305,7 @@ export default function Beneficiaries() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>ID</TableHead>
-                      <TableHead>Beneficiar</TableHead>
+                      <TableHead>Partener</TableHead>
                       <TableHead>Contact</TableHead>
                       <TableHead>CNP/CUI</TableHead>
                       <TableHead>Data Creării</TableHead>
@@ -313,24 +313,24 @@ export default function Beneficiaries() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {paginatedBeneficiaries.map((beneficiary) => (
-                      <TableRow key={beneficiary.id}>
+                    {paginatedParteneries.map((partenery) => (
+                      <TableRow key={partenery.id}>
                         <TableCell className="font-mono text-sm text-gray-500">
-                          #{beneficiary.id}
+                          #{partenery.id}
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-3">
                             <Avatar>
-                              <AvatarFallback className={`${getAvatarColor(beneficiary.name || "")} text-white`}>
-                                {getInitials(beneficiary.name || "")}
+                              <AvatarFallback className={`${getAvatarColor(partenery.name || "")} text-white`}>
+                                {getInitials(partenery.name || "")}
                               </AvatarFallback>
                             </Avatar>
                             <div>
-                              <div className="font-medium">{beneficiary.name}</div>
-                              {beneficiary.companyName && (
+                              <div className="font-medium">{partenery.name}</div>
+                              {partenery.companyName && (
                                 <div className="text-sm text-gray-500 flex items-center">
                                   <Building className="h-3 w-3 mr-1" />
-                                  {beneficiary.companyName}
+                                  {partenery.companyName}
                                 </div>
                               )}
                             </div>
@@ -340,52 +340,52 @@ export default function Beneficiaries() {
                           <div className="space-y-1">
                             <div className="text-sm flex items-center">
                               <Mail className="h-3 w-3 mr-1" />
-                              {beneficiary.email}
+                              {partenery.email}
                             </div>
-                            {beneficiary.phone && (
+                            {partenery.phone && (
                               <div className="text-sm text-gray-500 flex items-center">
                                 <Phone className="h-3 w-3 mr-1" />
-                                {beneficiary.phone}
+                                {partenery.phone}
                               </div>
                             )}
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="space-y-1">
-                            {beneficiary.cnp && (
+                            {partenery.cnp && (
                               <div className="text-sm">
-                                <span className="text-xs text-gray-400">CNP:</span> {beneficiary.cnp}
+                                <span className="text-xs text-gray-400">CNP:</span> {partenery.cnp}
                               </div>
                             )}
-                            {beneficiary.companyCui && (
+                            {partenery.companyCui && (
                               <div className="text-sm">
-                                <span className="text-xs text-gray-400">CUI:</span> {beneficiary.companyCui}
+                                <span className="text-xs text-gray-400">CUI:</span> {partenery.companyCui}
                               </div>
                             )}
 
-                            {!beneficiary.cnp && !beneficiary.companyCui && "—"}
+                            {!partenery.cnp && !partenery.companyCui && "—"}
                           </div>
                         </TableCell>
-                        <TableCell>{formatDate(beneficiary.createdAt)}</TableCell>
+                        <TableCell>{formatDate(partenery.createdAt)}</TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleEdit(beneficiary)}
+                              onClick={() => handleEdit(partenery)}
                               className="hover:bg-green-50"
-                              title="Editează beneficiarul"
-                              aria-label="Editează beneficiarul"
+                              title="Editează partenerul"
+                              aria-label="Editează partenerul"
                             >
                               <Edit className="h-4 w-4 text-green-600" />
                             </Button>
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleDelete(beneficiary)}
+                              onClick={() => handleDelete(partenery)}
                               className="hover:bg-red-50"
-                              title="Șterge beneficiarul"
-                              aria-label="Șterge beneficiarul"
+                              title="Șterge partenerul"
+                              aria-label="Șterge partenerul"
                             >
                               <Trash2 className="h-4 w-4 text-red-600" />
                             </Button>
@@ -399,7 +399,7 @@ export default function Beneficiaries() {
               
               {totalItems === 0 && !isLoading && (
                 <div className="text-center py-8 text-gray-500">
-                  {searchQuery ? "Nu au fost găsiți beneficiari care să corespundă căutării" : "Nu au fost găsiți beneficiari"}
+                  {searchQuery ? "Nu au fost găsiți parteneri care să corespundă căutării" : "Nu au fost găsiți parteneri"}
                 </div>
               )}
 
@@ -426,7 +426,7 @@ export default function Beneficiaries() {
                       </SelectContent>
                     </Select>
                     <span className="text-sm text-gray-700">
-                      din {totalItems} {totalItems === 1 ? 'beneficiar' : 'beneficiari'}
+                      din {totalItems} {totalItems === 1 ? 'partener' : 'parteneri'}
                     </span>
                   </div>
 
@@ -477,19 +477,19 @@ export default function Beneficiaries() {
           </Card>
         </div>
 
-      {/* Create/Edit Beneficiary Modal */}
+      {/* Create/Edit Partenery Modal */}
       <Dialog open={isCreateModalOpen} onOpenChange={resetForm}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {selectedBeneficiary ? "Editează Beneficiar" : "Adaugă Beneficiar Nou"}
+              {selectedPartenery ? "Editează Partener" : "Adaugă Partener Nou"}
             </DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4">
             {/* Toggle between Individual/Company */}
             <div className="space-y-2">
-              <Label>Tip Beneficiar</Label>
+              <Label>Tip Partener</Label>
               <Select 
                 value={formData.isCompany ? "true" : "false"}
                 onValueChange={(value) => setFormData({ ...formData, isCompany: value === "true" })}
@@ -582,7 +582,7 @@ export default function Beneficiaries() {
                       id="name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Numele complet al beneficiarului"
+                      placeholder="Numele complet al partenerului"
                     />
                   </div>
 
@@ -640,13 +640,13 @@ export default function Beneficiaries() {
               Anulează
             </Button>
             <Button 
-              onClick={handleCreateBeneficiary}
-              disabled={createBeneficiaryMutation.isPending}
+              onClick={handleCreatePartenery}
+              disabled={createParteneryMutation.isPending}
               className="bg-blue-600 hover:bg-blue-700"
             >
-              {createBeneficiaryMutation.isPending 
+              {createParteneryMutation.isPending 
                 ? "Se salvează..." 
-                : selectedBeneficiary ? "Actualizează" : "Adaugă Beneficiar"
+                : selectedPartenery ? "Actualizează" : "Adaugă Partener"
               }
             </Button>
           </div>

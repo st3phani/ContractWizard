@@ -278,7 +278,7 @@ export default function Templates() {
               <RichTextEditor
                 content={formData.content}
                 onChange={(content) => setFormData({ ...formData, content })}
-                placeholder="Conținutul contractului cu placeholder-uri (ex: {{beneficiary.name}})"
+                placeholder="Conținutul contractului cu placeholder-uri (ex: {{partenery.name}})"
                 className="min-h-[400px]"
                 onEditorReady={(editor) => setEditorInstance(editor)}
               />
@@ -313,16 +313,16 @@ export default function Templates() {
               </div>
 
               <div className="bg-green-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-green-900 mb-3">👤 Variabile Beneficiar</h4>
+                <h4 className="font-semibold text-green-900 mb-3">👤 Variabile Partener</h4>
                 <div className="space-y-1">
                   {[
-                    '{{beneficiary.name}}',
-                    '{{beneficiary.email}}',
-                    '{{beneficiary.phone}}',
-                    '{{beneficiary.address}}',
-                    '{{beneficiary.cnp}}',
-                    '{{beneficiary.companyName}}',
-                    '{{beneficiary.companyCui}}'
+                    '{{partenery.name}}',
+                    '{{partenery.email}}',
+                    '{{partenery.phone}}',
+                    '{{partenery.address}}',
+                    '{{partenery.cnp}}',
+                    '{{partenery.companyName}}',
+                    '{{partenery.companyCui}}'
                   ].map((variable) => (
                     <div key={variable} className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                       <code className="text-green-700 text-xs">{variable}</code>
@@ -373,11 +373,11 @@ export default function Templates() {
                   <div>
                     <p><strong>Variabile de bază:</strong></p>
                     <p>{"{{provider.name}}"}, CIF {"{{provider.cui}}"}</p>
-                    <p>{"{{beneficiary.name}}"}, {"{{beneficiary.email}}"}</p>
+                    <p>{"{{partenery.name}}"}, {"{{partenery.email}}"}</p>
                   </div>
                   
                   <div className="border-t border-yellow-200 pt-2">
-                    <p><strong>Condiții pentru tip beneficiar:</strong></p>
+                    <p><strong>Condiții pentru tip partener:</strong></p>
                     <div className="mt-1 space-y-1">
                       <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                         <code className="text-yellow-700 text-xs">
@@ -411,10 +411,10 @@ export default function Templates() {
                   <div className="border-t border-yellow-200 pt-2">
                     <p><strong>Exemplu complet:</strong></p>
                     <code className="block bg-white px-2 py-1 rounded text-xs">
-                      {"{{#if isCompany}}"}{"{{beneficiary.companyName}}"}, CUI {"{{beneficiary.companyCui}}"}{"{{/if}}"}
+                      {"{{#if isCompany}}"}{"{{partenery.companyName}}"}, CUI {"{{partenery.companyCui}}"}{"{{/if}}"}
                     </code>
                     <code className="block bg-white px-2 py-1 rounded text-xs">
-                      {"{{#if isIndividual}}"}{"{{beneficiary.name}}"}, CNP {"{{beneficiary.cnp}}"}{"{{/if}}"}
+                      {"{{#if isIndividual}}"}{"{{partenery.name}}"}, CNP {"{{partenery.cnp}}"}{"{{/if}}"}
                     </code>
                   </div>
                 </div>
@@ -456,7 +456,7 @@ export default function Templates() {
               <h4 className="font-semibold text-amber-800 mb-2">ℹ️ Informații</h4>
               <p className="text-sm text-amber-700">
                 Aceasta este o previzualizare a template-ului cu variabilele nepopulate. 
-                În contractele reale, variabilele precum <code>{"{{beneficiary.name}}"}</code> vor fi înlocuite cu datele actuale.
+                În contractele reale, variabilele precum <code>{"{{partenery.name}}"}</code> vor fi înlocuite cu datele actuale.
               </p>
             </div>
             
@@ -473,14 +473,14 @@ export default function Templates() {
                 <p className="mb-2">Template-ul conține următoarele tipuri de variabile:</p>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="font-medium">Variabile beneficiar:</p>
+                    <p className="font-medium">Variabile partener:</p>
                     <ul className="list-disc list-inside space-y-1 text-xs">
-                      {previewTemplate?.content.includes('{{beneficiary.name}}') && <li>Nume beneficiar</li>}
-                      {previewTemplate?.content.includes('{{beneficiary.email}}') && <li>Email beneficiar</li>}
-                      {previewTemplate?.content.includes('{{beneficiary.address}}') && <li>Adresă beneficiar</li>}
-                      {previewTemplate?.content.includes('{{beneficiary.cnp}}') && <li>CNP beneficiar</li>}
-                      {previewTemplate?.content.includes('{{beneficiary.companyName}}') && <li>Nume companie</li>}
-                      {previewTemplate?.content.includes('{{beneficiary.companyCui}}') && <li>CUI companie</li>}
+                      {previewTemplate?.content.includes('{{partenery.name}}') && <li>Nume partener</li>}
+                      {previewTemplate?.content.includes('{{partenery.email}}') && <li>Email partener</li>}
+                      {previewTemplate?.content.includes('{{partenery.address}}') && <li>Adresă partener</li>}
+                      {previewTemplate?.content.includes('{{partenery.cnp}}') && <li>CNP partener</li>}
+                      {previewTemplate?.content.includes('{{partenery.companyName}}') && <li>Nume companie</li>}
+                      {previewTemplate?.content.includes('{{partenery.companyCui}}') && <li>CUI companie</li>}
                     </ul>
                   </div>
                   <div>

@@ -1,7 +1,7 @@
 import { 
   contracts, 
   contractTemplates, 
-  beneficiaries,
+  parteneries,
   companySettings,
   systemSettings,
   userProfiles,
@@ -34,8 +34,8 @@ export interface IStorage {
   updateContractTemplate(id: number, template: Partial<InsertContractTemplate>): Promise<ContractTemplate | undefined>;
   deleteContractTemplate(id: number): Promise<boolean>;
 
-  // Beneficiaries
-  getBeneficiaries(): Promise<Beneficiary[]>;
+  // Parteneries
+  getParteneries(): Promise<Beneficiary[]>;
   getBeneficiary(id: number): Promise<Beneficiary | undefined>;
   getBeneficiaryByEmail(email: string): Promise<Beneficiary | undefined>;
   createBeneficiary(beneficiary: InsertBeneficiary): Promise<Beneficiary>;
@@ -177,7 +177,7 @@ export class MemStorage implements IStorage {
   }
 
   private contractTemplates: Map<number, ContractTemplate>;
-  private beneficiaries: Map<number, Beneficiary>;
+  private parteneries: Map<number, Beneficiary>;
   private contracts: Map<number, Contract>;
   private currentTemplateId: number;
   private currentBeneficiaryId: number;
@@ -185,7 +185,7 @@ export class MemStorage implements IStorage {
 
   constructor() {
     this.contractTemplates = new Map();
-    this.beneficiaries = new Map();
+    this.parteneries = new Map();
     this.contracts = new Map();
     this.currentTemplateId = 1;
     this.currentBeneficiaryId = 1;
@@ -212,15 +212,15 @@ CIF [CIF Companie], reprezentată legal prin [Reprezentant Legal],
 
 și
 
-BENEFICIAR: {{beneficiary.name}}, 
-domiciliat în {{beneficiary.address}}, 
-CNP/CUI: {{beneficiary.cnp}}, 
-în calitate de beneficiar,
+BENEFICIAR: {{partenery.name}}, 
+domiciliat în {{partenery.address}}, 
+CNP/CUI: {{partenery.cnp}}, 
+în calitate de partener,
 
 S-a încheiat prezentul contract având următoarele clauze:
 
 Art. 1 - Obiectul contractului
-Prestatorul se obligă să execute pentru beneficiar serviciile prevăzute în anexa care face parte integrantă din prezentul contract.
+Prestatorul se obligă să execute pentru partener serviciile prevăzute în anexa care face parte integrantă din prezentul contract.
 
 Art. 2 - Durata contractului
 Prezentul contract se încheie pe perioada: {{contract.startDate}} - {{contract.endDate}}
@@ -235,9 +235,9 @@ Părțile își asumă obligațiile prevăzute în legislația în vigoare și �
 PRESTATOR                    BENEFICIAR
 _________________           _________________`,
         fields: JSON.stringify([
-          { name: "beneficiary.name", type: "text", required: true },
-          { name: "beneficiary.address", type: "textarea", required: true },
-          { name: "beneficiary.cnp", type: "text", required: true },
+          { name: "partenery.name", type: "text", required: true },
+          { name: "partenery.address", type: "textarea", required: true },
+          { name: "partenery.cnp", type: "text", required: true },
           { name: "contract.value", type: "number", required: true },
           { name: "contract.currency", type: "select", options: ["RON", "EUR", "USD"], required: true },
           { name: "contract.startDate", type: "date", required: true },
@@ -286,49 +286,49 @@ _________________           _________________`,
     return this.contractTemplates.delete(id);
   }
 
-  // Beneficiaries
-  async getBeneficiaries(): Promise<Beneficiary[]> {
-    return Array.from(this.beneficiaries.values());
+  // Parteneries
+  async getParteneries(): Promise<Beneficiary[]> {
+    return Array.from(this.parteneries.values());
   }
 
   async getBeneficiary(id: number): Promise<Beneficiary | undefined> {
-    return this.beneficiaries.get(id);
+    return this.parteneries.get(id);
   }
 
   async getBeneficiaryByEmail(email: string): Promise<Beneficiary | undefined> {
-    return Array.from(this.beneficiaries.values()).find(b => b.email === email);
+    return Array.from(this.parteneries.values()).find(b => b.email === email);
   }
 
   async createBeneficiary(beneficiary: InsertBeneficiary): Promise<Beneficiary> {
     const id = this.currentBeneficiaryId++;
     const newBeneficiary: Beneficiary = {
-      ...beneficiary,
+      ...partenery,
       id,
-      phone: beneficiary.phone ?? null,
-      address: beneficiary.address ?? null,
-      cnp: beneficiary.cnp ?? null,
-      companyName: beneficiary.companyName ?? null,
-      companyAddress: beneficiary.companyAddress ?? null,
-      companyCui: beneficiary.companyCui ?? null,
-      companyRegistrationNumber: beneficiary.companyRegistrationNumber ?? null,
-      isCompany: beneficiary.isCompany ?? false,
+      phone: partenery.phone ?? null,
+      address: partenery.address ?? null,
+      cnp: partenery.cnp ?? null,
+      companyName: partenery.companyName ?? null,
+      companyAddress: partenery.companyAddress ?? null,
+      companyCui: partenery.companyCui ?? null,
+      companyRegistrationNumber: partenery.companyRegistrationNumber ?? null,
+      isCompany: partenery.isCompany ?? false,
       createdAt: new Date()
     };
-    this.beneficiaries.set(id, newBeneficiary);
+    this.parteneries.set(id, newBeneficiary);
     return newBeneficiary;
   }
 
   async updateBeneficiary(id: number, beneficiary: Partial<InsertBeneficiary>): Promise<Beneficiary | undefined> {
-    const existing = this.beneficiaries.get(id);
+    const existing = this.parteneries.get(id);
     if (!existing) return undefined;
     
-    const updated = { ...existing, ...beneficiary };
-    this.beneficiaries.set(id, updated);
+    const updated = { ...existing, ...partenery };
+    this.parteneries.set(id, updated);
     return updated;
   }
 
   async deleteBeneficiary(id: number): Promise<boolean> {
-    return this.beneficiaries.delete(id);
+    return this.parteneries.delete(id);
   }
 
   // Contracts
@@ -338,9 +338,9 @@ _________________           _________________`,
     
     for (const contract of contractsArray) {
       const template = contract.templateId ? this.contractTemplates.get(contract.templateId) : null;
-      const beneficiary = contract.beneficiaryId ? this.beneficiaries.get(contract.beneficiaryId) : null;
+      const partenery = contract.parteneryId ? this.parteneries.get(contract.parteneryId) : null;
       
-      // Handle reserved contracts with null template/beneficiary
+      // Handle reserved contracts with null template/partenery
       if (contract.status === "reserved") {
         const mockTemplate: ContractTemplate = {
           id: 0,
@@ -372,7 +372,7 @@ _________________           _________________`,
         contractsWithDetails.push({
           ...contract,
           template,
-          beneficiary
+          partenery
         });
       }
     }
@@ -385,7 +385,7 @@ _________________           _________________`,
     if (!contract) return undefined;
     
     const template = contract.templateId ? this.contractTemplates.get(contract.templateId) : null;
-    const beneficiary = contract.beneficiaryId ? this.beneficiaries.get(contract.beneficiaryId) : null;
+    const partenery = contract.parteneryId ? this.parteneries.get(contract.parteneryId) : null;
     
     // Handle reserved contracts
     if (contract.status === "reserved") {
@@ -422,7 +422,7 @@ _________________           _________________`,
     return {
       ...contract,
       template,
-      beneficiary
+      partenery
     };
   }
 
@@ -431,7 +431,7 @@ _________________           _________________`,
     if (!contract) return undefined;
     
     const template = contract.templateId ? this.contractTemplates.get(contract.templateId) : null;
-    const beneficiary = contract.beneficiaryId ? this.beneficiaries.get(contract.beneficiaryId) : null;
+    const partenery = contract.parteneryId ? this.parteneries.get(contract.parteneryId) : null;
     
     // Handle reserved contracts
     if (contract.status === "reserved") {
@@ -468,7 +468,7 @@ _________________           _________________`,
     return {
       ...contract,
       template,
-      beneficiary
+      partenery
     };
   }
 
@@ -480,7 +480,7 @@ _________________           _________________`,
       id,
       orderNumber: contractData.orderNumber,
       templateId: contractData.templateId,
-      beneficiaryId: contractData.beneficiaryId,
+      parteneryId: contractData.parteneryId,
       value: contractData.value ? String(contractData.value) : null,
       currency: contractData.currency ?? "RON",
       startDate: contractData.startDate ?? null,
@@ -501,16 +501,16 @@ _________________           _________________`,
     this.contracts.set(id, newContract);
     
     const template = this.contractTemplates.get(contractData.templateId);
-    const beneficiary = this.beneficiaries.get(contractData.beneficiaryId);
+    const partenery = this.parteneries.get(contractData.parteneryId);
     
     if (!template || !beneficiary) {
-      throw new Error("Template or beneficiary not found");
+      throw new Error("Template or partenery not found");
     }
     
     return {
       ...newContract,
       template,
-      beneficiary
+      partenery
     };
   }
 
@@ -528,14 +528,14 @@ _________________           _________________`,
     this.contracts.set(id, updated);
     
     const template = this.contractTemplates.get(updated.templateId || 0);
-    const beneficiary = this.beneficiaries.get(updated.beneficiaryId || 0);
+    const partenery = this.parteneries.get(updated.parteneryId || 0);
     
     if (!template || !beneficiary) return undefined;
     
     return {
       ...updated,
       template,
-      beneficiary
+      partenery
     };
   }
 
@@ -575,7 +575,7 @@ _________________           _________________`,
       id,
       orderNumber,
       templateId: null,
-      beneficiaryId: null,
+      parteneryId: null,
       value: null,
       currency: "RON",
       startDate: null,
@@ -595,7 +595,7 @@ _________________           _________________`,
     
     this.contracts.set(id, reservedContract);
     
-    // Create mock template and beneficiary for reserved contract
+    // Create mock template and partenery for reserved contract
     const mockTemplate: ContractTemplate = { 
       id: 0, 
       name: "Contract Rezervat", 
@@ -661,24 +661,24 @@ export class DatabaseStorage implements IStorage {
     return (result.rowCount ?? 0) > 0;
   }
 
-  async getBeneficiaries(): Promise<Beneficiary[]> {
-    const beneficiariesList = await db.select().from(beneficiaries);
-    return beneficiariesList;
+  async getParteneries(): Promise<Beneficiary[]> {
+    const parteneriesList = await db.select().from(parteneries);
+    return parteneriesList;
   }
 
   async getBeneficiary(id: number): Promise<Beneficiary | undefined> {
-    const [beneficiary] = await db.select().from(beneficiaries).where(eq(beneficiaries.id, id));
-    return beneficiary || undefined;
+    const [partenery] = await db.select().from(parteneries).where(eq(parteneries.id, id));
+    return partenery || undefined;
   }
 
   async getBeneficiaryByEmail(email: string): Promise<Beneficiary | undefined> {
-    const [beneficiary] = await db.select().from(beneficiaries).where(eq(beneficiaries.email, email));
-    return beneficiary || undefined;
+    const [partenery] = await db.select().from(parteneries).where(eq(parteneries.email, email));
+    return partenery || undefined;
   }
 
   async createBeneficiary(beneficiary: InsertBeneficiary): Promise<Beneficiary> {
     const [newBeneficiary] = await db
-      .insert(beneficiaries)
+      .insert(parteneries)
       .values(beneficiary)
       .returning();
     return newBeneficiary;
@@ -686,15 +686,15 @@ export class DatabaseStorage implements IStorage {
 
   async updateBeneficiary(id: number, beneficiary: Partial<InsertBeneficiary>): Promise<Beneficiary | undefined> {
     const [updated] = await db
-      .update(beneficiaries)
+      .update(parteneries)
       .set(beneficiary)
-      .where(eq(beneficiaries.id, id))
+      .where(eq(parteneries.id, id))
       .returning();
     return updated || undefined;
   }
 
   async deleteBeneficiary(id: number): Promise<boolean> {
-    const result = await db.delete(beneficiaries).where(eq(beneficiaries.id, id));
+    const result = await db.delete(parteneries).where(eq(parteneries.id, id));
     return (result.rowCount ?? 0) > 0;
   }
 
@@ -704,7 +704,7 @@ export class DatabaseStorage implements IStorage {
         .select()
         .from(contracts)
         .leftJoin(contractTemplates, eq(contracts.templateId, contractTemplates.id))
-        .leftJoin(beneficiaries, eq(contracts.beneficiaryId, beneficiaries.id))
+        .leftJoin(parteneries, eq(contracts.parteneryId, parteneries.id))
         .leftJoin(contractStatuses, eq(contracts.statusId, contractStatuses.id))
         .orderBy(desc(contracts.id));
 
@@ -714,8 +714,8 @@ export class DatabaseStorage implements IStorage {
       return result.map(row => {
         const contract = row.contracts;
         
-        // Handle reserved contracts with beneficiaryId = 0 or templateId = 0
-        if (contract.beneficiaryId === 0 || contract.templateId === 0) {
+        // Handle reserved contracts with parteneryId = 0 or templateId = 0
+        if (contract.parteneryId === 0 || contract.templateId === 0) {
           const mockTemplate: ContractTemplate = {
             id: 0,
             name: "Template Rezervat",
@@ -740,7 +740,7 @@ export class DatabaseStorage implements IStorage {
           return {
             ...contract,
             template: row.contract_templates || mockTemplate,
-            beneficiary: row.beneficiaries || mockBeneficiary,
+            beneficiary: row.parteneries || mockBeneficiary,
             status: row.contract_statuses || null,
             provider: companySettings,
           };
@@ -749,7 +749,7 @@ export class DatabaseStorage implements IStorage {
         return {
           ...contract,
           template: row.contract_templates || null,
-          beneficiary: row.beneficiaries || null,
+          beneficiary: row.parteneries || null,
           status: row.contract_statuses || null,
           provider: companySettings,
         };
@@ -775,8 +775,8 @@ export class DatabaseStorage implements IStorage {
     // Get company settings for provider data
     const companySettings = await this.getCompanySettings();
     
-    // Handle reserved contracts with beneficiaryId = 0 or templateId = 0
-    if (contract.beneficiaryId === 0 || contract.templateId === 0) {
+    // Handle reserved contracts with parteneryId = 0 or templateId = 0
+    if (contract.parteneryId === 0 || contract.templateId === 0) {
       const mockTemplate: ContractTemplate = {
         id: 0,
         name: "Template Rezervat",
@@ -801,7 +801,7 @@ export class DatabaseStorage implements IStorage {
       return {
         ...contract,
         template: contract.template || mockTemplate,
-        beneficiary: contract.beneficiary || mockBeneficiary,
+        beneficiary: contract.partenery || mockBeneficiary,
         status: contract.status,
         provider: companySettings
       } as ContractWithDetails;
@@ -828,8 +828,8 @@ export class DatabaseStorage implements IStorage {
     // Get company settings for provider data
     const companySettings = await this.getCompanySettings();
     
-    // Handle reserved contracts with beneficiaryId = 0 or templateId = 0
-    if (contract.beneficiaryId === 0 || contract.templateId === 0) {
+    // Handle reserved contracts with parteneryId = 0 or templateId = 0
+    if (contract.parteneryId === 0 || contract.templateId === 0) {
       const mockTemplate: ContractTemplate = {
         id: 0,
         name: "Template Rezervat",
@@ -854,7 +854,7 @@ export class DatabaseStorage implements IStorage {
       return {
         ...contract,
         template: contract.template || mockTemplate,
-        beneficiary: contract.beneficiary || mockBeneficiary,
+        beneficiary: contract.partenery || mockBeneficiary,
         status: contract.status,
         provider: companySettings
       } as ContractWithDetails;
@@ -964,7 +964,7 @@ export class DatabaseStorage implements IStorage {
       .values({
         orderNumber,
         templateId: 0,
-        beneficiaryId: 0,
+        parteneryId: 0,
         value: null,
         currency: "RON",
         startDate: null,
@@ -974,7 +974,7 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
 
-    // Create mock template and beneficiary for display
+    // Create mock template and partenery for display
     const mockTemplate: ContractTemplate = { 
       id: 0, 
       name: "Contract Rezervat", 
@@ -1270,7 +1270,7 @@ export class DatabaseStorage implements IStorage {
         .select()
         .from(contracts)
         .leftJoin(contractTemplates, eq(contracts.templateId, contractTemplates.id))
-        .leftJoin(beneficiaries, eq(contracts.beneficiaryId, beneficiaries.id))
+        .leftJoin(parteneries, eq(contracts.parteneryId, parteneries.id))
         .leftJoin(contractStatuses, eq(contracts.statusId, contractStatuses.id))
         .where(eq(contracts.signedToken, token));
 
@@ -1285,7 +1285,7 @@ export class DatabaseStorage implements IStorage {
       return {
         ...row.contracts,
         template: row.contract_templates || null,
-        beneficiary: row.beneficiaries || null,
+        beneficiary: row.parteneries || null,
         status: row.contract_statuses || null,
         provider: companySettings,
       };
@@ -1301,7 +1301,7 @@ export class DatabaseStorage implements IStorage {
         .select()
         .from(contracts)
         .leftJoin(contractTemplates, eq(contracts.templateId, contractTemplates.id))
-        .leftJoin(beneficiaries, eq(contracts.beneficiaryId, beneficiaries.id))
+        .leftJoin(parteneries, eq(contracts.parteneryId, parteneries.id))
         .leftJoin(contractStatuses, eq(contracts.statusId, contractStatuses.id))
         .where(eq(contracts.signingToken, token));
 
@@ -1316,7 +1316,7 @@ export class DatabaseStorage implements IStorage {
       return {
         ...row.contracts,
         template: row.contract_templates || null,
-        beneficiary: row.beneficiaries || null,
+        beneficiary: row.parteneries || null,
         status: row.contract_statuses || null,
         provider: companySettings,
       };
@@ -1376,15 +1376,15 @@ CIF [CIF Companie], reprezentată legal prin [Reprezentant Legal],
 
 și
 
-BENEFICIAR: {{beneficiary.name}}, 
-domiciliat în {{beneficiary.address}}, 
-CNP/CUI: {{beneficiary.cnp}}, 
-în calitate de beneficiar,
+BENEFICIAR: {{partenery.name}}, 
+domiciliat în {{partenery.address}}, 
+CNP/CUI: {{partenery.cnp}}, 
+în calitate de partener,
 
 S-a încheiat prezentul contract având următoarele clauze:
 
 Art. 1 - Obiectul contractului
-Prestatorul se obligă să execute pentru beneficiar serviciile prevăzute în anexa care face parte integrantă din prezentul contract.
+Prestatorul se obligă să execute pentru partener serviciile prevăzute în anexa care face parte integrantă din prezentul contract.
 
 Art. 2 - Durata contractului
 Prezentul contract se încheie pe perioada: {{contract.startDate}} - {{contract.endDate}}
@@ -1399,9 +1399,9 @@ Părțile își asumă obligațiile prevăzute în legislația în vigoare și �
 PRESTATOR                    BENEFICIAR
 _________________           _________________`,
         fields: JSON.stringify([
-          { name: "beneficiary.name", type: "text", required: true },
-          { name: "beneficiary.address", type: "textarea", required: true },
-          { name: "beneficiary.cnp", type: "text", required: true },
+          { name: "partenery.name", type: "text", required: true },
+          { name: "partenery.address", type: "textarea", required: true },
+          { name: "partenery.cnp", type: "text", required: true },
           { name: "contract.value", type: "number", required: true },
           { name: "contract.currency", type: "select", options: ["RON", "EUR", "USD"], required: true },
           { name: "contract.startDate", type: "date", required: true },

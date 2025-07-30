@@ -10,7 +10,7 @@ interface EmailOptions {
 
 interface SignedContractEmailOptions {
   contract: ContractWithDetails;
-  recipientType: 'beneficiary' | 'administrator';
+  recipientType: 'partenery' | 'administrator';
   adminEmail?: string;
 }
 
@@ -63,7 +63,7 @@ export async function sendContractEmail(options: EmailOptions): Promise<void> {
             <h3 style="margin: 0 0 10px 0; color: #374151;">Detalii Contract</h3>
             <p><strong>Numărul contractului:</strong> ${options.contract.orderNumber}</p>
             <p><strong>Template:</strong> ${options.contract.template.name}</p>
-            <p><strong>Beneficiar:</strong> ${options.contract.beneficiary.name}</p>
+            <p><strong>Partener:</strong> ${options.contract.partenery.name}</p>
             <p><strong>Data creării:</strong> ${new Date(options.contract.createdAt || '').toLocaleDateString('ro-RO')}</p>
           </div>
           
@@ -93,20 +93,20 @@ export async function sendSignedContractNotification(options: SignedContractEmai
   const { contract, recipientType, adminEmail } = options;
   
   // Safety check for contract structure
-  if (!contract || !contract.beneficiary) {
+  if (!contract || !contract.partenery) {
     console.error('❌ Invalid contract structure for email notification:', contract);
-    throw new Error('Contract or beneficiary data is missing');
+    throw new Error('Contract or partenery data is missing');
   }
   
-  const recipientEmail = recipientType === 'beneficiary' 
-    ? contract.beneficiary.email 
+  const recipientEmail = recipientType === 'partenery' 
+    ? contract.partenery.email 
     : (adminEmail || 'admin@contractmanager.ro');
     
-  const subject = recipientType === 'beneficiary' 
+  const subject = recipientType === 'partenery' 
     ? `Contract #${contract.orderNumber} - Confirmare Semnare`
     : `Contract #${contract.orderNumber} - Notificare Semnare`;
     
-  const isForBeneficiary = recipientType === 'beneficiary';
+  const isForPartenery = recipientType === 'partenery';
   
   // Simple console logging for development
   if (process.env.NODE_ENV === 'development') {
@@ -118,8 +118,8 @@ export async function sendSignedContractNotification(options: SignedContractEmai
     console.log('Contract Details:');
     console.log(`  - Numărul contractului: ${contract.orderNumber}`);
     console.log(`  - Template: ${contract.template?.name || 'N/A'}`);
-    console.log(`  - Beneficiar: ${contract.beneficiary.name}`);
-    console.log(`  - Email beneficiar: ${contract.beneficiary.email}`);
+    console.log(`  - Partener: ${contract.partenery.name}`);
+    console.log(`  - Email partener: ${contract.partenery.email}`);
     console.log(`  - Data creării: ${contract.createdAt ? new Date(contract.createdAt).toLocaleDateString('ro-RO') : 'N/A'}`);
     console.log(`  - Semnat de: ${contract.signedBy || 'N/A'}`);
     console.log(`  - Data semnării: ${contract.signedAt ? new Date(contract.signedAt).toLocaleDateString('ro-RO') : 'N/A'}`);
@@ -154,7 +154,7 @@ export async function sendSignedContractNotification(options: SignedContractEmai
       
       <div style="padding: 20px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
         <h2 style="color: #1f2937; margin: 0 0 20px 0;">
-          ${isForBeneficiary ? 'Confirmare Semnare Contract' : 'Notificare Semnare Contract'}
+          ${isForPartenery ? 'Confirmare Semnare Contract' : 'Notificare Semnare Contract'}
         </h2>
         
         <div style="background-color: #10b981; color: white; padding: 15px; border-radius: 6px; margin-bottom: 20px; text-align: center;">
@@ -162,9 +162,9 @@ export async function sendSignedContractNotification(options: SignedContractEmai
         </div>
         
         <div style="color: #374151; line-height: 1.6; margin-bottom: 20px;">
-          ${isForBeneficiary 
+          ${isForPartenery 
             ? `Contractul dumneavoastră a fost semnat cu succes. Vă mulțumim pentru colaborare!`
-            : `Un contract a fost semnat în sistem de către beneficiar.`
+            : `Un contract a fost semnat în sistem de către partener.`
           }
         </div>
         
@@ -180,12 +180,12 @@ export async function sendSignedContractNotification(options: SignedContractEmai
               <td style="padding: 8px 0;">${contract.template?.name || 'N/A'}</td>
             </tr>
             <tr>
-              <td style="padding: 8px 0; font-weight: bold;">Beneficiar:</td>
-              <td style="padding: 8px 0;">${contract.beneficiary.name}</td>
+              <td style="padding: 8px 0; font-weight: bold;">Partener:</td>
+              <td style="padding: 8px 0;">${contract.partenery.name}</td>
             </tr>
             <tr>
-              <td style="padding: 8px 0; font-weight: bold;">Email beneficiar:</td>
-              <td style="padding: 8px 0;">${contract.beneficiary.email}</td>
+              <td style="padding: 8px 0; font-weight: bold;">Email partener:</td>
+              <td style="padding: 8px 0;">${contract.partenery.email}</td>
             </tr>
             <tr>
               <td style="padding: 8px 0; font-weight: bold;">Data creării:</td>
@@ -234,7 +234,7 @@ export async function sendSignedContractNotification(options: SignedContractEmai
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
         <p style="color: #6b7280; font-size: 14px;">
           Acest email a fost trimis automat de sistemul Contract Manager.<br>
-          ${isForBeneficiary ? 'Vă mulțumim pentru colaborare!' : 'Notificare automată pentru administrator.'}
+          ${isForPartenery ? 'Vă mulțumim pentru colaborare!' : 'Notificare automată pentru administrator.'}
         </p>
       </div>
     </div>

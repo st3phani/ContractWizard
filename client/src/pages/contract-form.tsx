@@ -22,14 +22,14 @@ import { cn } from "@/lib/utils";
 import { formatDate, parseDate, getDateInputFormat, type DateFormat } from "@/lib/dateUtils";
 import { useDateFormat } from "@/hooks/use-date-format";
 
-import type { ContractTemplate, Beneficiary, InsertBeneficiary } from "@shared/schema";
-import { insertBeneficiarySchema } from "@shared/schema";
+import type { ContractTemplate, Partenery, InsertBeneficiaryy } from "@shared/schema";
+import { insertPartenerySchema } from "@shared/schema";
 import { Label } from "@/components/ui/label";
 
 
 const contractFormSchema = z.object({
-  // Beneficiary data
-  beneficiary: z.object({
+  // Partenery data
+  partenery: z.object({
     name: z.string().min(1, "Numele este obligatoriu"),
     email: z.string().email("Email invalid").min(1, "Email-ul este obligatoriu"),
     phone: z.string().min(1, "Telefonul este obligatoriu"),
@@ -103,9 +103,9 @@ export default function ContractForm() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [beneficiarySearchOpen, setBeneficiarySearchOpen] = useState(false);
-  const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
-  const [showNewBeneficiaryModal, setShowNewBeneficiaryModal] = useState(false);
+  const [partenerySearchOpen, setPartenerySearchOpen] = useState(false);
+  const [selectedPartenery, setSelectedPartenery] = useState<Partenery | null>(null);
+  const [showNewParteneryModal, setShowNewParteneryModal] = useState(false);
   
   // Check if we're editing - get contractId from URL params
   const urlParams = new URLSearchParams(window.location.search);
@@ -115,8 +115,8 @@ export default function ContractForm() {
   // Use date format hook for consistent formatting
   const { dateFormat, formatDate: formatDateWithSettings, systemSettings } = useDateFormat();
 
-  // Beneficiary form data for modal (same as in Beneficiaries page)
-  const [formData, setFormData] = useState<InsertBeneficiary>({
+  // Partenery form data for modal (same as in Parteneries page)
+  const [formData, setFormData] = useState<InsertBeneficiaryy>({
     name: "",
     email: "",
     phone: "",
@@ -133,7 +133,7 @@ export default function ContractForm() {
   const form = useForm<ContractFormData>({
     resolver: zodResolver(contractFormSchema),
     defaultValues: {
-      beneficiary: {
+      partenery: {
         name: "",
         email: "",
         phone: "",
@@ -162,9 +162,9 @@ export default function ContractForm() {
     queryKey: ["/api/contract-templates"],
   });
 
-  // Fetch beneficiaries for search
-  const { data: beneficiaries = [] } = useQuery<Beneficiary[]>({
-    queryKey: ["/api/beneficiaries"],
+  // Fetch parteneries for search
+  const { data: parteneries = [] } = useQuery<Partenery[]>({
+    queryKey: ["/api/parteneries"],
   });
 
   // Fetch contract data for editing
@@ -188,7 +188,7 @@ export default function ContractForm() {
       const contractData = editContract;
       console.log("Setting form with contract data:", contractData);
       console.log("Template ID from contract:", contractData.templateId);
-      setSelectedBeneficiary(contractData.beneficiary);
+      setSelectedPartenery(contractData.partenery);
       
       // Format dates for form inputs
       const createdDate = contractData.createdAt ? new Date(contractData.createdAt).toISOString().split('T')[0] : '';
@@ -196,17 +196,17 @@ export default function ContractForm() {
       const endDate = contractData.endDate ? new Date(contractData.endDate).toISOString().split('T')[0] : '';
       
       const formValues = {
-        beneficiary: {
-          name: contractData.beneficiary.name || "",
-          email: contractData.beneficiary.email || "",
-          phone: contractData.beneficiary.phone || "",
-          address: contractData.beneficiary.address || "",
-          cnp: contractData.beneficiary.cnp || "",
-          companyName: contractData.beneficiary.companyName || "",
-          companyAddress: contractData.beneficiary.companyAddress || "",
-          companyCui: contractData.beneficiary.companyCui || "",
-          companyRegistrationNumber: contractData.beneficiary.companyRegistrationNumber || "",
-          isCompany: contractData.beneficiary.isCompany || false,
+        partenery: {
+          name: contractData.partenery.name || "",
+          email: contractData.partenery.email || "",
+          phone: contractData.partenery.phone || "",
+          address: contractData.partenery.address || "",
+          cnp: contractData.partenery.cnp || "",
+          companyName: contractData.partenery.companyName || "",
+          companyAddress: contractData.partenery.companyAddress || "",
+          companyCui: contractData.partenery.companyCui || "",
+          companyRegistrationNumber: contractData.partenery.companyRegistrationNumber || "",
+          isCompany: contractData.partenery.isCompany || false,
         },
         contract: {
           templateId: contractData.templateId,
@@ -234,7 +234,7 @@ export default function ContractForm() {
       if (isEditing && editContractId) {
         // Update existing contract
         const updatePayload = {
-          beneficiaryData: data.beneficiary,
+          parteneryData: data.partenery,
           contractData: {
             templateId: data.contract.templateId,
             value: data.contract.value ? parseFloat(data.contract.value) : null,
@@ -250,7 +250,7 @@ export default function ContractForm() {
       } else {
         // Create new contract
         return apiRequest("POST", "/api/contracts", {
-          beneficiaryData: data.beneficiary,
+          parteneryData: data.partenery,
           contractData: {
             templateId: data.contract.templateId,
             value: data.contract.value ? parseFloat(data.contract.value) : null,
@@ -289,7 +289,7 @@ export default function ContractForm() {
   const reserveContractMutation = useMutation({
     mutationFn: (data: ContractFormData) => {
       return apiRequest("POST", "/api/contracts/reserve", {
-        beneficiaryData: data.beneficiary,
+        parteneryData: data.partenery,
         contractData: {
           templateId: data.contract.templateId,
           value: data.contract.value ? parseFloat(data.contract.value) : null,
@@ -348,9 +348,9 @@ export default function ContractForm() {
       // Find the first error field
       let firstErrorField = null;
       
-      if (errors.beneficiary) {
-        const beneficiaryError = Object.keys(errors.beneficiary)[0];
-        firstErrorField = `beneficiary.${beneficiaryError}`;
+      if (errors.partenery) {
+        const parteneryError = Object.keys(errors.partenery)[0];
+        firstErrorField = `partenery.${parteneryError}`;
       } else if (errors.contract) {
         const contractError = Object.keys(errors.contract)[0];
         firstErrorField = `contract.${contractError}`;
@@ -377,17 +377,17 @@ export default function ContractForm() {
     
     // Create minimal contract data for reservation
     const reservationData: ContractFormData = {
-      beneficiary: {
-        name: formData.beneficiary?.name || "-",
-        email: formData.beneficiary?.email || "rezervat@temp.com",
-        phone: formData.beneficiary?.phone || "-",
-        address: formData.beneficiary?.address || "-",
-        cnp: formData.beneficiary?.cnp || "-",
-        companyName: formData.beneficiary?.companyName || "-",
-        companyAddress: formData.beneficiary?.companyAddress || "-",
-        companyCui: formData.beneficiary?.companyCui || "-",
-        companyRegistrationNumber: formData.beneficiary?.companyRegistrationNumber || "-",
-        isCompany: formData.beneficiary?.isCompany || false,
+      partenery: {
+        name: formData.partenery?.name || "-",
+        email: formData.partenery?.email || "rezervat@temp.com",
+        phone: formData.partenery?.phone || "-",
+        address: formData.partenery?.address || "-",
+        cnp: formData.partenery?.cnp || "-",
+        companyName: formData.partenery?.companyName || "-",
+        companyAddress: formData.partenery?.companyAddress || "-",
+        companyCui: formData.partenery?.companyCui || "-",
+        companyRegistrationNumber: formData.partenery?.companyRegistrationNumber || "-",
+        isCompany: formData.partenery?.isCompany || false,
       },
       contract: {
         templateId: formData.contract?.templateId || 1,
@@ -403,29 +403,29 @@ export default function ContractForm() {
     reserveContractMutation.mutate(reservationData);
   };
 
-  const handleSelectBeneficiary = (beneficiary: Beneficiary) => {
-    setSelectedBeneficiary(beneficiary);
-    setShowNewBeneficiaryModal(false);
-    setBeneficiarySearchOpen(false);
+  const handleSelectPartenery = (partenery: Partenery) => {
+    setSelectedPartenery(partenery);
+    setShowNewParteneryModal(false);
+    setPartenerySearchOpen(false);
     
-    // Update form with selected beneficiary data
-    form.setValue("beneficiary.name", beneficiary.name);
-    form.setValue("beneficiary.email", beneficiary.email);
-    form.setValue("beneficiary.phone", beneficiary.phone || "");
-    form.setValue("beneficiary.address", beneficiary.address || "");
-    form.setValue("beneficiary.cnp", beneficiary.cnp || "");
+    // Update form with selected partenery data
+    form.setValue("partenery.name", partenery.name);
+    form.setValue("partenery.email", partenery.email);
+    form.setValue("partenery.phone", partenery.phone || "");
+    form.setValue("partenery.address", partenery.address || "");
+    form.setValue("partenery.cnp", partenery.cnp || "");
   };
 
-  const handleNewBeneficiary = () => {
-    setSelectedBeneficiary(null);
-    setShowNewBeneficiaryModal(true);
-    setBeneficiarySearchOpen(false);
+  const handleNewPartenery = () => {
+    setSelectedPartenery(null);
+    setShowNewParteneryModal(true);
+    setPartenerySearchOpen(false);
   };
 
-  // Create beneficiary mutation for modal
-  const createBeneficiaryMutation = useMutation({
-    mutationFn: async (data: InsertBeneficiary) => {
-      const response = await fetch("/api/beneficiaries", {
+  // Create partenery mutation for modal
+  const createParteneryMutation = useMutation({
+    mutationFn: async (data: InsertBeneficiaryy) => {
+      const response = await fetch("/api/parteneries", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -434,29 +434,29 @@ export default function ContractForm() {
       });
       
       if (!response.ok) {
-        throw new Error("Failed to create beneficiary");
+        throw new Error("Failed to create partenery");
       }
       
       return response.json();
     },
-    onSuccess: (newBeneficiary: Beneficiary) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
+    onSuccess: (newPartenery: Partenery) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/parteneries"] });
       
-      // Auto-select the newly created beneficiary
-      setSelectedBeneficiary(newBeneficiary);
-      setShowNewBeneficiaryModal(false);
+      // Auto-select the newly created partenery
+      setSelectedPartenery(newPartenery);
+      setShowNewParteneryModal(false);
       
-      // Update contract form with new beneficiary data
-      form.setValue("beneficiary.name", newBeneficiary.name);
-      form.setValue("beneficiary.email", newBeneficiary.email);
-      form.setValue("beneficiary.phone", newBeneficiary.phone || "");
-      form.setValue("beneficiary.address", newBeneficiary.address || "");
-      form.setValue("beneficiary.cnp", newBeneficiary.cnp || "");
-      form.setValue("beneficiary.companyName", newBeneficiary.companyName || "");
-      form.setValue("beneficiary.companyAddress", newBeneficiary.companyAddress || "");
-      form.setValue("beneficiary.companyCui", newBeneficiary.companyCui || "");
-      form.setValue("beneficiary.companyRegistrationNumber", newBeneficiary.companyRegistrationNumber || "");
-      form.setValue("beneficiary.isCompany", newBeneficiary.isCompany);
+      // Update contract form with new partenery data
+      form.setValue("partenery.name", newPartenery.name);
+      form.setValue("partenery.email", newPartenery.email);
+      form.setValue("partenery.phone", newPartenery.phone || "");
+      form.setValue("partenery.address", newPartenery.address || "");
+      form.setValue("partenery.cnp", newPartenery.cnp || "");
+      form.setValue("partenery.companyName", newPartenery.companyName || "");
+      form.setValue("partenery.companyAddress", newPartenery.companyAddress || "");
+      form.setValue("partenery.companyCui", newPartenery.companyCui || "");
+      form.setValue("partenery.companyRegistrationNumber", newPartenery.companyRegistrationNumber || "");
+      form.setValue("partenery.isCompany", newPartenery.isCompany);
       
       // Reset modal form
       setFormData({
@@ -480,20 +480,20 @@ export default function ContractForm() {
     },
     onError: (error) => {
       // Only handle validation errors in form, no toast notifications as per user preference
-      console.error("Error creating beneficiary:", error);
+      console.error("Error creating partenery:", error);
     },
   });
 
   // State to track validation errors
   const [validationErrors, setValidationErrors] = useState<{ [key: string]: boolean }>({});
 
-  const handleCreateBeneficiary = () => {
-    console.log("handleCreateBeneficiary called with formData:", formData);
+  const handleCreatePartenery = () => {
+    console.log("handleCreatePartenery called with formData:", formData);
     
     // For companies, set name to the legal representative name
     const dataToSend = { ...formData };
     
-    // Validate required fields manually (same validation as in Beneficiaries page)
+    // Validate required fields manually (same validation as in Parteneries page)
     const errors: { [key: string]: boolean } = {};
 
     if (!dataToSend.email.trim()) errors.email = true;
@@ -529,7 +529,7 @@ export default function ContractForm() {
     }
 
     console.log("Validation passed, calling mutation with data:", dataToSend);
-    createBeneficiaryMutation.mutate(dataToSend);
+    createParteneryMutation.mutate(dataToSend);
   };
 
   // Clear specific validation error when user starts typing
@@ -565,45 +565,45 @@ export default function ContractForm() {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Beneficiary Data */}
+                {/* Partenery Data */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Date Beneficiar</CardTitle>
+                    <CardTitle>Date Partener</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {/* Beneficiary Search Section */}
+                    {/* Partenery Search Section */}
                     <div className="space-y-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
                       <div className="flex items-center justify-between">
                         <div>
-                          <h4 className="font-medium text-blue-900">Selectează Beneficiarul</h4>
-                          <p className="text-sm text-blue-700">Caută un beneficiar existent sau creează unul nou</p>
+                          <h4 className="font-medium text-blue-900">Selectează Partenerul</h4>
+                          <p className="text-sm text-blue-700">Caută un partener existent sau creează unul nou</p>
                         </div>
                       </div>
                       
                       <div className="flex gap-2 items-stretch">
-                        <Popover open={beneficiarySearchOpen} onOpenChange={setBeneficiarySearchOpen}>
+                        <Popover open={partenerySearchOpen} onOpenChange={setPartenerySearchOpen}>
                           <PopoverTrigger asChild>
                             <Button
                               variant="outline"
                               role="combobox"
-                              aria-expanded={beneficiarySearchOpen}
+                              aria-expanded={partenerySearchOpen}
                               className="flex-1 justify-start min-w-0"
-                              title="Caută beneficiar existent"
-                              aria-label="Caută beneficiar existent"
+                              title="Caută partener existent"
+                              aria-label="Caută partener existent"
                             >
-                              {selectedBeneficiary ? (
+                              {selectedPartenery ? (
                                 <div className="flex items-center">
                                   <Avatar className="h-6 w-6 mr-2">
                                     <AvatarFallback className="text-xs">
-                                      {selectedBeneficiary?.name ? selectedBeneficiary.name.split(' ').map(n => n[0]).join('').toUpperCase() : "B"}
+                                      {selectedPartenery?.name ? selectedPartenery.name.split(' ').map(n => n[0]).join('').toUpperCase() : "B"}
                                     </AvatarFallback>
                                   </Avatar>
-                                  {selectedBeneficiary?.name || "Beneficiar fără nume"}
+                                  {selectedPartenery?.name || "Partener fără nume"}
                                 </div>
                               ) : (
                                 <>
                                   <Search className="mr-2 h-4 w-4" />
-                                  Caută beneficiar existent...
+                                  Caută partener existent...
                                 </>
                               )}
                             </Button>
@@ -612,25 +612,25 @@ export default function ContractForm() {
                             <Command>
                               <CommandInput placeholder="Caută după nume sau email..." />
                               <CommandList>
-                                <CommandEmpty>Nu s-au găsit beneficiari.</CommandEmpty>
+                                <CommandEmpty>Nu s-au găsit parteneri.</CommandEmpty>
                                 <CommandGroup>
-                                  {beneficiaries.map((beneficiary) => (
+                                  {parteneries.map((partenery) => (
                                     <CommandItem
-                                      key={beneficiary.id}
-                                      value={`${beneficiary.name} ${beneficiary.email}`}
-                                      onSelect={() => handleSelectBeneficiary(beneficiary)}
+                                      key={partenery.id}
+                                      value={`${partenery.name} ${partenery.email}`}
+                                      onSelect={() => handleSelectPartenery(partenery)}
                                     >
                                       <div className="flex items-center w-full">
                                         <Avatar className="h-8 w-8 mr-3">
                                           <AvatarFallback className="text-xs">
-                                            {beneficiary.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                            {partenery.name.split(' ').map(n => n[0]).join('').toUpperCase()}
                                           </AvatarFallback>
                                         </Avatar>
                                         <div className="flex-1">
-                                          <div className="font-medium">{beneficiary.name}</div>
-                                          <div className="text-sm text-gray-500">{beneficiary.email}</div>
+                                          <div className="font-medium">{partenery.name}</div>
+                                          <div className="text-sm text-gray-500">{partenery.email}</div>
                                         </div>
-                                        {selectedBeneficiary?.id === beneficiary.id && (
+                                        {selectedPartenery?.id === partenery.id && (
                                           <Check className="h-4 w-4" />
                                         )}
                                       </div>
@@ -645,33 +645,33 @@ export default function ContractForm() {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={handleNewBeneficiary}
+                          onClick={handleNewPartenery}
                           className={cn(
                             "shrink-0 whitespace-nowrap",
                             false && "bg-blue-100 border-blue-300 text-blue-700"
                           )}
-                          title="Creează beneficiar nou"
-                          aria-label="Creează beneficiar nou"
+                          title="Creează partener nou"
+                          aria-label="Creează partener nou"
                         >
                           <Plus className="h-4 w-4 mr-1" />
-                          Beneficiar Nou
+                          Partener Nou
                         </Button>
                       </div>
 
-                      {selectedBeneficiary && (
+                      {selectedPartenery && (
                         <div className="p-3 bg-white rounded border border-blue-200">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center">
                               <Avatar className="h-10 w-10 mr-3">
                                 <AvatarFallback>
-                                  {selectedBeneficiary?.name ? selectedBeneficiary.name.split(' ').map(n => n[0]).join('').toUpperCase() : "B"}
+                                  {selectedPartenery?.name ? selectedPartenery.name.split(' ').map(n => n[0]).join('').toUpperCase() : "B"}
                                 </AvatarFallback>
                               </Avatar>
                               <div>
-                                <div className="font-medium">{selectedBeneficiary?.name || "Beneficiar fără nume"}</div>
-                                <div className="text-sm text-gray-500">{selectedBeneficiary?.email}</div>
-                                {selectedBeneficiary?.phone && (
-                                  <div className="text-sm text-gray-500">{selectedBeneficiary.phone}</div>
+                                <div className="font-medium">{selectedPartenery?.name || "Partener fără nume"}</div>
+                                <div className="text-sm text-gray-500">{selectedPartenery?.email}</div>
+                                {selectedPartenery?.phone && (
+                                  <div className="text-sm text-gray-500">{selectedPartenery.phone}</div>
                                 )}
                               </div>
                             </div>
@@ -679,7 +679,7 @@ export default function ContractForm() {
                               type="button"
                               variant="ghost"
                               size="sm"
-                              onClick={handleNewBeneficiary}
+                              onClick={handleNewPartenery}
                               className="text-blue-600 hover:text-blue-700 whitespace-nowrap shrink-0"
                             >
                               <User className="h-4 w-4 mr-1" />
@@ -861,21 +861,21 @@ export default function ContractForm() {
           </Form>
         </div>
 
-      {/* Beneficiary Modal - Same as in Beneficiaries page */}
-      <Dialog open={showNewBeneficiaryModal} onOpenChange={(open) => {
+      {/* Partenery Modal - Same as in Parteneries page */}
+      <Dialog open={showNewParteneryModal} onOpenChange={(open) => {
         if (!open) {
-          setShowNewBeneficiaryModal(false);
+          setShowNewParteneryModal(false);
         }
       }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Adaugă Beneficiar Nou</DialogTitle>
+            <DialogTitle>Adaugă Partener Nou</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
             {/* Toggle between Individual/Company */}
             <div className="space-y-2">
-              <Label>Tip Beneficiar</Label>
+              <Label>Tip Partener</Label>
               <Select 
                 value={formData.isCompany ? "true" : "false"}
                 onValueChange={(value) => setFormData({ ...formData, isCompany: value === "true" })}
@@ -969,7 +969,7 @@ export default function ContractForm() {
                       id="name"
                       value={formData.name}
                       onChange={(e) => handleFieldChange('name', e.target.value, (value) => setFormData({ ...formData, name: value }))}
-                      placeholder="Numele complet al beneficiarului"
+                      placeholder="Numele complet al partenerului"
                       className={validationErrors.name ? "border-red-500 bg-pink-50" : ""}
                     />
                   </div>
@@ -1028,15 +1028,15 @@ export default function ContractForm() {
           </div>
           
           <div className="flex justify-end space-x-3 pt-4">
-            <Button variant="outline" onClick={() => setShowNewBeneficiaryModal(false)}>
+            <Button variant="outline" onClick={() => setShowNewParteneryModal(false)}>
               Anulează
             </Button>
             <Button 
-              onClick={handleCreateBeneficiary}
-              disabled={createBeneficiaryMutation.isPending}
+              onClick={handleCreatePartenery}
+              disabled={createParteneryMutation.isPending}
               className="bg-blue-600 hover:bg-blue-700"
             >
-              {createBeneficiaryMutation.isPending ? "Se salvează..." : "Adaugă Beneficiar"}
+              {createParteneryMutation.isPending ? "Se salvează..." : "Adaugă Partener"}
             </Button>
           </div>
         </DialogContent>

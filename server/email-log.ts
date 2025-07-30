@@ -10,7 +10,7 @@ export interface EmailLogEntry {
     id: number;
     orderNumber: number;
     template: string;
-    beneficiary: string;
+    partenery: string;
   };
   message: string;
 }

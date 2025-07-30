@@ -98,7 +98,7 @@ export default function Dashboard() {
   const handleEmail = async (contract: ContractWithDetails) => {
     try {
       await apiRequest("POST", `/api/contracts/${contract.id}/email`, {
-        recipient: contract.beneficiary.email,
+        recipient: contract.partenery.email,
         subject: `Contract ${contract.template.name} - Nr. ${contract.orderNumber}`,
         message: `Bună ziua,
 
