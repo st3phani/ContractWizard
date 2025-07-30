@@ -28,7 +28,7 @@ export default function EmailModal({ contract, isOpen, onClose, onSent }: EmailM
   // Initialize form when contract changes
   useEffect(() => {
     if (contract) {
-      setRecipient(contract.partenery.email);
+      setRecipient(contract.beneficiary.email);
       setSubject(`Contract ${contract.template.name} - ${contract.orderNumber}`);
       setMessage(`Bună ziua,
 

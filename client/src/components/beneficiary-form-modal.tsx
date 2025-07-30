@@ -5,86 +5,86 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { ParteneryFormFields } from "./partenery-form-fields";
+import { BeneficiaryFormFields } from "./beneficiary-form-fields";
 import { apiRequest } from "@/lib/queryClient";
-import type { InsertBeneficiaryy, Partenery } from "@shared/schema";
+import type { InsertBeneficiary, Beneficiary } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
-interface ParteneryFormModalProps {
+interface BeneficiaryFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  partenery?: Partenery | null;
-  onSuccess?: (partenery: Partenery) => void;
+  beneficiary?: Beneficiary | null;
+  onSuccess?: (beneficiary: Beneficiary) => void;
 }
 
-export function ParteneryFormModal({ isOpen, onClose, partenery, onSuccess }: ParteneryFormModalProps) {
+export function BeneficiaryFormModal({ isOpen, onClose, beneficiary, onSuccess }: BeneficiaryFormModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const form = useForm<InsertBeneficiaryy>({
+  const form = useForm<InsertBeneficiary>({
     defaultValues: {
-      name: partenery?.name || "",
-      email: partenery?.email || "",
-      phone: partenery?.phone || "",
-      address: partenery?.address || "",
-      cnp: partenery?.cnp || "",
-      companyName: partenery?.companyName || "",
-      companyAddress: partenery?.companyAddress || "",
-      companyCui: partenery?.companyCui || "",
-      companyRegistrationNumber: partenery?.companyRegistrationNumber || "",
-      isCompany: partenery?.isCompany || false,
+      name: beneficiary?.name || "",
+      email: beneficiary?.email || "",
+      phone: beneficiary?.phone || "",
+      address: beneficiary?.address || "",
+      cnp: beneficiary?.cnp || "",
+      companyName: beneficiary?.companyName || "",
+      companyAddress: beneficiary?.companyAddress || "",
+      companyCui: beneficiary?.companyCui || "",
+      companyRegistrationNumber: beneficiary?.companyRegistrationNumber || "",
+      isCompany: beneficiary?.isCompany || false,
     },
   });
 
-  const createParteneryMutation = useMutation({
-    mutationFn: async (data: InsertBeneficiaryy) => {
-      const response = await apiRequest("POST", "/api/parteneries", data);
+  const createBeneficiaryMutation = useMutation({
+    mutationFn: async (data: InsertBeneficiary) => {
+      const response = await apiRequest("POST", "/api/beneficiaries", data);
       return response.json();
     },
-    onSuccess: (newPartenery: Partenery) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/parteneries"] });
+    onSuccess: (newBeneficiary: Beneficiary) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
       onClose();
       form.reset();
       if (onSuccess) {
-        onSuccess(newPartenery);
+        onSuccess(newBeneficiary);
       }
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "A apărut o eroare la crearea partenerului.",
+        description: "A apărut o eroare la crearea beneficiaryului.",
         variant: "destructive",
       });
     },
   });
 
-  const updateParteneryMutation = useMutation({
-    mutationFn: async (data: InsertBeneficiaryy) => {
-      const response = await apiRequest("PATCH", `/api/parteneries/${partenery!.id}`, data);
+  const updateBeneficiaryMutation = useMutation({
+    mutationFn: async (data: InsertBeneficiary) => {
+      const response = await apiRequest("PATCH", `/api/beneficiaries/${beneficiary!.id}`, data);
       return response.json();
     },
-    onSuccess: (updatedPartenery: Partenery) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/parteneries"] });
+    onSuccess: (updatedBeneficiary: Beneficiary) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
       onClose();
       form.reset();
       if (onSuccess) {
-        onSuccess(updatedPartenery);
+        onSuccess(updatedBeneficiary);
       }
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "A apărut o eroare la actualizarea partenerului.",
+        description: "A apărut o eroare la actualizarea beneficiaryului.",
         variant: "destructive",
       });
     },
   });
 
-  const onSubmit = (data: InsertBeneficiaryy) => {
-    if (partenery) {
-      updateParteneryMutation.mutate(data);
+  const onSubmit = (data: InsertBeneficiary) => {
+    if (beneficiary) {
+      updateBeneficiaryMutation.mutate(data);
     } else {
-      createParteneryMutation.mutate(data);
+      createBeneficiaryMutation.mutate(data);
     }
   };
 
@@ -98,13 +98,13 @@ export function ParteneryFormModal({ isOpen, onClose, partenery, onSuccess }: Pa
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {partenery ? "Editează Partener" : "Adaugă Partener Nou"}
+            {beneficiary ? "Editează Partener" : "Adaugă Partener Nou"}
           </DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <ParteneryFormFields
+            <BeneficiaryFormFields
               control={form.control}
               watch={form.watch}
             />
@@ -115,12 +115,12 @@ export function ParteneryFormModal({ isOpen, onClose, partenery, onSuccess }: Pa
               </Button>
               <Button 
                 type="submit" 
-                disabled={createParteneryMutation.isPending || updateParteneryMutation.isPending}
+                disabled={createBeneficiaryMutation.isPending || updateBeneficiaryMutation.isPending}
                 className="bg-blue-600 hover:bg-blue-700"
               >
-                {(createParteneryMutation.isPending || updateParteneryMutation.isPending) ? 
+                {(createBeneficiaryMutation.isPending || updateBeneficiaryMutation.isPending) ? 
                   "Se salvează..." : 
-                  (partenery ? "Actualizează Partener" : "Adaugă Partener")
+                  (beneficiary ? "Actualizează Partener" : "Adaugă Partener")
                 }
               </Button>
             </div>

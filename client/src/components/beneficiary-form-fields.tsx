@@ -5,13 +5,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 
-interface ParteneryFormFieldsProps {
+interface BeneficiaryFormFieldsProps {
   control: Control<any>;
   watch: UseFormWatch<any>;
-  namePrefix?: string; // e.g., "partenery" for nested forms
+  namePrefix?: string; // e.g., "beneficiary" for nested forms
 }
 
-export function ParteneryFormFields({ control, watch, namePrefix = "" }: ParteneryFormFieldsProps) {
+export function BeneficiaryFormFields({ control, watch, namePrefix = "" }: BeneficiaryFormFieldsProps) {
   const prefix = namePrefix ? `${namePrefix}.` : "";
   const isCompany = watch(`${prefix}isCompany`);
 
@@ -142,7 +142,7 @@ export function ParteneryFormFields({ control, watch, namePrefix = "" }: Partene
                 <FormItem>
                   <FormLabel>Nume Complet *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Numele complet al partenerului" {...field} />
+                    <Input placeholder="Numele complet al beneficiaryului" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

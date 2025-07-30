@@ -15,17 +15,17 @@ import { apiRequest } from "@/lib/queryClient";
 import { getInitials, getAvatarColor } from "@/lib/utils";
 import { useDateFormat } from "@/hooks/use-date-format";
 
-import { ParteneryFormFields } from "@/components/partenery-form-fields";
-import type { Partenery, InsertBeneficiaryy } from "@shared/schema";
+import { BeneficiaryFormFields } from "@/components/beneficiary-form-fields";
+import type { Beneficiary, InsertBeneficiary } from "@shared/schema";
 import { paginateItems, type PaginationConfig } from "@/utils/paginationUtils";
 
 export default function Parteneries() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [selectedPartenery, setSelectedPartenery] = useState<Partenery | null>(null);
+  const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [formData, setFormData] = useState<InsertBeneficiaryy>({
+  const [formData, setFormData] = useState<InsertBeneficiary>({
     name: "",
     email: "",
     phone: "",
@@ -42,19 +42,19 @@ export default function Parteneries() {
   const queryClient = useQueryClient();
   const { formatDate } = useDateFormat();
 
-  // Fetch parteneries
-  const { data: parteneries = [], isLoading } = useQuery<Partenery[]>({
-    queryKey: ["/api/parteneries"],
+  // Fetch beneficiaries
+  const { data: beneficiaries = [], isLoading } = useQuery<Beneficiary[]>({
+    queryKey: ["/api/beneficiaries"],
   });
 
-  // Filter and sort parteneries based on search query and ID descending
-  const filteredParteneries = parteneries
-    .filter(partenery =>
-      partenery.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      partenery.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      partenery.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      partenery.cnp?.includes(searchQuery) ||
-      partenery.companyCui?.includes(searchQuery)
+  // Filter and sort beneficiaries based on search query and ID descending
+  const filteredParteneries = beneficiaries
+    .filter(beneficiary =>
+      beneficiary.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      beneficiary.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      beneficiary.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      beneficiary.cnp?.includes(searchQuery) ||
+      beneficiary.companyCui?.includes(searchQuery)
     )
     .sort((a, b) => b.id - a.id); // Sort by ID descending
 
@@ -63,7 +63,7 @@ export default function Parteneries() {
   const paginationResult = paginateItems(filteredParteneries, paginationConfig);
   
   const {
-    items: paginatedParteneries,
+    items: paginatedBeneficiaries,
     totalItems,
     totalPages,
     hasNextPage,
@@ -76,64 +76,64 @@ export default function Parteneries() {
     setCurrentPage(1);
   };
 
-  // Create partenery mutation
-  const createParteneryMutation = useMutation({
-    mutationFn: (data: InsertBeneficiaryy) => {
+  // Create beneficiary mutation
+  const createBeneficiaryMutation = useMutation({
+    mutationFn: (data: InsertBeneficiary) => {
       console.log("Sending to API:", data);
-      return apiRequest("POST", "/api/parteneries", data);
+      return apiRequest("POST", "/api/beneficiaries", data);
     },
     onSuccess: (result) => {
       console.log("API Response:", result);
-      queryClient.invalidateQueries({ queryKey: ["/api/parteneries"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
       setIsCreateModalOpen(false);
       setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
-      setSelectedPartenery(null);
+      setSelectedBeneficiary(null);
     },
     onError: (error) => {
       console.error("API Error:", error);
       toast({
         title: "Error",
-        description: "A apărut o eroare la crearea partenerului.",
+        description: "A apărut o eroare la crearea beneficiaryului.",
         variant: "destructive",
       });
     },
   });
 
-  // Update partenery mutation
-  const updateParteneryMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<InsertBeneficiaryy> }) => 
-      apiRequest("PUT", `/api/parteneries/${id}`, data),
+  // Update beneficiary mutation
+  const updateBeneficiaryMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<InsertBeneficiary> }) => 
+      apiRequest("PUT", `/api/beneficiaries/${id}`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/parteneries"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
       setIsCreateModalOpen(false);
       setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
-      setSelectedPartenery(null);
+      setSelectedBeneficiary(null);
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "A apărut o eroare la actualizarea partenerului.",
+        description: "A apărut o eroare la actualizarea beneficiaryului.",
         variant: "destructive",
       });
     },
   });
 
-  // Delete partenery mutation
-  const deleteParteneryMutation = useMutation({
-    mutationFn: (id: number) => apiRequest("DELETE", `/api/parteneries/${id}`),
+  // Delete beneficiary mutation
+  const deleteBeneficiaryMutation = useMutation({
+    mutationFn: (id: number) => apiRequest("DELETE", `/api/beneficiaries/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/parteneries"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "A apărut o eroare la ștergerea partenerului.",
+        description: "A apărut o eroare la ștergerea beneficiaryului.",
         variant: "destructive",
       });
     },
   });
 
-  const handleCreatePartenery = () => {
+  const handleCreateBeneficiary = () => {
     // Validation for required fields
     const missingFields = [];
     const fieldsToFocus = [];
@@ -221,41 +221,41 @@ export default function Parteneries() {
 
     console.log("Form data before mutation:", JSON.stringify(formData, null, 2));
     
-    if (selectedPartenery) {
-      // Update existing partenery
-      updateParteneryMutation.mutate({ id: selectedPartenery.id, data: formData });
+    if (selectedBeneficiary) {
+      // Update existing beneficiary
+      updateBeneficiaryMutation.mutate({ id: selectedBeneficiary.id, data: formData });
     } else {
-      // Create new partenery
-      createParteneryMutation.mutate(formData);
+      // Create new beneficiary
+      createBeneficiaryMutation.mutate(formData);
     }
   };
 
-  const handleEdit = (partenery: Partenery) => {
-    setSelectedPartenery(partenery);
+  const handleEdit = (beneficiary: Beneficiary) => {
+    setSelectedBeneficiary(beneficiary);
     setFormData({
-      name: partenery.name,
-      email: partenery.email,
-      phone: partenery.phone ?? "",
-      address: partenery.address ?? "",
-      cnp: partenery.cnp ?? "",
-      companyName: partenery.companyName ?? "",
-      companyAddress: partenery.companyAddress ?? "",
-      companyCui: partenery.companyCui ?? "",
-      companyRegistrationNumber: partenery.companyRegistrationNumber ?? "",
-      isCompany: partenery.isCompany ?? false,
+      name: beneficiary.name,
+      email: beneficiary.email,
+      phone: beneficiary.phone ?? "",
+      address: beneficiary.address ?? "",
+      cnp: beneficiary.cnp ?? "",
+      companyName: beneficiary.companyName ?? "",
+      companyAddress: beneficiary.companyAddress ?? "",
+      companyCui: beneficiary.companyCui ?? "",
+      companyRegistrationNumber: beneficiary.companyRegistrationNumber ?? "",
+      isCompany: beneficiary.isCompany ?? false,
     });
     setIsCreateModalOpen(true);
   };
 
-  const handleDelete = (partenery: Partenery) => {
-    if (window.confirm("Sunteți sigur că doriți să ștergeți acest partener?")) {
-      deleteParteneryMutation.mutate(partenery.id);
+  const handleDelete = (beneficiary: Beneficiary) => {
+    if (window.confirm("Sunteți sigur că doriți să ștergeți acest beneficiary?")) {
+      deleteBeneficiaryMutation.mutate(beneficiary.id);
     }
   };
 
   const resetForm = () => {
     setIsCreateModalOpen(false);
-    setSelectedPartenery(null);
+    setSelectedBeneficiary(null);
     setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
   };
 
@@ -266,13 +266,13 @@ export default function Parteneries() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-semibold text-gray-900">Parteneri</h2>
-              <p className="text-gray-600 mt-1">Gestionați lista de parteneri pentru contracte</p>
+              <p className="text-gray-600 mt-1">Gestionați lista de beneficiaryi pentru contracte</p>
             </div>
             <Button 
               onClick={() => setIsCreateModalOpen(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white"
-              title="Adaugă un partener nou"
-              aria-label="Adaugă un partener nou"
+              title="Adaugă un beneficiary nou"
+              aria-label="Adaugă un beneficiary nou"
             >
               <Plus className="h-4 w-4 mr-2" />
               Partener Nou
@@ -289,7 +289,7 @@ export default function Parteneries() {
                 <div className="relative w-64">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
-                    placeholder="Căutare parteneri..."
+                    placeholder="Căutare beneficiaryi..."
                     value={searchQuery}
                     onChange={(e) => handleSearchChange(e.target.value)}
                     className="pl-10"
@@ -313,24 +313,24 @@ export default function Parteneries() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {paginatedParteneries.map((partenery) => (
-                      <TableRow key={partenery.id}>
+                    {paginatedBeneficiaries.map((beneficiary) => (
+                      <TableRow key={beneficiary.id}>
                         <TableCell className="font-mono text-sm text-gray-500">
-                          #{partenery.id}
+                          #{beneficiary.id}
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-3">
                             <Avatar>
-                              <AvatarFallback className={`${getAvatarColor(partenery.name || "")} text-white`}>
-                                {getInitials(partenery.name || "")}
+                              <AvatarFallback className={`${getAvatarColor(beneficiary.name || "")} text-white`}>
+                                {getInitials(beneficiary.name || "")}
                               </AvatarFallback>
                             </Avatar>
                             <div>
-                              <div className="font-medium">{partenery.name}</div>
-                              {partenery.companyName && (
+                              <div className="font-medium">{beneficiary.name}</div>
+                              {beneficiary.companyName && (
                                 <div className="text-sm text-gray-500 flex items-center">
                                   <Building className="h-3 w-3 mr-1" />
-                                  {partenery.companyName}
+                                  {beneficiary.companyName}
                                 </div>
                               )}
                             </div>
@@ -340,52 +340,52 @@ export default function Parteneries() {
                           <div className="space-y-1">
                             <div className="text-sm flex items-center">
                               <Mail className="h-3 w-3 mr-1" />
-                              {partenery.email}
+                              {beneficiary.email}
                             </div>
-                            {partenery.phone && (
+                            {beneficiary.phone && (
                               <div className="text-sm text-gray-500 flex items-center">
                                 <Phone className="h-3 w-3 mr-1" />
-                                {partenery.phone}
+                                {beneficiary.phone}
                               </div>
                             )}
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="space-y-1">
-                            {partenery.cnp && (
+                            {beneficiary.cnp && (
                               <div className="text-sm">
-                                <span className="text-xs text-gray-400">CNP:</span> {partenery.cnp}
+                                <span className="text-xs text-gray-400">CNP:</span> {beneficiary.cnp}
                               </div>
                             )}
-                            {partenery.companyCui && (
+                            {beneficiary.companyCui && (
                               <div className="text-sm">
-                                <span className="text-xs text-gray-400">CUI:</span> {partenery.companyCui}
+                                <span className="text-xs text-gray-400">CUI:</span> {beneficiary.companyCui}
                               </div>
                             )}
 
-                            {!partenery.cnp && !partenery.companyCui && "—"}
+                            {!beneficiary.cnp && !beneficiary.companyCui && "—"}
                           </div>
                         </TableCell>
-                        <TableCell>{formatDate(partenery.createdAt)}</TableCell>
+                        <TableCell>{formatDate(beneficiary.createdAt)}</TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleEdit(partenery)}
+                              onClick={() => handleEdit(beneficiary)}
                               className="hover:bg-green-50"
-                              title="Editează partenerul"
-                              aria-label="Editează partenerul"
+                              title="Editează beneficiaryul"
+                              aria-label="Editează beneficiaryul"
                             >
                               <Edit className="h-4 w-4 text-green-600" />
                             </Button>
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleDelete(partenery)}
+                              onClick={() => handleDelete(beneficiary)}
                               className="hover:bg-red-50"
-                              title="Șterge partenerul"
-                              aria-label="Șterge partenerul"
+                              title="Șterge beneficiaryul"
+                              aria-label="Șterge beneficiaryul"
                             >
                               <Trash2 className="h-4 w-4 text-red-600" />
                             </Button>
@@ -399,7 +399,7 @@ export default function Parteneries() {
               
               {totalItems === 0 && !isLoading && (
                 <div className="text-center py-8 text-gray-500">
-                  {searchQuery ? "Nu au fost găsiți parteneri care să corespundă căutării" : "Nu au fost găsiți parteneri"}
+                  {searchQuery ? "Nu au fost găsiți beneficiaryi care să corespundă căutării" : "Nu au fost găsiți beneficiaryi"}
                 </div>
               )}
 
@@ -426,7 +426,7 @@ export default function Parteneries() {
                       </SelectContent>
                     </Select>
                     <span className="text-sm text-gray-700">
-                      din {totalItems} {totalItems === 1 ? 'partener' : 'parteneri'}
+                      din {totalItems} {totalItems === 1 ? 'beneficiary' : 'beneficiaryi'}
                     </span>
                   </div>
 
@@ -477,12 +477,12 @@ export default function Parteneries() {
           </Card>
         </div>
 
-      {/* Create/Edit Partenery Modal */}
+      {/* Create/Edit Beneficiary Modal */}
       <Dialog open={isCreateModalOpen} onOpenChange={resetForm}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {selectedPartenery ? "Editează Partener" : "Adaugă Partener Nou"}
+              {selectedBeneficiary ? "Editează Partener" : "Adaugă Partener Nou"}
             </DialogTitle>
           </DialogHeader>
           
@@ -582,7 +582,7 @@ export default function Parteneries() {
                       id="name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Numele complet al partenerului"
+                      placeholder="Numele complet al beneficiaryului"
                     />
                   </div>
 
@@ -640,13 +640,13 @@ export default function Parteneries() {
               Anulează
             </Button>
             <Button 
-              onClick={handleCreatePartenery}
-              disabled={createParteneryMutation.isPending}
+              onClick={handleCreateBeneficiary}
+              disabled={createBeneficiaryMutation.isPending}
               className="bg-blue-600 hover:bg-blue-700"
             >
-              {createParteneryMutation.isPending 
+              {createBeneficiaryMutation.isPending 
                 ? "Se salvează..." 
-                : selectedPartenery ? "Actualizează" : "Adaugă Partener"
+                : selectedBeneficiary ? "Actualizează" : "Adaugă Partener"
               }
             </Button>
           </div>

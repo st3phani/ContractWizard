@@ -190,11 +190,11 @@ export default function SignedContractPage() {
             </CardContent>
           </Card>
 
-          {/* Partenery Details */}
+          {/* Beneficiary Details */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                {contract.partenery.isCompany ? (
+                {contract.beneficiary.isCompany ? (
                   <Building className="h-5 w-5 mr-2" />
                 ) : (
                   <User className="h-5 w-5 mr-2" />
@@ -205,7 +205,7 @@ export default function SignedContractPage() {
             <CardContent className="space-y-4">
               <div>
                 <p className="text-sm font-medium text-gray-500">Nume</p>
-                <p className="text-lg font-semibold">{contract.partenery.name}</p>
+                <p className="text-lg font-semibold">{contract.beneficiary.name}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -214,58 +214,58 @@ export default function SignedContractPage() {
                     <Mail className="h-3 w-3 mr-1" />
                     Email
                   </p>
-                  <p className="font-medium">{contract.partenery.email}</p>
+                  <p className="font-medium">{contract.beneficiary.email}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-500 flex items-center">
                     <Phone className="h-3 w-3 mr-1" />
                     Telefon
                   </p>
-                  <p className="font-medium">{contract.partenery.phone || 'N/A'}</p>
+                  <p className="font-medium">{contract.beneficiary.phone || 'N/A'}</p>
                 </div>
               </div>
 
-              {contract.partenery.address && (
+              {contract.beneficiary.address && (
                 <div>
                   <p className="text-sm font-medium text-gray-500 flex items-center">
                     <MapPin className="h-3 w-3 mr-1" />
                     Adresă
                   </p>
-                  <p className="font-medium">{contract.partenery.address}</p>
+                  <p className="font-medium">{contract.beneficiary.address}</p>
                 </div>
               )}
 
-              {contract.partenery.isCompany ? (
+              {contract.beneficiary.isCompany ? (
                 <div className="space-y-3">
                   <Separator />
                   <p className="text-sm font-medium text-gray-700">Detalii Companie</p>
-                  {contract.partenery.companyName && (
+                  {contract.beneficiary.companyName && (
                     <div>
                       <p className="text-sm font-medium text-gray-500">Numele Companiei</p>
-                      <p className="font-medium">{contract.partenery.companyName}</p>
+                      <p className="font-medium">{contract.beneficiary.companyName}</p>
                     </div>
                   )}
-                  {contract.partenery.companyCui && (
+                  {contract.beneficiary.companyCui && (
                     <div>
                       <p className="text-sm font-medium text-gray-500">CUI</p>
-                      <p className="font-medium">{contract.partenery.companyCui}</p>
+                      <p className="font-medium">{contract.beneficiary.companyCui}</p>
                     </div>
                   )}
-                  {contract.partenery.name && contract.partenery.isCompany && (
+                  {contract.beneficiary.name && contract.beneficiary.isCompany && (
                     <div>
                       <p className="text-sm font-medium text-gray-500">Reprezentant Legal</p>
-                      <p className="font-medium">{contract.partenery.name}</p>
+                      <p className="font-medium">{contract.beneficiary.name}</p>
                     </div>
                   )}
                 </div>
               ) : (
-                contract.partenery.cnp && (
+                contract.beneficiary.cnp && (
                   <div>
                     <p className="text-sm font-medium text-gray-500 flex items-center">
                       <Hash className="h-3 w-3 mr-1" />
                       CNP
                     </p>
-                    <p className="font-medium">{contract.partenery.cnp}</p>
+                    <p className="font-medium">{contract.beneficiary.cnp}</p>
                   </div>
                 )
               )}
