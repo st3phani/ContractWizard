@@ -122,6 +122,8 @@ Four main entities:
 ```
 Changelog:
 
+- July 30, 2025. **SYSTEM DATE FORMAT CONSISTENCY IMPLEMENTED** - Created useDateFormat hook and updated all pages to respect system_dateFormat setting. Date formatting now consistent across contract forms, signing pages, signed pages, tables, and all components. Hook provides centralized date formatting using system settings with automatic cache loading for optimal performance.
+
 - July 30, 2025. **SYSTEM SETTINGS JSON CACHE IMPLEMENTED** - Created automatic JSON cache system for system_settings to enable instant loading of currency, date format, and other settings. Cache file (system-settings-cache.json) is generated automatically when settings are updated and loaded first for immediate availability. Falls back to database when cache doesn't exist. Contract form now loads EUR currency instantly without waiting for database queries.
 
 - July 30, 2025. **SYSTEM SETTINGS KEY-VALUE RESTRUCTURE COMPLETED** - Successfully restructured system_settings table with key-value architecture and fixed timestamp formatting issues. Implemented PostgreSQL to_char() for consistent "YYYY-MM-DD HH24:MI:SS" format, preventing TanStack Query auto-parsing of ISO dates. System settings now persist correctly with proper timestamp display (2025-07-30 11:13:54 format).
