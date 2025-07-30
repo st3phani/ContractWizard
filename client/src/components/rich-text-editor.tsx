@@ -385,8 +385,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
               size="sm"
               onClick={() => editor.chain().focus().deleteRow().run()}
               className="h-8 w-8 p-0"
-              title="Șterge rând"
-              aria-label="Șterge rând"
+              title="Delete row"
+              aria-label="Delete row"
             >
               <Minus className="h-4 w-4" />
             </Button>
@@ -418,8 +418,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
               size="sm"
               onClick={() => editor.chain().focus().deleteColumn().run()}
               className="h-8 w-8 p-0"
-              title="Șterge coloană"
-              aria-label="Șterge coloană"
+              title="Delete column"
+              aria-label="Delete column"
             >
               <Minus className="h-4 w-4 rotate-90" />
             </Button>
@@ -467,8 +467,8 @@ export default function RichTextEditor({ content, onChange, placeholder, classNa
               size="sm"
               onClick={() => editor.chain().focus().deleteTable().run()}
               className="h-8 w-8 p-0"
-              title="Șterge tabel"
-              aria-label="Șterge tabel"
+              title="Delete table"
+              aria-label="Delete table"
             >
               <TableIcon className="h-4 w-4 text-red-500" />
             </Button>

@@ -19,7 +19,7 @@ import { BeneficiaryFormFields } from "@/components/beneficiary-form-fields";
 import type { Beneficiary, InsertBeneficiary } from "@shared/schema";
 import { paginateItems, type PaginationConfig } from "@/utils/paginationUtils";
 
-export default function Parteneries() {
+export default function Partners() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<Beneficiary | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -380,8 +380,8 @@ export default function Parteneries() {
                               size="sm"
                               onClick={() => handleEdit(beneficiary)}
                               className="hover:bg-green-50"
-                              title="Editează partenerul"
-                              aria-label="Editează partenerul"
+                              title="Edit partner"
+                              aria-label="Edit partner"
                             >
                               <Edit className="h-4 w-4 text-green-600" />
                             </Button>
@@ -390,8 +390,8 @@ export default function Parteneries() {
                               size="sm"
                               onClick={() => handleDelete(beneficiary)}
                               className="hover:bg-red-50"
-                              title="Șterge partenerul"
-                              aria-label="Șterge partenerul"
+                              title="Delete partner"
+                              aria-label="Delete partner"
                             >
                               <Trash2 className="h-4 w-4 text-red-600" />
                             </Button>
@@ -488,7 +488,7 @@ export default function Parteneries() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {selectedBeneficiary ? "Editează Partener" : "Adaugă Partener Nou"}
+              {selectedBeneficiary ? "Edit Partner" : "Add New Partner"}
             </DialogTitle>
           </DialogHeader>
           
@@ -501,11 +501,11 @@ export default function Parteneries() {
                 onValueChange={(value) => setFormData({ ...formData, isCompany: value === "true" })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Selectează tipul" />
+                  <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="false">Persoană Fizică</SelectItem>
-                  <SelectItem value="true">Companie</SelectItem>
+                  <SelectItem value="false">Individual</SelectItem>
+                  <SelectItem value="true">Company</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -558,7 +558,7 @@ export default function Parteneries() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Reprezentant Legal *</Label>
+                    <Label htmlFor="name">Legal Representative *</Label>
                     <Input
                       id="name"
                       value={formData.name || ""}
@@ -568,7 +568,7 @@ export default function Parteneries() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="cnp">CNP Reprezentant *</Label>
+                    <Label htmlFor="cnp">Representative CNP *</Label>
                     <Input
                       id="cnp"
                       value={formData.cnp || ""}
@@ -643,7 +643,7 @@ export default function Parteneries() {
           
           <div className="flex justify-end space-x-3 pt-4">
             <Button variant="outline" onClick={resetForm}>
-              Anulează
+              Cancel
             </Button>
             <Button 
               onClick={handleCreateBeneficiary}

@@ -86,14 +86,14 @@ const contractFormSchema = z.object({
   // Contract data
   contract: z.object({
     templateId: z.number({
-      required_error: "Template-ul este obligatoriu",
-      invalid_type_error: "Template-ul este obligatoriu",
-    }).min(1, "Template-ul este obligatoriu"),
-    value: z.string().min(1, "Valoarea contractului este obligatorie"),
+      required_error: "Template is required",
+      invalid_type_error: "Template is required",
+    }).min(1, "Template is required"),
+    value: z.string().min(1, "Contract value is required"),
     currency: z.string(),
     createdDate: z.string().optional(),
-    startDate: z.string().min(1, "Data începerii este obligatorie"),
-    endDate: z.string().min(1, "Data încheierii este obligatorie"),
+    startDate: z.string().min(1, "Start date is required"),
+    endDate: z.string().min(1, "End date is required"),
   }),
 });
 
@@ -551,10 +551,10 @@ export default function ContractForm() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-semibold text-gray-900">
-                {isEditing ? "Editează Contract" : "Creează Contract Nou"}
+                {isEditing ? "Edit Contract" : "Create New Contract"}
               </h2>
               <p className="text-gray-600 mt-1">
-                {isEditing ? "Modifică datele contractului existent" : "Completați datele pentru generarea contractului"}
+                {isEditing ? "Modify existing contract data" : "Fill in the data to generate the contract"}
               </p>
             </div>
           </div>
@@ -568,15 +568,15 @@ export default function ContractForm() {
                 {/* Beneficiary Data */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Date Partener</CardTitle>
+                    <CardTitle>Partner Data</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {/* Beneficiary Search Section */}
                     <div className="space-y-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
                       <div className="flex items-center justify-between">
                         <div>
-                          <h4 className="font-medium text-blue-900">Selectează Partenerul</h4>
-                          <p className="text-sm text-blue-700">Caută un beneficiary existent sau creează unul nou</p>
+                          <h4 className="font-medium text-blue-900">Select Partner</h4>
+                          <p className="text-sm text-blue-700">Search for an existing partner or create a new one</p>
                         </div>
                       </div>
                       
@@ -588,8 +588,8 @@ export default function ContractForm() {
                               role="combobox"
                               aria-expanded={beneficiarySearchOpen}
                               className="flex-1 justify-start min-w-0"
-                              title="Caută partener existent"
-                              aria-label="Caută partener existent"
+                              title="Search existing partner"
+                              aria-label="Search existing partner"
                             >
                               {selectedBeneficiary ? (
                                 <div className="flex items-center">
@@ -598,21 +598,21 @@ export default function ContractForm() {
                                       {selectedBeneficiary?.name ? selectedBeneficiary.name.split(' ').map(n => n[0]).join('').toUpperCase() : "B"}
                                     </AvatarFallback>
                                   </Avatar>
-                                  {selectedBeneficiary?.name || "Partener fără nume"}
+                                  {selectedBeneficiary?.name || "Partner without name"}
                                 </div>
                               ) : (
                                 <>
                                   <Search className="mr-2 h-4 w-4" />
-                                  Caută partener existent...
+                                  Search existing partner...
                                 </>
                               )}
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-full p-0" align="start">
                             <Command>
-                              <CommandInput placeholder="Caută după nume sau email..." />
+                              <CommandInput placeholder="Search by name or email..." />
                               <CommandList>
-                                <CommandEmpty>Nu s-au găsit parteneri.</CommandEmpty>
+                                <CommandEmpty>No partners found.</CommandEmpty>
                                 <CommandGroup>
                                   {beneficiaries.map((beneficiary) => (
                                     <CommandItem
@@ -650,11 +650,11 @@ export default function ContractForm() {
                             "shrink-0 whitespace-nowrap",
                             false && "bg-blue-100 border-blue-300 text-blue-700"
                           )}
-                          title="Creează beneficiary nou"
-                          aria-label="Creează beneficiary nou"
+                          title="Create new partner"
+                          aria-label="Create new partner"
                         >
                           <Plus className="h-4 w-4 mr-1" />
-                          Partener Nou
+                          New Partner
                         </Button>
                       </div>
 
@@ -668,7 +668,7 @@ export default function ContractForm() {
                                 </AvatarFallback>
                               </Avatar>
                               <div>
-                                <div className="font-medium">{selectedBeneficiary?.name || "Partener fără nume"}</div>
+                                <div className="font-medium">{selectedBeneficiary?.name || "Partner without name"}</div>
                                 <div className="text-sm text-gray-500">{selectedBeneficiary?.email}</div>
                                 {selectedBeneficiary?.phone && (
                                   <div className="text-sm text-gray-500">{selectedBeneficiary.phone}</div>
@@ -683,7 +683,7 @@ export default function ContractForm() {
                               className="text-blue-600 hover:text-blue-700 whitespace-nowrap shrink-0"
                             >
                               <User className="h-4 w-4 mr-1" />
-                              Schimbă
+                              Change
                             </Button>
                           </div>
                         </div>
@@ -697,7 +697,7 @@ export default function ContractForm() {
                 {/* Contract Data */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Detalii Contract</CardTitle>
+                    <CardTitle>Contract Details</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <FormField
@@ -705,14 +705,14 @@ export default function ContractForm() {
                       name="contract.templateId"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Template Contract</FormLabel>
+                          <FormLabel>Contract Template</FormLabel>
                           <Select 
                             value={field.value?.toString() || ""} 
                             onValueChange={(value) => field.onChange(parseInt(value))}
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Selectează template" />
+                                <SelectValue placeholder="Select template" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -733,7 +733,7 @@ export default function ContractForm() {
                       name="contract.value"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Valoare Contract *</FormLabel>
+                          <FormLabel>Contract Value *</FormLabel>
                           <FormControl>
                             <Input type="number" step="0.01" placeholder="0.00" {...field} />
                           </FormControl>
@@ -747,7 +747,7 @@ export default function ContractForm() {
                       name="contract.currency"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Moneda</FormLabel>
+                          <FormLabel>Currency</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
@@ -770,7 +770,7 @@ export default function ContractForm() {
                       name="contract.createdDate"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Data Creării</FormLabel>
+                          <FormLabel>Creation Date</FormLabel>
                           <FormControl>
                             <Input 
                               type="date" 
@@ -787,7 +787,7 @@ export default function ContractForm() {
                       name="contract.startDate"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Data Începerii *</FormLabel>
+                          <FormLabel>Start Date *</FormLabel>
                           <FormControl>
                             <Input 
                               type="date" 
@@ -804,7 +804,7 @@ export default function ContractForm() {
                       name="contract.endDate"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Data Încheierii *</FormLabel>
+                          <FormLabel>End Date *</FormLabel>
                           <FormControl>
                             <Input 
                               type="date" 
@@ -828,10 +828,10 @@ export default function ContractForm() {
                   type="button"
                   variant="outline"
                   onClick={() => setLocation("/")}
-                  title="Anulează crearea contractului"
-                  aria-label="Anulează crearea contractului"
+                  title="Cancel contract creation"
+                  aria-label="Cancel contract creation"
                 >
-                  Anulează
+                  Cancel
                 </Button>
                 <Button 
                   type="button"
@@ -839,21 +839,21 @@ export default function ContractForm() {
                   onClick={onReserve}
                   disabled={reserveContractMutation.isPending}
                   className="border-orange-500 text-orange-600 hover:bg-orange-50"
-                  title="Rezervă numărul contractului"
-                  aria-label="Rezervă numărul contractului"
+                  title="Reserve contract number"
+                  aria-label="Reserve contract number"
                 >
-                  {reserveContractMutation.isPending ? "Se rezervă..." : "Rezervă Contract"}
+                  {reserveContractMutation.isPending ? "Reserving..." : "Reserve Contract"}
                 </Button>
                 <Button 
                   type="submit" 
                   disabled={contractMutation.isPending}
                   className="bg-blue-600 hover:bg-blue-700"
-                  title={isEditing ? "Actualizează contractul" : "Generează contractul"}
-                  aria-label={isEditing ? "Actualizează contractul" : "Generează contractul"}
+                  title={isEditing ? "Update contract" : "Generate contract"}
+                  aria-label={isEditing ? "Update contract" : "Generate contract"}
                 >
                   {contractMutation.isPending ? 
-                    (isEditing ? "Se actualizează..." : "Se creează...") : 
-                    (isEditing ? "Actualizează Contract" : "Generează Contract")
+                    (isEditing ? "Updating..." : "Creating...") : 
+                    (isEditing ? "Update Contract" : "Generate Contract")
                   }
                 </Button>
               </div>
@@ -869,23 +869,23 @@ export default function ContractForm() {
       }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Adaugă Partener Nou</DialogTitle>
+            <DialogTitle>Add New Partner</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
             {/* Toggle between Individual/Company */}
             <div className="space-y-2">
-              <Label>Tip Partener</Label>
+              <Label>Partner Type</Label>
               <Select 
                 value={formData.isCompany ? "true" : "false"}
                 onValueChange={(value) => setFormData({ ...formData, isCompany: value === "true" })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Selectează tipul" />
+                  <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="false">Persoană Fizică</SelectItem>
-                  <SelectItem value="true">Companie</SelectItem>
+                  <SelectItem value="false">Individual</SelectItem>
+                  <SelectItem value="true">Company</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -1009,13 +1009,13 @@ export default function ContractForm() {
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleFieldChange('email', e.target.value, (value) => setFormData({ ...formData, email: value }))}
-                  placeholder="adresa@email.com"
+                  placeholder="address@email.com"
                   className={validationErrors.email ? "border-red-500 bg-pink-50" : ""}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Telefon *</Label>
+                <Label htmlFor="phone">Phone *</Label>
                 <Input
                   id="phone"
                   value={formData.phone || ""}
@@ -1029,14 +1029,14 @@ export default function ContractForm() {
           
           <div className="flex justify-end space-x-3 pt-4">
             <Button variant="outline" onClick={() => setShowNewBeneficiaryModal(false)}>
-              Anulează
+              Cancel
             </Button>
             <Button 
               onClick={handleCreateBeneficiary}
               disabled={createBeneficiaryMutation.isPending}
               className="bg-blue-600 hover:bg-blue-700"
             >
-              {createBeneficiaryMutation.isPending ? "Se salvează..." : "Adaugă Partener"}
+              {createBeneficiaryMutation.isPending ? "Saving..." : "Add Partner"}
             </Button>
           </div>
         </DialogContent>

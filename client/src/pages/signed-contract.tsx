@@ -23,9 +23,9 @@ export default function SignedContractPage() {
       const response = await fetch(`/api/contracts/signed/${token}`);
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error("Contractul semnat nu a fost găsit sau token-ul este invalid");
+          throw new Error("Signed contract not found or token is invalid");
         }
-        throw new Error("Eroare la încărcarea contractului semnat");
+        throw new Error("Error loading signed contract");
       }
       return response.json();
     },
@@ -69,7 +69,7 @@ export default function SignedContractPage() {
         <Alert className="max-w-md">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Pagină invalidă. Vă rugăm să verificați link-ul.
+            Invalid page. Please check the link.
           </AlertDescription>
         </Alert>
       </div>
@@ -81,7 +81,7 @@ export default function SignedContractPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Se încarcă contractul semnat...</p>
+          <p className="text-gray-600">Loading signed contract...</p>
         </div>
       </div>
     );
@@ -106,7 +106,7 @@ export default function SignedContractPage() {
         <Alert className="max-w-md">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Contractul nu a fost găsit.
+            Contract not found.
           </AlertDescription>
         </Alert>
       </div>
@@ -124,18 +124,18 @@ export default function SignedContractPage() {
                 <CheckCircle2 className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Contract Semnat</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Signed Contract</h1>
                 <p className="text-gray-600">Contract #{contract.orderNumber}</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
               <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
                 <CheckCircle2 className="h-3 w-3 mr-1" />
-                {contract.status?.statusLabel || "Semnat"}
+                {contract.status?.statusLabel || "Signed"}
               </Badge>
               <Button onClick={downloadPDF} className="bg-indigo-600 hover:bg-indigo-700">
                 <Download className="h-4 w-4 mr-2" />
-                Descarcă PDF
+                Download PDF
               </Button>
             </div>
           </div>
@@ -147,13 +147,13 @@ export default function SignedContractPage() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <FileText className="h-5 w-5 mr-2" />
-                Detalii Contract
+                Contract Details
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Număr Contract</p>
+                  <p className="text-sm font-medium text-gray-500">Contract Number</p>
                   <p className="text-lg font-semibold">#{contract.orderNumber}</p>
                 </div>
                 <div>
@@ -164,24 +164,24 @@ export default function SignedContractPage() {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Valoare Contract</p>
+                  <p className="text-sm font-medium text-gray-500">Contract Value</p>
                   <p className="text-lg font-semibold text-green-600">
                     {formatCurrency(contract.value, contract.currency)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Data Creării</p>
+                  <p className="text-sm font-medium text-gray-500">Creation Date</p>
                   <p className="font-medium">{formatDate(contract.createdAt)}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Data Începerii</p>
+                  <p className="text-sm font-medium text-gray-500">Start Date</p>
                   <p className="font-medium">{formatDate(contract.startDate)}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Data Încheierii</p>
+                  <p className="text-sm font-medium text-gray-500">End Date</p>
                   <p className="font-medium">{formatDate(contract.endDate)}</p>
                 </div>
               </div>
@@ -199,12 +199,12 @@ export default function SignedContractPage() {
                 ) : (
                   <User className="h-5 w-5 mr-2" />
                 )}
-                Partener
+                Partner
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-sm font-medium text-gray-500">Nume</p>
+                <p className="text-sm font-medium text-gray-500">Name</p>
                 <p className="text-lg font-semibold">{contract.beneficiary.name}</p>
               </div>
 
@@ -219,7 +219,7 @@ export default function SignedContractPage() {
                 <div>
                   <p className="text-sm font-medium text-gray-500 flex items-center">
                     <Phone className="h-3 w-3 mr-1" />
-                    Telefon
+                    Phone
                   </p>
                   <p className="font-medium">{contract.beneficiary.phone || 'N/A'}</p>
                 </div>
@@ -229,7 +229,7 @@ export default function SignedContractPage() {
                 <div>
                   <p className="text-sm font-medium text-gray-500 flex items-center">
                     <MapPin className="h-3 w-3 mr-1" />
-                    Adresă
+                    Address
                   </p>
                   <p className="font-medium">{contract.beneficiary.address}</p>
                 </div>
@@ -238,10 +238,10 @@ export default function SignedContractPage() {
               {contract.beneficiary.isCompany ? (
                 <div className="space-y-3">
                   <Separator />
-                  <p className="text-sm font-medium text-gray-700">Detalii Companie</p>
+                  <p className="text-sm font-medium text-gray-700">Company Details</p>
                   {contract.beneficiary.companyName && (
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Numele Companiei</p>
+                      <p className="text-sm font-medium text-gray-500">Company Name</p>
                       <p className="font-medium">{contract.beneficiary.companyName}</p>
                     </div>
                   )}
@@ -253,7 +253,7 @@ export default function SignedContractPage() {
                   )}
                   {contract.beneficiary.name && contract.beneficiary.isCompany && (
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Reprezentant Legal</p>
+                      <p className="text-sm font-medium text-gray-500">Legal Representative</p>
                       <p className="font-medium">{contract.beneficiary.name}</p>
                     </div>
                   )}
@@ -277,10 +277,10 @@ export default function SignedContractPage() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <CheckCircle2 className="h-5 w-5 mr-2 text-green-600" />
-                Detalii Semnare
+                Signing Details
               </CardTitle>
               <CardDescription>
-                Informații despre procesul de semnare digitală
+                Information about the digital signing process
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -288,45 +288,45 @@ export default function SignedContractPage() {
                 <div className="flex items-center">
                   <CheckCircle2 className="h-5 w-5 text-green-600 mr-2" />
                   <p className="text-green-800 font-medium">
-                    Contractul a fost semnat cu succes în data de{' '}
-                    {contract.signedAt ? new Date(contract.signedAt).toLocaleDateString('ro-RO') : 'N/A'}{' '}
-                    la ora{' '}
-                    {contract.signedAt ? new Date(contract.signedAt).toLocaleTimeString('ro-RO') : 'N/A'}
+                    The contract was successfully signed on{' '}
+                    {contract.signedAt ? new Date(contract.signedAt).toLocaleDateString('en-US') : 'N/A'}{' '}
+                    at{' '}
+                    {contract.signedAt ? new Date(contract.signedAt).toLocaleTimeString('en-US') : 'N/A'}
                   </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Semnat de</p>
+                  <p className="text-sm font-medium text-gray-500">Signed by</p>
                   <p className="text-lg font-semibold">{contract.signedBy || 'N/A'}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Data și Ora</p>
+                  <p className="text-sm font-medium text-gray-500">Date and Time</p>
                   <p className="font-medium">
                     {contract.signedAt ? (
                       <>
                         <Calendar className="h-3 w-3 inline mr-1" />
-                        {new Date(contract.signedAt).toLocaleDateString('ro-RO')} {' '}
-                        {new Date(contract.signedAt).toLocaleTimeString('ro-RO')}
+                        {new Date(contract.signedAt).toLocaleDateString('en-US')} {' '}
+                        {new Date(contract.signedAt).toLocaleTimeString('en-US')}
                       </>
                     ) : 'N/A'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Adresa IP</p>
+                  <p className="text-sm font-medium text-gray-500">IP Address</p>
                   <p className="font-medium font-mono text-sm">{contract.signedIp || 'N/A'}</p>
                 </div>
               </div>
 
               {contract.signedToken && (
                 <div className="mt-6 pt-6 border-t">
-                  <p className="text-sm font-medium text-gray-500 mb-2">Token Unic Contract Semnat</p>
+                  <p className="text-sm font-medium text-gray-500 mb-2">Unique Signed Contract Token</p>
                   <div className="bg-gray-50 p-3 rounded-md">
                     <p className="font-mono text-sm text-gray-700 break-all">{contract.signedToken}</p>
                   </div>
                   <p className="text-xs text-gray-500 mt-2">
-                    Acest token unic confirmă autenticitatea contractului semnat și poate fi folosit pentru verificări ulterioare.
+                    This unique token confirms the authenticity of the signed contract and can be used for future verifications.
                   </p>
                 </div>
               )}
@@ -339,25 +339,25 @@ export default function SignedContractPage() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Building className="h-5 w-5 mr-2" />
-                  Prestator
+                  Provider
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Numele Companiei</p>
+                      <p className="text-sm font-medium text-gray-500">Company Name</p>
                       <p className="text-lg font-semibold">{contract.provider.name}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500 flex items-center">
                         <MapPin className="h-3 w-3 mr-1" />
-                        Adresă
+                        Address
                       </p>
                       <p className="font-medium">{contract.provider.address}</p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Reprezentant Legal</p>
+                      <p className="text-sm font-medium text-gray-500">Legal Representative</p>
                       <p className="font-medium">{contract.provider.legalRepresentative}</p>
                     </div>
                   </div>
@@ -366,7 +366,7 @@ export default function SignedContractPage() {
                       <div>
                         <p className="text-sm font-medium text-gray-500 flex items-center">
                           <Phone className="h-3 w-3 mr-1" />
-                          Telefon
+                          Phone
                         </p>
                         <p className="font-medium">{contract.provider.phone}</p>
                       </div>
@@ -384,7 +384,7 @@ export default function SignedContractPage() {
                         <p className="font-medium">{contract.provider.cui}</p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-500">Nr. Înregistrare</p>
+                        <p className="text-sm font-medium text-gray-500">Registration Number</p>
                         <p className="font-medium">{contract.provider.registrationNumber}</p>
                       </div>
                     </div>
@@ -397,8 +397,8 @@ export default function SignedContractPage() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-gray-500 text-sm">
-          <p>Acest document a fost generat automat de sistemul Contract Manager.</p>
-          <p>Pentru verificări suplimentare, contactați administratorul.</p>
+          <p>This document was automatically generated by the Contract Manager system.</p>
+          <p>For additional verifications, contact the administrator.</p>
         </div>
       </div>
     </div>

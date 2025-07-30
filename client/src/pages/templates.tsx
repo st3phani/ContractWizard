@@ -81,14 +81,14 @@ export default function Templates() {
   };
 
   const handleDeleteTemplate = (templateId: number) => {
-    if (window.confirm("Sunteți sigur că doriți să ștergeți acest template?")) {
+    if (window.confirm("Are you sure you want to delete this template?")) {
       deleteTemplateMutation.mutate(templateId);
     }
   };
 
   const handleDuplicateTemplate = (template: ContractTemplate) => {
     const duplicatedData = {
-      name: `${template.name} - Copie`,
+      name: `${template.name} - Copy`,
       content: template.content,
       fields: template.fields,
     };
@@ -96,8 +96,8 @@ export default function Templates() {
     createTemplateMutation.mutate(duplicatedData);
     
     toast({
-      title: "Template duplicat",
-      description: `Template-ul "${template.name}" a fost duplicat cu succes!`,
+      title: "Template duplicated",
+      description: `Template "${template.name}" was duplicated successfully!`,
       duration: 3000,
     });
   };
@@ -109,11 +109,11 @@ export default function Templates() {
 
   const addVariable = (variable: string) => {
     if (editorInstance) {
-      // Utilizează editorul TipTap pentru inserare directă
+      // Use TipTap editor for direct insertion
       editorInstance.chain().focus().insertContent(' ' + variable).run();
       
       toast({
-        title: "Variabilă adăugată",
+        title: "Variable added",
         description: `${variable} a fost adăugat în template`,
         duration: 2000,
       });
@@ -140,7 +140,7 @@ export default function Templates() {
       setFormData({ ...formData, content: newContent });
       
       toast({
-        title: "Variabilă adăugată", 
+        title: "Variable added", 
         description: `${variable} a fost adăugat în template`,
         duration: 2000,
       });
@@ -153,8 +153,8 @@ export default function Templates() {
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900">Template-uri Contract</h2>
-              <p className="text-gray-600 mt-1">Gestionați template-urile pentru contracte</p>
+              <h2 className="text-2xl font-semibold text-gray-900">Contract Templates</h2>
+              <p className="text-gray-600 mt-1">Manage contract templates</p>
             </div>
             <Button 
               onClick={() => {
@@ -163,11 +163,11 @@ export default function Templates() {
                 setIsCreateModalOpen(true);
               }}
               className="bg-blue-600 hover:bg-blue-700"
-              title="Creează un template nou"
-              aria-label="Creează un template nou"
+              title="Create new template"
+              aria-label="Create new template"
             >
               <Plus className="h-4 w-4 mr-2" />
-              Template Nou
+              New Template
             </Button>
           </div>
         </header>
@@ -185,9 +185,9 @@ export default function Templates() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Nume Template</TableHead>
-                      <TableHead>Data Creării</TableHead>
-                      <TableHead className="text-center">Acțiuni</TableHead>
+                      <TableHead>Template Name</TableHead>
+                      <TableHead>Created Date</TableHead>
+                      <TableHead className="text-center">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -201,7 +201,7 @@ export default function Templates() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handlePreviewTemplate(template)}
-                              title="Previzualizare Template"
+                              title="Preview Template"
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -217,8 +217,8 @@ export default function Templates() {
                                 });
                                 setIsCreateModalOpen(true);
                               }}
-                              title="Editează template-ul"
-                              aria-label="Editează template-ul"
+                              title="Edit template"
+                              aria-label="Edit template"
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -226,7 +226,7 @@ export default function Templates() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleDuplicateTemplate(template)}
-                              title="Duplicare Template"
+                              title="Duplicate Template"
                             >
                               <Copy className="h-4 w-4" />
                             </Button>
@@ -234,8 +234,8 @@ export default function Templates() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleDeleteTemplate(template.id)}
-                              title="Șterge template-ul"
-                              aria-label="Șterge template-ul"
+                              title="Delete template"
+                              aria-label="Delete template"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -258,27 +258,27 @@ export default function Templates() {
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {selectedTemplate ? "Editează Template" : "Creează Template Nou"}
+              {selectedTemplate ? "Edit Template" : "Create New Template"}
             </DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="templateName">Nume Template *</Label>
+              <Label htmlFor="templateName">Template Name *</Label>
               <Input
                 id="templateName"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Numele template-ului"
+                placeholder="Template name"
               />
             </div>
             
             <div className="space-y-2">
-              <Label>Conținut Contract *</Label>
+              <Label>Contract Content *</Label>
               <RichTextEditor
                 content={formData.content}
                 onChange={(content) => setFormData({ ...formData, content })}
-                placeholder="Conținutul contractului cu placeholder-uri (ex: {{beneficiary.name}})"
+                placeholder="Contract content with placeholders (ex: {{beneficiary.name}})"
                 className="min-h-[400px]"
                 onEditorReady={(editor) => setEditorInstance(editor)}
               />
@@ -286,7 +286,7 @@ export default function Templates() {
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
               <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-blue-900 mb-3">📋 Variabile Prestator</h4>
+                <h4 className="font-semibold text-blue-900 mb-3">📋 Provider Variables</h4>
                 <div className="space-y-1">
                   {[
                     '{{provider.name}}',
@@ -305,7 +305,7 @@ export default function Templates() {
                         onClick={() => addVariable(variable)}
                         className="text-xs h-6 px-2"
                       >
-                        Adaugă
+                        Add
                       </Button>
                     </div>
                   ))}
@@ -313,7 +313,7 @@ export default function Templates() {
               </div>
 
               <div className="bg-green-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-green-900 mb-3">👤 Variabile Partener</h4>
+                <h4 className="font-semibold text-green-900 mb-3">👤 Partner Variables</h4>
                 <div className="space-y-1">
                   {[
                     '{{beneficiary.name}}',
@@ -332,7 +332,7 @@ export default function Templates() {
                         onClick={() => addVariable(variable)}
                         className="text-xs h-6 px-2"
                       >
-                        Adaugă
+                        Add
                       </Button>
                     </div>
                   ))}
@@ -342,7 +342,7 @@ export default function Templates() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-purple-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-purple-900 mb-3">📋 Variabile Contract</h4>
+                <h4 className="font-semibold text-purple-900 mb-3">📋 Contract Variables</h4>
                 <div className="space-y-1">
                   {[
                     '{{orderNumber}}',
@@ -360,7 +360,7 @@ export default function Templates() {
                         onClick={() => addVariable(variable)}
                         className="text-xs h-6 px-2"
                       >
-                        Adaugă
+                        Add
                       </Button>
                     </div>
                   ))}
@@ -368,41 +368,41 @@ export default function Templates() {
               </div>
 
               <div className="bg-yellow-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-yellow-900 mb-2">💡 Exemple & Condiții</h4>
+                <h4 className="font-semibold text-yellow-900 mb-2">💡 Examples & Conditions</h4>
                 <div className="text-sm text-yellow-800 space-y-2">
                   <div>
-                    <p><strong>Variabile de bază:</strong></p>
+                    <p><strong>Basic variables:</strong></p>
                     <p>{"{{provider.name}}"}, CIF {"{{provider.cui}}"}</p>
                     <p>{"{{beneficiary.name}}"}, {"{{beneficiary.email}}"}</p>
                   </div>
                   
                   <div className="border-t border-yellow-200 pt-2">
-                    <p><strong>Condiții pentru tip beneficiary:</strong></p>
+                    <p><strong>Conditions for partner type:</strong></p>
                     <div className="mt-1 space-y-1">
                       <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                         <code className="text-yellow-700 text-xs">
-                          {"{{#if isCompany}}"}Conținut pentru companii{"{{/if}}"}
+                          {"{{#if isCompany}}"}Content for companies{"{{/if}}"}
                         </code>
                         <Button 
                           size="sm" 
                           variant="outline" 
-                          onClick={() => addVariable("{{#if isCompany}}Conținut pentru companii{{/if}}")}
+                          onClick={() => addVariable("{{#if isCompany}}Content for companies{{/if}}")}
                           className="text-xs h-6 px-2"
                         >
-                          Adaugă
+                          Add
                         </Button>
                       </div>
                       <div className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                         <code className="text-yellow-700 text-xs">
-                          {"{{#if isIndividual}}"}Conținut pentru PF{"{{/if}}"}
+                          {"{{#if isIndividual}}"}Content for individuals{"{{/if}}"}
                         </code>
                         <Button 
                           size="sm" 
                           variant="outline" 
-                          onClick={() => addVariable("{{#if isIndividual}}Conținut pentru PF{{/if}}")}
+                          onClick={() => addVariable("{{#if isIndividual}}Content for individuals{{/if}}")}
                           className="text-xs h-6 px-2"
                         >
-                          Adaugă
+                          Add
                         </Button>
                       </div>
                     </div>
@@ -431,14 +431,14 @@ export default function Templates() {
                 setFormData({ name: "", content: "", fields: "[]" });
               }}
             >
-              Anulează
+              Cancel
             </Button>
             <Button 
               onClick={handleSaveTemplate}
               disabled={createTemplateMutation.isPending || updateTemplateMutation.isPending}
               className="bg-blue-600 hover:bg-blue-700"
             >
-              {(createTemplateMutation.isPending || updateTemplateMutation.isPending) ? "Se salvează..." : (selectedTemplate ? "Actualizează" : "Creează")}
+              {(createTemplateMutation.isPending || updateTemplateMutation.isPending) ? "Saving..." : (selectedTemplate ? "Update" : "Create")}
             </Button>
           </div>
         </DialogContent>
@@ -448,15 +448,15 @@ export default function Templates() {
       <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Previzualizare Template: {previewTemplate?.name}</DialogTitle>
+            <DialogTitle>Template Preview: {previewTemplate?.name}</DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4">
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
               <h4 className="font-semibold text-amber-800 mb-2">ℹ️ Informații</h4>
               <p className="text-sm text-amber-700">
-                Aceasta este o previzualizare a template-ului cu variabilele nepopulate. 
-                În contractele reale, variabilele precum <code>{"{{beneficiary.name}}"}</code> vor fi înlocuite cu datele actuale.
+                This is a preview of the template with unpopulated variables. 
+                In real contracts, variables like <code>{"{{beneficiary.name}}"}</code> will be replaced with actual data.
               </p>
             </div>
             
@@ -468,36 +468,36 @@ export default function Templates() {
             </div>
             
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h4 className="font-semibold text-blue-800 mb-2">🔧 Variabile utilizate</h4>
+              <h4 className="font-semibold text-blue-800 mb-2">🔧 Variables used</h4>
               <div className="text-sm text-blue-700">
-                <p className="mb-2">Template-ul conține următoarele tipuri de variabile:</p>
+                <p className="mb-2">The template contains the following types of variables:</p>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="font-medium">Variabile beneficiary:</p>
+                    <p className="font-medium">Beneficiary variables:</p>
                     <ul className="list-disc list-inside space-y-1 text-xs">
-                      {previewTemplate?.content.includes('{{beneficiary.name}}') && <li>Nume beneficiary</li>}
-                      {previewTemplate?.content.includes('{{beneficiary.email}}') && <li>Email beneficiary</li>}
-                      {previewTemplate?.content.includes('{{beneficiary.address}}') && <li>Adresă beneficiary</li>}
-                      {previewTemplate?.content.includes('{{beneficiary.cnp}}') && <li>CNP beneficiary</li>}
-                      {previewTemplate?.content.includes('{{beneficiary.companyName}}') && <li>Nume companie</li>}
-                      {previewTemplate?.content.includes('{{beneficiary.companyCui}}') && <li>CUI companie</li>}
+                      {previewTemplate?.content.includes('{{beneficiary.name}}') && <li>Beneficiary name</li>}
+                      {previewTemplate?.content.includes('{{beneficiary.email}}') && <li>Beneficiary email</li>}
+                      {previewTemplate?.content.includes('{{beneficiary.address}}') && <li>Beneficiary address</li>}
+                      {previewTemplate?.content.includes('{{beneficiary.cnp}}') && <li>Beneficiary CNP</li>}
+                      {previewTemplate?.content.includes('{{beneficiary.companyName}}') && <li>Company name</li>}
+                      {previewTemplate?.content.includes('{{beneficiary.companyCui}}') && <li>Company CUI</li>}
                     </ul>
                   </div>
                   <div>
-                    <p className="font-medium">Variabile contract:</p>
+                    <p className="font-medium">Contract variables:</p>
                     <ul className="list-disc list-inside space-y-1 text-xs">
-                      {previewTemplate?.content.includes('{{orderNumber}}') && <li>Număr contract</li>}
-                      {previewTemplate?.content.includes('{{currentDate}}') && <li>Data curentă</li>}
-                      {previewTemplate?.content.includes('{{contract.value}}') && <li>Valoare contract</li>}
-                      {previewTemplate?.content.includes('{{contract.startDate}}') && <li>Data început</li>}
-                      {previewTemplate?.content.includes('{{contract.endDate}}') && <li>Data sfârșit</li>}
+                      {previewTemplate?.content.includes('{{orderNumber}}') && <li>Contract number</li>}
+                      {previewTemplate?.content.includes('{{currentDate}}') && <li>Current date</li>}
+                      {previewTemplate?.content.includes('{{contract.value}}') && <li>Contract value</li>}
+                      {previewTemplate?.content.includes('{{contract.startDate}}') && <li>Start date</li>}
+                      {previewTemplate?.content.includes('{{contract.endDate}}') && <li>End date</li>}
                     </ul>
                   </div>
                 </div>
                 {(previewTemplate?.content.includes('{{#if isCompany}}') || previewTemplate?.content.includes('{{#if isIndividual}}')) && (
                   <div className="mt-3 p-2 bg-green-100 rounded">
-                    <p className="font-medium text-green-800">✨ Template condițional</p>
-                    <p className="text-xs text-green-700">Acest template conține logică condițională pentru afișarea diferită a conținutului pentru persoane fizice vs companii.</p>
+                    <p className="font-medium text-green-800">✨ Conditional template</p>
+                    <p className="text-xs text-green-700">This template contains conditional logic for displaying different content for individuals vs companies.</p>
                   </div>
                 )}
               </div>
@@ -505,7 +505,7 @@ export default function Templates() {
             
             <div className="flex justify-end">
               <Button onClick={() => setIsPreviewOpen(false)}>
-                Închide
+                Close
               </Button>
             </div>
           </div>

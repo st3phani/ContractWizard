@@ -15,8 +15,8 @@ import { Loader2, CheckCircle2, AlertCircle, FileText, User, Building, Calendar,
 import { useDateFormat } from "@/hooks/use-date-format";
 
 const contractSigningSchema = z.object({
-  signedBy: z.string().min(1, "Numele este obligatoriu pentru semnare"),
-  agreed: z.boolean().refine(val => val === true, "Trebuie să fiți de acord cu termenii contractului"),
+  signedBy: z.string().min(1, "Name is required for signing"),
+  agreed: z.boolean().refine(val => val === true, "You must agree to the contract terms"),
 });
 
 type ContractSigningData = z.infer<typeof contractSigningSchema>;
@@ -118,7 +118,7 @@ export default function SignContract() {
         <Alert className="max-w-md">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Link de semnare invalid. Vă rugăm să verificați link-ul primit prin email.
+            Invalid signing link. Please check the link received via email.
           </AlertDescription>
         </Alert>
       </div>
@@ -130,7 +130,7 @@ export default function SignContract() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="flex items-center space-x-3">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span className="text-gray-600">Se încarcă contractul...</span>
+          <span className="text-gray-600">Loading contract...</span>
         </div>
       </div>
     );
@@ -142,7 +142,7 @@ export default function SignContract() {
         <Alert className="max-w-md">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            {fetchError instanceof Error ? fetchError.message : "Contract nu a fost găsit sau link-ul a expirat."}
+            {fetchError instanceof Error ? fetchError.message : "Contract not found or link has expired."}
           </AlertDescription>
         </Alert>
       </div>
@@ -155,25 +155,25 @@ export default function SignContract() {
         <Card className="max-w-2xl w-full">
           <CardHeader className="text-center">
             <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
-            <CardTitle className="text-2xl text-green-700">Contract Semnat cu Succes!</CardTitle>
+            <CardTitle className="text-2xl text-green-700">Contract Signed Successfully!</CardTitle>
             <CardDescription>
-              Contractul a fost semnat și salvat în sistem. Veți primi o confirmare prin email.
+              The contract has been signed and saved in the system. You will receive an email confirmation.
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
             <div className="bg-gray-50 p-4 rounded-lg mb-6">
-              <h3 className="font-medium text-gray-900 mb-2">Detalii Contract</h3>
+              <h3 className="font-medium text-gray-900 mb-2">Contract Details</h3>
               <div className="space-y-1 text-sm text-gray-600">
-                <p><strong>Numărul contractului:</strong> {(signedContract || contract).orderNumber}</p>
+                <p><strong>Contract Number:</strong> {(signedContract || contract).orderNumber}</p>
                 <p><strong>Template:</strong> {(signedContract || contract).template?.name}</p>
-                <p><strong>Semnat de:</strong> {(signedContract || contract).signedBy || form.getValues('signedBy')}</p>
-                <p><strong>Data semnării:</strong> {formatDate((signedContract || contract).signedAt || new Date())}</p>
-                <p><strong>IP:</strong> {(signedContract || contract).signedIp || 'Se procesează...'}</p>
-                <p><strong>Token semnat:</strong> <span className="font-mono text-xs">{(signedContract || contract).signedToken || 'Se procesează...'}</span></p>
+                <p><strong>Signed by:</strong> {(signedContract || contract).signedBy || form.getValues('signedBy')}</p>
+                <p><strong>Signing Date:</strong> {formatDate((signedContract || contract).signedAt || new Date())}</p>
+                <p><strong>IP:</strong> {(signedContract || contract).signedIp || 'Processing...'}</p>
+                <p><strong>Signed Token:</strong> <span className="font-mono text-xs">{(signedContract || contract).signedToken || 'Processing...'}</span></p>
               </div>
             </div>
             <p className="text-sm text-gray-500">
-              Puteți închide această pagină. Contractul semnat va fi procesat de echipa noastră.
+              You can close this page. The signed contract will be processed by our team.
             </p>
           </CardContent>
         </Card>
@@ -186,8 +186,8 @@ export default function SignContract() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Semnare Contract</h1>
-          <p className="text-gray-600">Vă rugăm să verificați contractul și să-l semnați digital</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Contract Signing</h1>
+          <p className="text-gray-600">Please review the contract and sign it digitally</p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
@@ -197,27 +197,27 @@ export default function SignContract() {
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center">
                   <FileText className="h-5 w-5 mr-2" />
-                  Detalii Contract
+                  Contract Details
                 </div>
                 <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
                   <DialogTrigger asChild>
                     <Button variant="outline" size="sm" className="flex items-center">
                       <Eye className="h-4 w-4 mr-2" />
-                      Previzualizare
+                      Preview
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                     <DialogHeader>
-                      <DialogTitle>Previzualizare Contract</DialogTitle>
+                      <DialogTitle>Contract Preview</DialogTitle>
                       <DialogDescription>
-                        Conținutul complet al contractului pentru semnare
+                        Complete contract content for signing
                       </DialogDescription>
                     </DialogHeader>
                     <div className="mt-4 p-6 bg-white border rounded-lg">
                       <div 
                         className="prose prose-sm max-w-none"
                         dangerouslySetInnerHTML={{ 
-                          __html: contract.template?.content?.replace(/{{[^}]+}}/g, (match) => {
+                          __html: contract.template?.content?.replace(/{{[^}]+}}/g, (match: string) => {
                             const field = match.slice(2, -2).trim();
                             switch (field) {
                               case 'orderNumber':
@@ -270,11 +270,11 @@ export default function SignContract() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-gray-500">Numărul contractului</Label>
+                  <Label className="text-sm font-medium text-gray-500">Contract Number</Label>
                   <p className="text-lg font-semibold">{contract.orderNumber}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-500">Data creării</Label>
+                  <Label className="text-sm font-medium text-gray-500">Creation Date</Label>
                   <p className="text-lg">{formatDate(contract.createdAt) || 'N/A'}</p>
                 </div>
               </div>
@@ -283,7 +283,7 @@ export default function SignContract() {
                 <div className="flex items-center space-x-2">
                   <Euro className="h-4 w-4 text-gray-500" />
                   <div>
-                    <Label className="text-sm font-medium text-gray-500">Valoare</Label>
+                    <Label className="text-sm font-medium text-gray-500">Value</Label>
                     <p className="text-lg font-semibold">{contract.value} {contract.currency}</p>
                   </div>
                 </div>
@@ -293,7 +293,7 @@ export default function SignContract() {
                 <div className="flex items-center space-x-2">
                   <Calendar className="h-4 w-4 text-gray-500" />
                   <div>
-                    <Label className="text-sm font-medium text-gray-500">Perioada</Label>
+                    <Label className="text-sm font-medium text-gray-500">Period</Label>
                     <p className="text-lg">
                       {contract.startDate && formatDate(contract.startDate)} - {' '}
                       {contract.endDate && formatDate(contract.endDate)}
@@ -311,7 +311,7 @@ export default function SignContract() {
                     <User className="h-4 w-4 text-gray-500 mr-2" />
                   )}
                   <Label className="text-sm font-medium text-gray-500">
-                    {contract.beneficiary?.isCompany ? "Companie" : "Persoană Fizică"}
+                    {contract.beneficiary?.isCompany ? "Company" : "Individual"}
                   </Label>
                 </div>
                 
@@ -322,7 +322,7 @@ export default function SignContract() {
                   )}
                   {contract.beneficiary?.isCompany && contract.beneficiary.name && (
                     <p className="text-sm text-gray-600">
-                      <strong>Reprezentant legal:</strong> {contract.beneficiary.name}
+                      <strong>Legal Representative:</strong> {contract.beneficiary.name}
                     </p>
                   )}
                 </div>
@@ -333,19 +333,19 @@ export default function SignContract() {
           {/* Signing Form */}
           <Card>
             <CardHeader>
-              <CardTitle>Semnare Digitală</CardTitle>
+              <CardTitle>Digital Signature</CardTitle>
               <CardDescription>
-                Completați informațiile de mai jos pentru a semna contractul
+                Complete the information below to sign the contract
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div>
-                  <Label htmlFor="signedBy">Numele persoanei care semnează *</Label>
+                  <Label htmlFor="signedBy">Name of the person signing *</Label>
                   <Input
                     id="signedBy"
                     {...form.register("signedBy")}
-                    placeholder="Introduceți numele complet"
+                    placeholder="Enter full name"
                     className="mt-1"
                   />
                   {form.formState.errors.signedBy && (
@@ -355,8 +355,8 @@ export default function SignContract() {
                   )}
                   <p className="text-xs text-gray-500 mt-1">
                     {contract.beneficiary?.isCompany 
-                      ? "Pentru companii, introduceți numele reprezentantului legal"
-                      : "Introduceți numele dumneavoastră complet"
+                      ? "For companies, enter the name of the legal representative"
+                      : "Enter your full name"
                     }
                   </p>
                 </div>
@@ -370,8 +370,8 @@ export default function SignContract() {
                     />
                     <div>
                       <Label htmlFor="agreed" className="text-sm leading-5">
-                        Confirm că am citit și înțeles termenii contractului și sunt de acord cu toate clauzele stipulate. 
-                        Prin semnarea acestui contract, mă angajez să respect toate obligațiile prevăzute.
+                        I confirm that I have read and understood the contract terms and agree with all stipulated clauses. 
+                        By signing this contract, I commit to comply with all provided obligations.
                       </Label>
                       {form.formState.errors.agreed && (
                         <p className="text-sm text-red-600 mt-1">
@@ -397,10 +397,10 @@ export default function SignContract() {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Se semnează contractul...
+                      Signing contract...
                     </>
                   ) : (
-                    "Semnează Contractul"
+                    "Sign Contract"
                   )}
                 </Button>
               </form>

@@ -98,7 +98,7 @@ export function BeneficiaryFormModal({ isOpen, onClose, beneficiary, onSuccess }
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {beneficiary ? "Editează Partener" : "Adaugă Partener Nou"}
+            {beneficiary ? "Edit Partner" : "Add New Partner"}
           </DialogTitle>
         </DialogHeader>
 
@@ -111,7 +111,7 @@ export function BeneficiaryFormModal({ isOpen, onClose, beneficiary, onSuccess }
 
             <div className="flex justify-end space-x-2 pt-4">
               <Button type="button" variant="outline" onClick={handleClose}>
-                Anulează
+                Cancel
               </Button>
               <Button 
                 type="submit" 

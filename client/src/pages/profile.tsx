@@ -144,7 +144,7 @@ export default function Profile() {
       fieldsToFocus.push('email');
     }
     if (!profileData.phone) {
-      missingFields.push('Telefon');
+      missingFields.push('Phone');
       fieldsToFocus.push('phone');
     }
     if (!profileData.role) {
@@ -351,7 +351,7 @@ export default function Profile() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Telefon *</Label>
+                <Label htmlFor="phone">Phone *</Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
@@ -401,11 +401,11 @@ export default function Profile() {
                   onClick={handleSave}
                   disabled={updateProfileMutation.isPending || isLoading}
                   className="bg-blue-600 hover:bg-blue-700"
-                  title="Salvează informațiile profilului"
-                  aria-label="Salvează informațiile profilului"
+                  title="Save profile information"
+                  aria-label="Save profile information"
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  {updateProfileMutation.isPending ? "Se salvează..." : "Salvează Profil"}
+                  {updateProfileMutation.isPending ? "Saving..." : "Save Profile"}
                 </Button>
               </div>
               </CardContent>

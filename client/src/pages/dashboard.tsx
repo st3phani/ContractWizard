@@ -89,7 +89,7 @@ export default function Dashboard() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "A apărut o eroare la descărcarea contractului.",
+        description: "An error occurred while downloading the contract.",
         variant: "destructive",
       });
     }
@@ -98,16 +98,16 @@ export default function Dashboard() {
   const handleEmail = async (contract: ContractWithDetails) => {
     try {
       await apiRequest("POST", `/api/contracts/${contract.id}/email`, {
-        recipient: contract.beneficiary.email,
-        subject: `Contract ${contract.template.name} - Nr. ${contract.orderNumber}`,
-        message: `Bună ziua,
+        recipient: contract.beneficiary?.email || '',
+        subject: `Contract ${contract.template?.name || 'N/A'} - Nr. ${contract.orderNumber}`,
+        message: `Hello,
 
-Vă transmitem contractul pentru semnare.
+We are sending you the contract for signing.
 
-Pentru a semna contractul, vă rugăm să accesați link-ul din emailul pe care îl veți primi.
+To sign the contract, please access the link in the email you will receive.
 
-Mulțumim,
-Echipa Contract Manager`,
+Thank you,
+Contract Manager Team`,
         attachPDF: true,
       });
 

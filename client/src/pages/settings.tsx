@@ -59,12 +59,12 @@ export default function Settings() {
 
   // Update system settings when data is loaded
   useEffect(() => {
-    if (existingSystemSettings) {
+    if (existingSystemSettings && typeof existingSystemSettings === 'object') {
       setSystemSettings({
-        language: existingSystemSettings.language || "ro",
-        currency: existingSystemSettings.currency || "RON",
-        dateFormat: existingSystemSettings.dateFormat || "dd/mm/yyyy",
-        autoBackup: existingSystemSettings.autoBackup ?? true,
+        language: (existingSystemSettings as any).language || "ro",
+        currency: (existingSystemSettings as any).currency || "RON",
+        dateFormat: (existingSystemSettings as any).dateFormat || "dd/mm/yyyy",
+        autoBackup: (existingSystemSettings as any).autoBackup ?? true,
       });
     }
   }, [existingSystemSettings]);
@@ -86,14 +86,14 @@ export default function Settings() {
       queryClient.invalidateQueries({ queryKey: ["/api/company-settings"] });
       toast({
         title: "Success",
-        description: "Setările companiei au fost salvate cu succes!",
+        description: "Company settings have been saved successfully!",
         className: "bg-green-600 text-white border-green-600",
       });
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "A apărut o eroare la salvarea setărilor.",
+        description: "An error occurred while saving settings.",
         variant: "destructive",
       });
     },
@@ -128,7 +128,7 @@ export default function Settings() {
       fieldsToFocus.push('companyRegistrationNumber');
     }
     if (!companySettings.legalRepresentative) {
-      missingFields.push('Reprezentant Legal');
+      missingFields.push('Legal Representative');
     }
 
     if (missingFields.length > 0) {
@@ -151,14 +151,15 @@ export default function Settings() {
 
       toast({
         title: "Error",
-        description: `Următoarele câmpuri sunt obligatorii: ${missingFields.join(', ')}`,
+        description: `The following fields are required: ${missingFields.join(', ')}`,
         variant: "destructive",
       });
       return;
     }
 
     // Remove red borders on successful validation
-    allFields.forEach(fieldId => {
+    const allFieldIds = ['company-name', 'company-address', 'company-phone', 'company-email', 'company-cui', 'company-registration', 'company-legal'];
+    allFieldIds.forEach((fieldId: string) => {
       const element = document.getElementById(fieldId);
       if (element) {
         element.classList.remove('field-error');
@@ -177,14 +178,14 @@ export default function Settings() {
       queryClient.invalidateQueries({ queryKey: ["/api/system-settings"] });
       toast({
         title: "Success",
-        description: "Setările de sistem au fost salvate cu succes!",
+        description: "System settings have been saved successfully!",
         className: "bg-green-600 text-white border-green-600",
       });
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "A apărut o eroare la salvarea setărilor de sistem.",
+        description: "An error occurred while saving system settings.",
         variant: "destructive",
       });
     },
@@ -349,7 +350,7 @@ export default function Settings() {
                   className="bg-blue-600 hover:bg-blue-700"
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  {saveCompanySettingsMutation.isPending ? "Se salvează..." : "Salvează Informații Companie"}
+                  {saveCompanySettingsMutation.isPending ? "Saving..." : "Save Company Information"}
                 </Button>
               </div>
             </CardContent>
@@ -420,11 +421,11 @@ export default function Settings() {
                   onClick={handleSaveSystemSettings} 
                   disabled={saveSystemSettingsMutation.isPending}
                   className="bg-blue-600 hover:bg-blue-700"
-                  title="Salvează setările de sistem"
-                  aria-label="Salvează setările de sistem"
+                  title="Save system settings"
+                  aria-label="Save system settings"
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  {saveSystemSettingsMutation.isPending ? "Se salvează..." : "Salvează Setări Sistem"}
+                  {saveSystemSettingsMutation.isPending ? "Saving..." : "Save System Settings"}
                 </Button>
               </div>
             </CardContent>

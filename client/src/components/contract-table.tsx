@@ -239,7 +239,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
         
         {totalItems === 0 && (
           <div className="text-center py-8 text-gray-500">
-            Nu au fost găsite contracte
+            No contracts found
           </div>
         )}
 

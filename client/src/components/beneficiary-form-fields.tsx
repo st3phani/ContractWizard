@@ -105,6 +105,7 @@ export function BeneficiaryFormFields({ control, watch, namePrefix = "" }: Benef
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
               control={control}
+              name={`${prefix}name`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Legal Representative *</FormLabel>

@@ -29,7 +29,7 @@ export default function EmailTest() {
       queryClient.invalidateQueries({ queryKey: ["/api/email/logs"] });
       toast({
         title: "Success",
-        description: "Log-urile de email au fost șterse!",
+        description: "Email logs have been cleared!",
         className: "bg-green-600 text-white border-green-600",
       });
     },
@@ -42,13 +42,13 @@ export default function EmailTest() {
     if (result.data?.status === 'ready') {
       toast({
         title: "Success",
-        description: "Sistemul de email funcționează corect!",
+        description: "Email system is working correctly!",
         className: "bg-green-600 text-white border-green-600",
       });
     } else {
       toast({
         title: "Warning", 
-        description: "Sistemul de email are probleme.",
+        description: "Email system has issues.",
         variant: "destructive",
       });
     }
@@ -91,7 +91,7 @@ export default function EmailTest() {
         
         <div className="space-y-2">
           <p className="text-sm text-gray-600">
-            {emailStatus?.message || 'Se testează conexiunea...'}
+            {emailStatus?.message || 'Testing connection...'}
           </p>
           
           {emailStatus?.testingMode && (
@@ -117,7 +117,7 @@ export default function EmailTest() {
                 disabled={clearLogsMutation.isPending}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Șterge Log-uri
+                Clear Logs
               </Button>
             </div>
             
