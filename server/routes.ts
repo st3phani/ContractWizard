@@ -854,6 +854,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/system-settings", async (req, res) => {
     try {
       const settings = await storage.getSystemSettings();
+      console.log('DEBUG GET: settings.updatedAt type:', typeof settings?.updatedAt, 'value:', settings?.updatedAt);
       // Force string serialization for updatedAt
       const response = {
         ...settings,
@@ -863,6 +864,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             ? settings.updatedAt.toISOString().slice(0, 19).replace('T', ' ')
             : '2025-07-30 00:00:00'
       };
+      console.log('DEBUG GET: response.updatedAt type:', typeof response.updatedAt, 'value:', response.updatedAt);
       res.json(response);
     } catch (error) {
       console.error("Error fetching system settings:", error);
@@ -875,6 +877,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Use the custom schema that accepts the old format
       const validatedData = updateSystemSettingsSchema.parse(req.body);
       const updatedSettings = await storage.updateSystemSettings(validatedData);
+      console.log('DEBUG PUT: updatedSettings.updatedAt type:', typeof updatedSettings?.updatedAt, 'value:', updatedSettings?.updatedAt);
       // Force string serialization for updatedAt
       const response = {
         ...updatedSettings,
@@ -884,6 +887,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             ? updatedSettings.updatedAt.toISOString().slice(0, 19).replace('T', ' ')
             : '2025-07-30 00:00:00'
       };
+      console.log('DEBUG PUT: response.updatedAt type:', typeof response.updatedAt, 'value:', response.updatedAt);
       res.json(response);
     } catch (error) {
       console.error("Error updating system settings:", error);

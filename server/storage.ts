@@ -1072,6 +1072,7 @@ export class DatabaseStorage implements IStorage {
         
         // Track the latest timestamp - now it's already formatted as string from DB
         if (setting.updatedAt) {
+          console.log('DEBUG: setting.updatedAt type:', typeof setting.updatedAt, 'value:', setting.updatedAt);
           if (!latestTimestamp || setting.updatedAt > latestTimestamp) {
             latestTimestamp = setting.updatedAt;
           }
@@ -1081,6 +1082,7 @@ export class DatabaseStorage implements IStorage {
       // Set the formatted timestamp as string
       if (latestTimestamp) {
         settingsObject.updatedAt = latestTimestamp;
+        console.log('DEBUG: final updatedAt type:', typeof settingsObject.updatedAt, 'value:', settingsObject.updatedAt);
       }
       
       return settingsObject;
