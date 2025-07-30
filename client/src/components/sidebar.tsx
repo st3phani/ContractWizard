@@ -19,7 +19,7 @@ const navigation = [
   { name: "Contract Nou", href: "/contract-form", icon: Plus },
   { name: "Contracte", href: "/contracts", icon: FolderOpen },
   { name: "Template-uri", href: "/templates", icon: FileText },
-  { name: "Parteneri", href: "/beneficiaries", icon: Users },
+  { name: "Parteneri", href: "/partners", icon: Users },
 ];
 
 export default function Sidebar() {

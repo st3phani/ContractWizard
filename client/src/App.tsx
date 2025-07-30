@@ -49,7 +49,7 @@ function Router() {
         <Route path="/contract-form" component={ContractForm} />
         <Route path="/contracts" component={Contracts} />
         <Route path="/templates" component={Templates} />
-        <Route path="/beneficiaries" component={Beneficiaries} />
+        <Route path="/partners" component={Beneficiaries} />
         <Route path="/profile" component={Profile} />
         <Route path="/settings" component={Settings} />
         <Route component={NotFound} />
