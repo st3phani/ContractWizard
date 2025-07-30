@@ -1052,8 +1052,10 @@ export class DatabaseStorage implements IStorage {
       // Convert key-value pairs to object format for backward compatibility
       const settingsObject: any = {
         id: 1, // Keep for compatibility
-        updatedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
+        updatedAt: '2025-07-30 00:00:00' // Default value
       };
+      
+      let latestTimestamp: Date | null = null;
       
       settings.forEach(setting => {
         const key = setting.path.replace('system_', '');
@@ -1062,12 +1064,19 @@ export class DatabaseStorage implements IStorage {
         } else {
           settingsObject[key] = setting.value;
         }
-        // Update the updatedAt with the latest timestamp from any setting
+        
+        // Track the latest timestamp
         if (setting.updatedAt) {
-          const formattedDate = new Date(setting.updatedAt).toISOString().slice(0, 19).replace('T', ' ');
-          settingsObject.updatedAt = formattedDate;
+          if (!latestTimestamp || new Date(setting.updatedAt) > latestTimestamp) {
+            latestTimestamp = new Date(setting.updatedAt);
+          }
         }
       });
+      
+      // Set the formatted timestamp
+      if (latestTimestamp) {
+        settingsObject.updatedAt = latestTimestamp.toISOString().slice(0, 19).replace('T', ' ');
+      }
       
       return settingsObject;
     } catch (error) {
@@ -1117,8 +1126,15 @@ export class DatabaseStorage implements IStorage {
       
       await Promise.all(updatePromises);
       
-      // Return updated settings in old format for compatibility
-      return await this.getSystemSettings();
+      // Return updated settings in old format for compatibility with formatted timestamp
+      const updatedSettings = await this.getSystemSettings();
+      
+      // Ensure updatedAt is a string in the desired format
+      if (updatedSettings && updatedSettings.updatedAt instanceof Date) {
+        updatedSettings.updatedAt = updatedSettings.updatedAt.toISOString().slice(0, 19).replace('T', ' ');
+      }
+      
+      return updatedSettings;
     } catch (error) {
       console.error('Error updating system settings:', error);
       throw error;
