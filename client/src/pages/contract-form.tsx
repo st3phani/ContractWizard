@@ -187,19 +187,9 @@ export default function ContractForm() {
 
   // Reset form with system settings when they load
   React.useEffect(() => {
-    console.log('=== CURRENCY DEBUG ===');
-    console.log('systemSettings:', systemSettings);
-    console.log('isEditing:', isEditing);
-    console.log('editContract:', editContract);
-    
     if (systemSettings && !isEditing && !editContract) {
-      console.log('System settings loaded:', systemSettings);
-      console.log('Setting currency to:', systemSettings.currency);
-      
-      // Force set the currency value directly
+      console.log('System settings loaded - setting currency to:', systemSettings.currency);
       form.setValue('contract.currency', systemSettings.currency || 'RON');
-      
-      console.log('Form currency after setValue:', form.getValues().contract.currency);
     }
   }, [systemSettings, isEditing, form, editContract]);
 
@@ -779,7 +769,7 @@ export default function ContractForm() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Moneda</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue />
