@@ -588,8 +588,8 @@ export default function ContractForm() {
                               role="combobox"
                               aria-expanded={beneficiarySearchOpen}
                               className="flex-1 justify-start min-w-0"
-                              title="Caută beneficiary existent"
-                              aria-label="Caută beneficiary existent"
+                              title="Caută partener existent"
+                              aria-label="Caută partener existent"
                             >
                               {selectedBeneficiary ? (
                                 <div className="flex items-center">
@@ -603,7 +603,7 @@ export default function ContractForm() {
                               ) : (
                                 <>
                                   <Search className="mr-2 h-4 w-4" />
-                                  Caută beneficiary existent...
+                                  Caută partener existent...
                                 </>
                               )}
                             </Button>
@@ -612,7 +612,7 @@ export default function ContractForm() {
                             <Command>
                               <CommandInput placeholder="Caută după nume sau email..." />
                               <CommandList>
-                                <CommandEmpty>Nu s-au găsit beneficiaryi.</CommandEmpty>
+                                <CommandEmpty>Nu s-au găsit parteneri.</CommandEmpty>
                                 <CommandGroup>
                                   {beneficiaries.map((beneficiary) => (
                                     <CommandItem

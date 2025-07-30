@@ -248,7 +248,7 @@ export default function Parteneries() {
   };
 
   const handleDelete = (beneficiary: Beneficiary) => {
-    if (window.confirm("Sunteți sigur că doriți să ștergeți acest beneficiary?")) {
+    if (window.confirm("Sunteți sigur că doriți să ștergeți acest partener?")) {
       deleteBeneficiaryMutation.mutate(beneficiary.id);
     }
   };
@@ -266,13 +266,13 @@ export default function Parteneries() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-semibold text-gray-900">Parteneri</h2>
-              <p className="text-gray-600 mt-1">Gestionați lista de beneficiaryi pentru contracte</p>
+              <p className="text-gray-600 mt-1">Gestionați lista de parteneri pentru contracte</p>
             </div>
             <Button 
               onClick={() => setIsCreateModalOpen(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white"
-              title="Adaugă un beneficiary nou"
-              aria-label="Adaugă un beneficiary nou"
+              title="Adaugă un partener nou"
+              aria-label="Adaugă un partener nou"
             >
               <Plus className="h-4 w-4 mr-2" />
               Partener Nou
@@ -289,7 +289,7 @@ export default function Parteneries() {
                 <div className="relative w-64">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
-                    placeholder="Căutare beneficiaryi..."
+                    placeholder="Căutare parteneri..."
                     value={searchQuery}
                     onChange={(e) => handleSearchChange(e.target.value)}
                     className="pl-10"
@@ -374,8 +374,8 @@ export default function Parteneries() {
                               size="sm"
                               onClick={() => handleEdit(beneficiary)}
                               className="hover:bg-green-50"
-                              title="Editează beneficiaryul"
-                              aria-label="Editează beneficiaryul"
+                              title="Editează partenerul"
+                              aria-label="Editează partenerul"
                             >
                               <Edit className="h-4 w-4 text-green-600" />
                             </Button>
@@ -384,8 +384,8 @@ export default function Parteneries() {
                               size="sm"
                               onClick={() => handleDelete(beneficiary)}
                               className="hover:bg-red-50"
-                              title="Șterge beneficiaryul"
-                              aria-label="Șterge beneficiaryul"
+                              title="Șterge partenerul"
+                              aria-label="Șterge partenerul"
                             >
                               <Trash2 className="h-4 w-4 text-red-600" />
                             </Button>
@@ -399,7 +399,7 @@ export default function Parteneries() {
               
               {totalItems === 0 && !isLoading && (
                 <div className="text-center py-8 text-gray-500">
-                  {searchQuery ? "Nu au fost găsiți beneficiaryi care să corespundă căutării" : "Nu au fost găsiți beneficiaryi"}
+                  {searchQuery ? "Nu au fost găsiți parteneri care să corespundă căutării" : "Nu au fost găsiți parteneri"}
                 </div>
               )}
 
@@ -426,7 +426,7 @@ export default function Parteneries() {
                       </SelectContent>
                     </Select>
                     <span className="text-sm text-gray-700">
-                      din {totalItems} {totalItems === 1 ? 'beneficiary' : 'beneficiaryi'}
+                      din {totalItems} {totalItems === 1 ? 'partener' : 'parteneri'}
                     </span>
                   </div>
 
