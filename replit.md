@@ -122,7 +122,7 @@ Four main entities:
 ```
 Changelog:
 
-- July 30, 2025. **SYSTEM DATE FORMAT CONSISTENCY IMPLEMENTED** - Created useDateFormat hook and updated all pages to respect system_dateFormat setting. Date formatting now consistent across contract forms, signing pages, signed pages, tables, and all components. Hook provides centralized date formatting using system settings with automatic cache loading for optimal performance.
+- July 30, 2025. **SYSTEM DATE FORMAT CONSISTENCY IMPLEMENTED** - Created useDateFormat hook and updated all pages to respect system_dateFormat setting. Date formatting now consistent across contract forms, signing pages, signed pages, tables, and all components. Hook provides centralized date formatting using system settings with automatic cache loading for optimal performance. Contract form date inputs maintain native HTML date functionality with calendar picker while other displays use formatted dates (dd/mm/yyyy with slashes).
 
 - July 30, 2025. **SYSTEM SETTINGS JSON CACHE IMPLEMENTED** - Created automatic JSON cache system for system_settings to enable instant loading of currency, date format, and other settings. Cache file (system-settings-cache.json) is generated automatically when settings are updated and loaded first for immediate availability. Falls back to database when cache doesn't exist. Contract form now loads EUR currency instantly without waiting for database queries.
 
