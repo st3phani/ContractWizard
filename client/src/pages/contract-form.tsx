@@ -95,7 +95,7 @@ const contractFormSchema = z.object({
       invalid_type_error: "Template-ul este obligatoriu",
     }).min(1, "Template-ul este obligatoriu"),
     value: z.string().min(1, "Valoarea contractului este obligatorie"),
-    currency: z.string().default("RON"),
+    currency: z.string(),
     createdDate: z.string().optional(),
     startDate: z.string().min(1, "Data începerii este obligatorie"),
     endDate: z.string().min(1, "Data încheierii este obligatorie"),
@@ -118,8 +118,8 @@ export default function ContractForm() {
   const editContractId = urlParams.get('edit');
   const isEditing = Boolean(editContractId);
 
-  // Fetch system settings for date format
-  const { data: systemSettings } = useQuery<{ dateFormat: DateFormat }>({
+  // Fetch system settings for date format and currency
+  const { data: systemSettings } = useQuery<{ dateFormat: DateFormat; currency: string }>({
     queryKey: ["/api/system-settings"],
   });
 
@@ -159,7 +159,7 @@ export default function ContractForm() {
       contract: {
         templateId: undefined as any,
         value: "",
-        currency: "RON",
+        currency: "RON", // Will be updated when systemSettings loads
         createdDate: new Date().toISOString().split('T')[0], // Current date in YYYY-MM-DD format
         startDate: "",
         endDate: "",
@@ -184,6 +184,13 @@ export default function ContractForm() {
     queryFn: () => editContractId ? fetch(`/api/contracts/${editContractId}`).then(res => res.json()) : null,
     enabled: isEditing && Boolean(editContractId),
   });
+
+  // Update currency when system settings load (for new contracts)
+  React.useEffect(() => {
+    if (systemSettings && !isEditing) {
+      form.setValue('contract.currency', systemSettings.currency || 'RON');
+    }
+  }, [systemSettings, isEditing, form]);
 
   // Update form when editing contract data is loaded
   React.useEffect(() => {
@@ -215,7 +222,7 @@ export default function ContractForm() {
         contract: {
           templateId: contractData.templateId,
           value: contractData.value?.toString() || "",
-          currency: contractData.currency || "RON",
+          currency: contractData.currency || systemSettings?.currency || "RON",
           createdDate,
           startDate,
           endDate,
