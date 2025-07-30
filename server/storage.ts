@@ -1055,7 +1055,7 @@ export class DatabaseStorage implements IStorage {
         updatedAt: '2025-07-30 00:00:00' // Default value
       };
       
-      let latestTimestamp: Date | null = null;
+      let latestTimestamp: string = '';
       
       settings.forEach(setting => {
         const key = setting.path.replace('system_', '');
@@ -1065,17 +1065,21 @@ export class DatabaseStorage implements IStorage {
           settingsObject[key] = setting.value;
         }
         
-        // Track the latest timestamp
+        // Track the latest timestamp as string
         if (setting.updatedAt) {
-          if (!latestTimestamp || new Date(setting.updatedAt) > latestTimestamp) {
-            latestTimestamp = new Date(setting.updatedAt);
+          const formattedTimestamp = setting.updatedAt instanceof Date 
+            ? setting.updatedAt.toISOString().slice(0, 19).replace('T', ' ')
+            : String(setting.updatedAt).slice(0, 19).replace('T', ' ');
+          
+          if (!latestTimestamp || formattedTimestamp > latestTimestamp) {
+            latestTimestamp = formattedTimestamp;
           }
         }
       });
       
-      // Set the formatted timestamp
+      // Set the formatted timestamp as string
       if (latestTimestamp) {
-        settingsObject.updatedAt = latestTimestamp.toISOString().slice(0, 19).replace('T', ' ');
+        settingsObject.updatedAt = latestTimestamp;
       }
       
       return settingsObject;
@@ -1127,14 +1131,7 @@ export class DatabaseStorage implements IStorage {
       await Promise.all(updatePromises);
       
       // Return updated settings in old format for compatibility with formatted timestamp
-      const updatedSettings = await this.getSystemSettings();
-      
-      // Ensure updatedAt is a string in the desired format
-      if (updatedSettings && updatedSettings.updatedAt instanceof Date) {
-        updatedSettings.updatedAt = updatedSettings.updatedAt.toISOString().slice(0, 19).replace('T', ' ');
-      }
-      
-      return updatedSettings;
+      return await this.getSystemSettings();
     } catch (error) {
       console.error('Error updating system settings:', error);
       throw error;
