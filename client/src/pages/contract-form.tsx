@@ -791,8 +791,18 @@ export default function ContractForm() {
                           <FormLabel>Data Creării</FormLabel>
                           <FormControl>
                             <Input 
-                              type="date" 
+                              type="text" 
                               {...field}
+                              placeholder={getDateInputFormat(dateFormat)}
+                              value={field.value ? formatDateWithSettings(new Date(field.value)) : formatDateWithSettings(new Date())}
+                              onChange={(e) => {
+                                const parsedDate = parseDate(e.target.value, dateFormat);
+                                if (parsedDate) {
+                                  field.onChange(parsedDate.toISOString().split('T')[0]);
+                                } else {
+                                  field.onChange(e.target.value);
+                                }
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -808,8 +818,18 @@ export default function ContractForm() {
                           <FormLabel>Data Începerii *</FormLabel>
                           <FormControl>
                             <Input 
-                              type="date" 
+                              type="text" 
                               {...field}
+                              placeholder={getDateInputFormat(dateFormat)}
+                              value={field.value ? formatDateWithSettings(new Date(field.value)) : ""}
+                              onChange={(e) => {
+                                const parsedDate = parseDate(e.target.value, dateFormat);
+                                if (parsedDate) {
+                                  field.onChange(parsedDate.toISOString().split('T')[0]);
+                                } else {
+                                  field.onChange(e.target.value);
+                                }
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -825,8 +845,18 @@ export default function ContractForm() {
                           <FormLabel>Data Încheierii *</FormLabel>
                           <FormControl>
                             <Input 
-                              type="date" 
+                              type="text" 
                               {...field}
+                              placeholder={getDateInputFormat(dateFormat)}
+                              value={field.value ? formatDateWithSettings(new Date(field.value)) : ""}
+                              onChange={(e) => {
+                                const parsedDate = parseDate(e.target.value, dateFormat);
+                                if (parsedDate) {
+                                  field.onChange(parsedDate.toISOString().split('T')[0]);
+                                } else {
+                                  field.onChange(e.target.value);
+                                }
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
