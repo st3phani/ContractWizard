@@ -231,7 +231,6 @@ Valoarea totală a contractului este de {{contract.value}} {{contract.currency}}
 Art. 4 - Obligațiile părților
 Părțile își asumă obligațiile prevăzute în legislația în vigoare și în prezentul contract.
 
-{{contract.notes}}
 
 PRESTATOR                    BENEFICIAR
 _________________           _________________`,
@@ -243,7 +242,6 @@ _________________           _________________`,
           { name: "contract.currency", type: "select", options: ["RON", "EUR", "USD"], required: true },
           { name: "contract.startDate", type: "date", required: true },
           { name: "contract.endDate", type: "date", required: true },
-          { name: "contract.notes", type: "textarea", required: false }
         ]),
         createdAt: new Date()
       }
@@ -491,7 +489,7 @@ _________________           _________________`,
       currency: contractData.currency ?? "RON",
       startDate: contractData.startDate ?? null,
       endDate: contractData.endDate ?? null,
-      notes: contractData.notes ?? null,
+
       status: contractData.status ?? "draft",
       providerName: null,
       providerAddress: null,
@@ -586,7 +584,6 @@ _________________           _________________`,
       currency: "RON",
       startDate: null,
       endDate: null,
-      notes: null,
       status: "reserved",
       providerName: companySettings.name,
       providerAddress: companySettings.address,
@@ -980,7 +977,6 @@ export class DatabaseStorage implements IStorage {
         currency: "RON",
         startDate: null,
         endDate: null,
-        notes: null,
         statusId: 2,
         createdAt,
       })
@@ -1408,7 +1404,6 @@ Valoarea totală a contractului este de {{contract.value}} {{contract.currency}}
 Art. 4 - Obligațiile părților
 Părțile își asumă obligațiile prevăzute în legislația în vigoare și în prezentul contract.
 
-{{contract.notes}}
 
 PRESTATOR                    BENEFICIAR
 _________________           _________________`,
@@ -1420,7 +1415,6 @@ _________________           _________________`,
           { name: "contract.currency", type: "select", options: ["RON", "EUR", "USD"], required: true },
           { name: "contract.startDate", type: "date", required: true },
           { name: "contract.endDate", type: "date", required: true },
-          { name: "contract.notes", type: "textarea", required: false }
         ])
       });
     }

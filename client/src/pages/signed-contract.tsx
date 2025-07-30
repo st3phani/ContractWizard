@@ -186,12 +186,7 @@ export default function SignedContractPage() {
                 </div>
               </div>
 
-              {contract.notes && (
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Observații</p>
-                  <p className="text-sm bg-gray-50 p-3 rounded-md">{contract.notes}</p>
-                </div>
-              )}
+
             </CardContent>
           </Card>
 

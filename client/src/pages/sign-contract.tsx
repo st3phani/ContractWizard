@@ -242,8 +242,6 @@ export default function SignContract() {
                                 return contract.startDate ? formatDate(contract.startDate) : '';
                               case 'contract.endDate':
                                 return contract.endDate ? formatDate(contract.endDate) : '';
-                              case 'contract.notes':
-                                return contract.notes || '';
                               case 'provider.name':
                                 return contract.provider?.name || '';
                               case 'provider.address':

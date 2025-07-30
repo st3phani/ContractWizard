@@ -79,7 +79,7 @@ export const contracts = pgTable("contracts", {
   currency: text("currency").notNull().default("RON"),
   startDate: timestamp("start_date"),
   endDate: timestamp("end_date"),
-  notes: text("notes"),
+
   statusId: integer("status_id").notNull().default(1), // references contract_statuses.id
   createdAt: timestamp("created_at").notNull().defaultNow(),
   sentAt: timestamp("sent_at"),

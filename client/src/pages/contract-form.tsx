@@ -100,7 +100,6 @@ const contractFormSchema = z.object({
     createdDate: z.string().optional(),
     startDate: z.string().min(1, "Data începerii este obligatorie"),
     endDate: z.string().min(1, "Data încheierii este obligatorie"),
-    notes: z.string().optional(),
   }),
 });
 
@@ -160,7 +159,6 @@ export default function ContractForm() {
         createdDate: new Date().toISOString().split('T')[0], // Current date in YYYY-MM-DD format
         startDate: "",
         endDate: "",
-        notes: "",
       },
     },
   });
@@ -224,7 +222,7 @@ export default function ContractForm() {
           createdDate,
           startDate,
           endDate,
-          notes: contractData.notes || "",
+
         },
       };
       
@@ -251,7 +249,6 @@ export default function ContractForm() {
             createdDate: data.contract.createdDate || null,
             startDate: data.contract.startDate || null,
             endDate: data.contract.endDate || null,
-            notes: data.contract.notes,
           },
         };
         console.log("UPDATE payload being sent:", JSON.stringify(updatePayload, null, 2));
@@ -268,7 +265,6 @@ export default function ContractForm() {
             createdDate: data.contract.createdDate || null,
             startDate: data.contract.startDate || null,
             endDate: data.contract.endDate || null,
-            notes: data.contract.notes,
             status: "draft",
           },
         });
@@ -308,7 +304,6 @@ export default function ContractForm() {
           createdDate: data.contract.createdDate || null,
           startDate: data.contract.startDate ? parseDate(data.contract.startDate, dateFormat) || new Date(data.contract.startDate) : null,
           endDate: data.contract.endDate ? parseDate(data.contract.endDate, dateFormat) || new Date(data.contract.endDate) : null,
-          notes: data.contract.notes,
           status: "reserved",
         },
       });
@@ -409,7 +404,7 @@ export default function ContractForm() {
         createdDate: formData.contract?.createdDate || "",
         startDate: formData.contract?.startDate || "-",
         endDate: formData.contract?.endDate || "-",
-        notes: formData.contract?.notes || "-",
+
       }
     };
 
@@ -834,19 +829,7 @@ export default function ContractForm() {
                       )}
                     />
 
-                    <FormField
-                      control={form.control}
-                      name="contract.notes"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Observații</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="Observații suplimentare" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+
                   </CardContent>
                 </Card>
 

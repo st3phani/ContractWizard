@@ -351,7 +351,6 @@ export default function Templates() {
                     '{{contract.endDate}}',
                     '{{contract.value}}',
                     '{{contract.currency}}',
-                    '{{contract.notes}}'
                   ].map((variable) => (
                     <div key={variable} className="flex items-center justify-between bg-white px-2 py-1 rounded border">
                       <code className="text-purple-700 text-xs">{variable}</code>
@@ -492,7 +491,6 @@ export default function Templates() {
                       {previewTemplate?.content.includes('{{contract.value}}') && <li>Valoare contract</li>}
                       {previewTemplate?.content.includes('{{contract.startDate}}') && <li>Data început</li>}
                       {previewTemplate?.content.includes('{{contract.endDate}}') && <li>Data sfârșit</li>}
-                      {previewTemplate?.content.includes('{{contract.notes}}') && <li>Observații</li>}
                     </ul>
                   </div>
                 </div>

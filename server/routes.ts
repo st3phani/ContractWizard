@@ -83,7 +83,7 @@ function populateContractTemplate(template: string, data: any): string {
     populated = populated.replace(/\{\{contract\.currency\}\}/g, data.contract.currency || 'RON');
     populated = populated.replace(/\{\{contract\.startDate\}\}/g, data.contract.startDate || '');
     populated = populated.replace(/\{\{contract\.endDate\}\}/g, data.contract.endDate || '');
-    populated = populated.replace(/\{\{contract\.notes\}\}/g, data.contract.notes || '');
+
   }
   
   // Order number and current date
@@ -363,7 +363,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         currency: contractData.currency || "RON",
         startDate: contractData.startDate ? new Date(contractData.startDate) : null,
         endDate: contractData.endDate ? new Date(contractData.endDate) : null,
-        notes: contractData.notes || null,
+
         createdAt: contractData.createdDate ? new Date(contractData.createdDate) : existingContract.createdAt,
         // Change status from "reserved" to "draft" (In Așteptare) when updating
         statusId: existingContract.statusId === 2 ? 1 : existingContract.statusId,
@@ -442,7 +442,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           endDate: contract.endDate?.toLocaleDateString('ro-RO') || '',
           value: contract.value || '',
           currency: contract.currency || 'RON',
-          notes: contract.notes || ''
         },
         provider: {
           name: contract.provider?.name || '',
@@ -508,7 +507,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           endDate: contract.endDate?.toLocaleDateString('ro-RO') || '',
           value: contract.value || '',
           currency: contract.currency || '',
-          notes: contract.notes || ''
         },
         provider: {
           name: contract.provider?.name || '',
