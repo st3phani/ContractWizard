@@ -46,6 +46,7 @@ export default function Dashboard() {
       toast({
         title: "Success",
         description: "Contractul a fost șters cu succes!",
+        className: "bg-green-600 text-white border-green-600",
       });
     },
     onError: () => {
@@ -113,6 +114,7 @@ Echipa Contract Manager`,
       toast({
         title: "Succes",
         description: "Emailul cu contractul pentru semnare a fost trimis cu succes!",
+        className: "bg-green-600 text-white border-green-600",
       });
 
       // Invalidate queries to refresh the data

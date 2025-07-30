@@ -87,6 +87,7 @@ export default function Settings() {
       toast({
         title: "Success",
         description: "Setările companiei au fost salvate cu succes!",
+        className: "bg-green-600 text-white border-green-600",
       });
     },
     onError: () => {
@@ -179,6 +180,7 @@ export default function Settings() {
       toast({
         title: "Success",
         description: "Setările de sistem au fost salvate cu succes!",
+        className: "bg-green-600 text-white border-green-600",
       });
     },
     onError: () => {

@@ -5,7 +5,7 @@ import { queryClient } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import ContractTable from "@/components/contract-table";
 import ContractModal from "@/components/contract-modal";
-
+import { useToast } from "@/hooks/use-toast";
 
 import { Link, useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
@@ -14,6 +14,7 @@ import type { ContractWithDetails } from "@shared/schema";
 export default function ContractsPage() {
   const [, setLocation] = useLocation();
   const [selectedContract, setSelectedContract] = useState<ContractWithDetails | null>(null);
+  const { toast } = useToast();
 
 
   const {
@@ -90,6 +91,7 @@ Echipa Contract Manager`,
       toast({
         title: "Succes",
         description: "Emailul cu contractul pentru semnare a fost trimis cu succes!",
+        className: "bg-green-600 text-white border-green-600",
       });
 
       // Invalidate queries to refresh the data

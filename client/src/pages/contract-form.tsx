@@ -277,6 +277,7 @@ export default function ContractForm() {
       toast({
         title: "Success",
         description: isEditing ? "Contractul a fost actualizat cu succes!" : "Contractul a fost creat cu succes!",
+        className: "bg-green-600 text-white border-green-600",
       });
       setLocation("/contracts");
     },
@@ -313,6 +314,7 @@ export default function ContractForm() {
       toast({
         title: "Success",
         description: "Contractul a fost rezervat cu succes!",
+        className: "bg-green-600 text-white border-green-600",
       });
       setLocation("/");
     },

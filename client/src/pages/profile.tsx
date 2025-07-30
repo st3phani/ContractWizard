@@ -76,6 +76,7 @@ export default function Profile() {
       toast({
         title: "Succes",
         description: "Profilul a fost actualizat cu succes",
+        className: "bg-green-600 text-white border-green-600",
       });
     },
     onError: () => {
@@ -109,6 +110,7 @@ export default function Profile() {
       toast({
         title: "Succes",
         description: "Parola a fost actualizată cu succes",
+        className: "bg-green-600 text-white border-green-600",
       });
       setPasswordData({
         currentPassword: "",

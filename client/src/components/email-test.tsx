@@ -30,6 +30,7 @@ export default function EmailTest() {
       toast({
         title: "Success",
         description: "Log-urile de email au fost șterse!",
+        className: "bg-green-600 text-white border-green-600",
       });
     },
   });
@@ -42,6 +43,7 @@ export default function EmailTest() {
       toast({
         title: "Success",
         description: "Sistemul de email funcționează corect!",
+        className: "bg-green-600 text-white border-green-600",
       });
     } else {
       toast({

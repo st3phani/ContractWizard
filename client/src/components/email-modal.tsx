@@ -56,6 +56,7 @@ Echipa Contract Manager`);
       toast({
         title: "Success",
         description: "Emailul a fost trimis cu succes!",
+        className: "bg-green-600 text-white border-green-600",
       });
 
       onSent();
