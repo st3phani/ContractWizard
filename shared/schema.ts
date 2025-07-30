@@ -41,10 +41,9 @@ export const companySettings = pgTable("company_settings", {
 });
 
 export const systemSettings = pgTable("system_settings", {
-  id: serial("id").primaryKey(),
-  language: text("language").notNull().default("ro"),
-  currency: text("currency").notNull().default("RON"),
-  dateFormat: text("date_format").notNull().default("dd/mm/yyyy"),
+  configId: serial("config_id").primaryKey(),
+  path: text("path").notNull().unique(),
+  value: text("value").notNull(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
