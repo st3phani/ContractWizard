@@ -38,11 +38,11 @@ export function BeneficiaryFormModal({ isOpen, onClose, beneficiary, onSuccess }
 
   const createBeneficiaryMutation = useMutation({
     mutationFn: async (data: InsertBeneficiary) => {
-      const response = await apiRequest("POST", "/api/parteneri", data);
+      const response = await apiRequest("POST", "/api/partners", data);
       return response.json();
     },
     onSuccess: (newBeneficiary: Beneficiary) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/parteneri"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/partners"] });
       onClose();
       form.reset();
       if (onSuccess) {
@@ -60,11 +60,11 @@ export function BeneficiaryFormModal({ isOpen, onClose, beneficiary, onSuccess }
 
   const updateBeneficiaryMutation = useMutation({
     mutationFn: async (data: InsertBeneficiary) => {
-      const response = await apiRequest("PATCH", `/api/parteneri/${beneficiary!.id}`, data);
+      const response = await apiRequest("PATCH", `/api/partners/${beneficiary!.id}`, data);
       return response.json();
     },
     onSuccess: (updatedBeneficiary: Beneficiary) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/parteneri"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/partners"] });
       onClose();
       form.reset();
       if (onSuccess) {

@@ -164,7 +164,7 @@ export default function ContractForm() {
 
   // Fetch beneficiaries for search
   const { data: beneficiaries = [] } = useQuery<Beneficiary[]>({
-    queryKey: ["/api/parteneri"],
+    queryKey: ["/api/partners"],
   });
 
   // Fetch contract data for editing
@@ -425,7 +425,7 @@ export default function ContractForm() {
   // Create beneficiary mutation for modal
   const createBeneficiaryMutation = useMutation({
     mutationFn: async (data: InsertBeneficiary) => {
-      const response = await fetch("/api/parteneri", {
+      const response = await fetch("/api/partners", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -440,7 +440,7 @@ export default function ContractForm() {
       return response.json();
     },
     onSuccess: (newBeneficiary: Beneficiary) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/parteneri"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/partners"] });
       
       // Auto-select the newly created beneficiary
       setSelectedBeneficiary(newBeneficiary);
