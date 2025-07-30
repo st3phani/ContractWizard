@@ -44,7 +44,7 @@ export default function Parteneries() {
 
   // Fetch beneficiaries
   const { data: beneficiaries = [], isLoading } = useQuery<Beneficiary[]>({
-    queryKey: ["/api/beneficiaries"],
+    queryKey: ["/api/parteneri"],
   });
 
   console.log("Beneficiaries data:", beneficiaries);
@@ -84,11 +84,11 @@ export default function Parteneries() {
   const createBeneficiaryMutation = useMutation({
     mutationFn: (data: InsertBeneficiary) => {
       console.log("Sending to API:", data);
-      return apiRequest("POST", "/api/beneficiaries", data);
+      return apiRequest("POST", "/api/parteneri", data);
     },
     onSuccess: (result) => {
       console.log("API Response:", result);
-      queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/parteneri"] });
       setIsCreateModalOpen(false);
       setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
       setSelectedBeneficiary(null);
@@ -106,9 +106,9 @@ export default function Parteneries() {
   // Update beneficiary mutation
   const updateBeneficiaryMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Partial<InsertBeneficiary> }) => 
-      apiRequest("PUT", `/api/beneficiaries/${id}`, data),
+      apiRequest("PUT", `/api/parteneri/${id}`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/parteneri"] });
       setIsCreateModalOpen(false);
       setFormData({ name: "", email: "", phone: "", address: "", cnp: "", companyName: "", companyAddress: "", companyCui: "", companyRegistrationNumber: "", isCompany: false });
       setSelectedBeneficiary(null);
@@ -124,9 +124,9 @@ export default function Parteneries() {
 
   // Delete beneficiary mutation
   const deleteBeneficiaryMutation = useMutation({
-    mutationFn: (id: number) => apiRequest("DELETE", `/api/beneficiaries/${id}`),
+    mutationFn: (id: number) => apiRequest("DELETE", `/api/parteneri/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/beneficiaries"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/parteneri"] });
     },
     onError: () => {
       toast({

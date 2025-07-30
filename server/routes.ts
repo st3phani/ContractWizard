@@ -162,7 +162,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Parteneries
-  app.get("/api/beneficiaries", async (req, res) => {
+  app.get("/api/parteneri", async (req, res) => {
     try {
       const beneficiaries = await storage.getBeneficiaries();
       res.json(beneficiaries);
@@ -171,7 +171,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/beneficiaries/:id", async (req, res) => {
+  app.get("/api/parteneri/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const beneficiary = await storage.getBeneficiary(id);
@@ -184,7 +184,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/beneficiaries", async (req, res) => {
+  app.post("/api/parteneri", async (req, res) => {
     try {
       console.log("Received data:", req.body);
       const beneficiaryData = insertBeneficiarySchema.parse(req.body);
@@ -208,7 +208,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/beneficiaries/:id", async (req, res) => {
+  app.put("/api/parteneri/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const beneficiaryData = req.body;
@@ -225,7 +225,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/beneficiaries/:id", async (req, res) => {
+  app.delete("/api/parteneri/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const deleted = await storage.deleteBeneficiary(id);
