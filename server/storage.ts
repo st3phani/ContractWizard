@@ -1094,7 +1094,7 @@ export class DatabaseStorage implements IStorage {
     try {
       const updatePromises = [];
       
-      const currentDateTime = new Date();
+      const currentDateTime = sql`to_timestamp(${new Date().toISOString().slice(0, 19).replace('T', ' ')}, 'YYYY-MM-DD HH24:MI:SS')`;
       
       // Update each setting individually
       if (settingsData.language !== undefined) {
