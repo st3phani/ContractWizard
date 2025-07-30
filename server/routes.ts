@@ -854,6 +854,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/system-settings", async (req, res) => {
     try {
       const settings = await storage.getSystemSettings();
+      // Ensure updatedAt is a string in the desired format
+      if (settings && settings.updatedAt instanceof Date) {
+        settings.updatedAt = settings.updatedAt.toISOString().slice(0, 19).replace('T', ' ');
+      }
       res.json(settings);
     } catch (error) {
       console.error("Error fetching system settings:", error);
@@ -866,6 +870,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Use the custom schema that accepts the old format
       const validatedData = updateSystemSettingsSchema.parse(req.body);
       const updatedSettings = await storage.updateSystemSettings(validatedData);
+      // Ensure updatedAt is a string in the desired format
+      if (updatedSettings && updatedSettings.updatedAt instanceof Date) {
+        updatedSettings.updatedAt = updatedSettings.updatedAt.toISOString().slice(0, 19).replace('T', ' ');
+      }
       res.json(updatedSettings);
     } catch (error) {
       console.error("Error updating system settings:", error);
