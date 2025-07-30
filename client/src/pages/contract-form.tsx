@@ -159,7 +159,7 @@ export default function ContractForm() {
       contract: {
         templateId: undefined as any,
         value: "",
-        currency: "RON", // Will be updated when systemSettings loads
+        currency: "RON",
         createdDate: new Date().toISOString().split('T')[0], // Current date in YYYY-MM-DD format
         startDate: "",
         endDate: "",
@@ -185,14 +185,21 @@ export default function ContractForm() {
     enabled: isEditing && Boolean(editContractId),
   });
 
-  // Update currency when system settings load (for new contracts)
+  // Reset form with system settings when they load
   React.useEffect(() => {
-    if (systemSettings && !isEditing) {
+    if (systemSettings && !isEditing && !editContract) {
       console.log('System settings loaded:', systemSettings);
       console.log('Setting currency to:', systemSettings.currency);
-      form.setValue('contract.currency', systemSettings.currency || 'RON');
+      const currentValues = form.getValues();
+      form.reset({
+        ...currentValues,
+        contract: {
+          ...currentValues.contract,
+          currency: systemSettings.currency || 'RON'
+        }
+      });
     }
-  }, [systemSettings, isEditing, form]);
+  }, [systemSettings, isEditing, form, editContract]);
 
   // Update form when editing contract data is loaded
   React.useEffect(() => {
