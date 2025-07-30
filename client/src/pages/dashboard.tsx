@@ -45,14 +45,14 @@ export default function Dashboard() {
       queryClient.invalidateQueries({ queryKey: ["/api/contracts/stats"] });
       toast({
         title: "Success",
-        description: "Contractul a fost șters cu succes!",
+        description: "Contract deleted successfully!",
         className: "bg-green-600 text-white border-green-600",
       });
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "A apărut o eroare la ștergerea contractului.",
+        description: "An error occurred while deleting the contract.",
         variant: "destructive",
       });
     },
@@ -112,8 +112,8 @@ Echipa Contract Manager`,
       });
 
       toast({
-        title: "Succes",
-        description: "Emailul cu contractul pentru semnare a fost trimis cu succes!",
+        title: "Success",
+        description: "Email with contract for signing sent successfully!",
         className: "bg-green-600 text-white border-green-600",
       });
 
@@ -122,15 +122,15 @@ Echipa Contract Manager`,
       queryClient.invalidateQueries({ queryKey: ["/api/contracts/stats"] });
     } catch (error) {
       toast({
-        title: "Eroare",
-        description: "A apărut o eroare la trimiterea emailului.",
+        title: "Error",
+        description: "An error occurred while sending the email.",
         variant: "destructive",
       });
     }
   };
 
   const handleDelete = (contract: ContractWithDetails) => {
-    if (window.confirm("Sunteți sigur că doriți să ștergeți acest contract?")) {
+    if (window.confirm("Are you sure you want to delete this contract?")) {
       deleteContractMutation.mutate(contract.id);
     }
   };
@@ -145,8 +145,8 @@ Echipa Contract Manager`,
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900">Dashboard Contracte</h2>
-          <p className="text-gray-600 mt-1">Gestionați contractele dvs. rapid și eficient</p>
+          <h2 className="text-2xl font-semibold text-gray-900">Contracts Dashboard</h2>
+          <p className="text-gray-600 mt-1">Manage your contracts quickly and efficiently</p>
         </div>
       </header>
 
@@ -157,7 +157,7 @@ Echipa Contract Manager`,
 
         {/* Contracts Table */}
         {contractsLoading ? (
-          <div className="text-center py-8">Se încarcă...</div>
+          <div className="text-center py-8">Loading...</div>
         ) : (
           <ContractTable
             contracts={contracts}
@@ -167,7 +167,7 @@ Echipa Contract Manager`,
             onEmail={handleEmail}
             onDelete={handleDelete}
             showPagination={false}
-            title="Contracte Recente (Ultimele 5)"
+            title="Recent Contracts (Latest 5)"
           />
         )}
       </div>

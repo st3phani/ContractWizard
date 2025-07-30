@@ -116,7 +116,7 @@ export default function Parteneries() {
     onError: () => {
       toast({
         title: "Error",
-        description: "A apărut o eroare la actualizarea beneficiaryului.",
+        description: "An error occurred while updating the partner.",
         variant: "destructive",
       });
     },
@@ -131,7 +131,7 @@ export default function Parteneries() {
     onError: () => {
       toast({
         title: "Error",
-        description: "A apărut o eroare la ștergerea beneficiaryului.",
+        description: "An error occurred while deleting the partner.",
         variant: "destructive",
       });
     },
@@ -145,24 +145,24 @@ export default function Parteneries() {
     if (formData.isCompany) {
       // Additional required fields for companies
       if (!formData.companyName) {
-        missingFields.push('Nume Companie');
+        missingFields.push('Company Name');
         fieldsToFocus.push('companyName');
       }
       if (!formData.companyAddress) {
-        missingFields.push('Adresa Companiei');
+        missingFields.push('Company Address');
         fieldsToFocus.push('companyAddress');
       }
       if (!formData.companyCui) {
-        missingFields.push('CUI Companie');
+        missingFields.push('Company CUI');
         fieldsToFocus.push('companyCui');
       }
       if (!formData.companyRegistrationNumber) {
-        missingFields.push('Nr. Înregistrare');
+        missingFields.push('Registration Number');
         fieldsToFocus.push('companyRegistrationNumber');
       }
 
       if (!formData.cnp) {
-        missingFields.push('CNP Reprezentant');
+        missingFields.push('Representative CNP');
         fieldsToFocus.push('cnp');
       }
     } else {
@@ -172,14 +172,14 @@ export default function Parteneries() {
         fieldsToFocus.push('cnp');
       }
       if (!formData.address) {
-        missingFields.push('Adresa');
+        missingFields.push('Address');
         fieldsToFocus.push('address');
       }
     }
 
     // Check common required fields
     if (!formData.name) {
-      missingFields.push('Nume Complet');
+      missingFields.push('Full Name');
       fieldsToFocus.push('name');
     }
     if (!formData.email) {
@@ -187,7 +187,7 @@ export default function Parteneries() {
       fieldsToFocus.push('email');
     }
     if (!formData.phone) {
-      missingFields.push('Telefon');
+      missingFields.push('Phone');
       fieldsToFocus.push('phone');
     }
 
@@ -252,7 +252,7 @@ export default function Parteneries() {
   };
 
   const handleDelete = (beneficiary: Beneficiary) => {
-    if (window.confirm("Sunteți sigur că doriți să ștergeți acest partener?")) {
+    if (window.confirm("Are you sure you want to delete this partner?")) {
       deleteBeneficiaryMutation.mutate(beneficiary.id);
     }
   };
@@ -269,17 +269,17 @@ export default function Parteneries() {
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900">Parteneri</h2>
-              <p className="text-gray-600 mt-1">Gestionați lista de parteneri pentru contracte</p>
+              <h2 className="text-2xl font-semibold text-gray-900">Partners</h2>
+              <p className="text-gray-600 mt-1">Manage the list of partners for contracts</p>
             </div>
             <Button 
               onClick={() => setIsCreateModalOpen(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white"
-              title="Adaugă un partener nou"
-              aria-label="Adaugă un partener nou"
+              title="Add a new partner"
+              aria-label="Add a new partner"
             >
               <Plus className="h-4 w-4 mr-2" />
-              Partener Nou
+              New Partner
             </Button>
           </div>
         </header>
@@ -289,11 +289,11 @@ export default function Parteneries() {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Lista Parteneri</CardTitle>
+                <CardTitle>Partners List</CardTitle>
                 <div className="relative w-64">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
-                    placeholder="Căutare parteneri..."
+                    placeholder="Search partners..."
                     value={searchQuery}
                     onChange={(e) => handleSearchChange(e.target.value)}
                     className="pl-10"
@@ -303,7 +303,7 @@ export default function Parteneries() {
             </CardHeader>
             <CardContent>
               {isLoading ? (
-                <div className="text-center py-8">Se încarcă...</div>
+                <div className="text-center py-8">Loading...</div>
               ) : (
                 <>
                   {paginatedBeneficiaries.length > 0 ? (
@@ -311,11 +311,11 @@ export default function Parteneries() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>ID</TableHead>
-                      <TableHead>Partener</TableHead>
+                      <TableHead>Partner</TableHead>
                       <TableHead>Contact</TableHead>
                       <TableHead>CNP/CUI</TableHead>
-                      <TableHead>Data Creării</TableHead>
-                      <TableHead>Acțiuni</TableHead>
+                      <TableHead>Created Date</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

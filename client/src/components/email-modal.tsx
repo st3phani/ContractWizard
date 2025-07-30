@@ -27,17 +27,17 @@ export default function EmailModal({ contract, isOpen, onClose, onSent }: EmailM
 
   // Initialize form when contract changes
   useEffect(() => {
-    if (contract) {
+    if (contract && contract.beneficiary && contract.template) {
       setRecipient(contract.beneficiary.email);
       setSubject(`Contract ${contract.template.name} - ${contract.orderNumber}`);
-      setMessage(`Bună ziua,
+      setMessage(`Hello,
 
-Vă transmitem în anexă contractul pentru semnare.
+We are sending you the contract for signing as an attachment.
 
-Vă rugăm să îl semnați și să ni-l returnați.
+Please sign it and return it to us.
 
-Mulțumim,
-Echipa Contract Manager`);
+Thank you,
+Contract Manager Team`);
     }
   }, [contract?.id]);
 
@@ -55,7 +55,7 @@ Echipa Contract Manager`);
 
       toast({
         title: "Success",
-        description: "Emailul a fost trimis cu succes!",
+        description: "Email sent successfully!",
         className: "bg-green-600 text-white border-green-600",
       });
 
@@ -64,7 +64,7 @@ Echipa Contract Manager`);
     } catch (error) {
       toast({
         title: "Error",
-        description: "A apărut o eroare la trimiterea emailului.",
+        description: "An error occurred while sending the email.",
         variant: "destructive",
       });
     } finally {
@@ -79,13 +79,13 @@ Echipa Contract Manager`);
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <div className="flex justify-between items-center">
-            <DialogTitle>Trimite la Semnat</DialogTitle>
+            <DialogTitle>Send for Signing</DialogTitle>
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={onClose}
-              title="Închide"
-              aria-label="Închide"
+              title="Close"
+              aria-label="Close"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -94,34 +94,34 @@ Echipa Contract Manager`);
         
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="recipient">Către</Label>
+            <Label htmlFor="recipient">To</Label>
             <Input
               id="recipient"
               type="email"
               value={recipient}
               onChange={(e) => setRecipient(e.target.value)}
-              placeholder="destinatar@email.com"
+              placeholder="recipient@email.com"
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="subject">Subiect</Label>
+            <Label htmlFor="subject">Subject</Label>
             <Input
               id="subject"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              placeholder="Subiectul emailului"
+              placeholder="Email subject"
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="message">Mesaj</Label>
+            <Label htmlFor="message">Message</Label>
             <Textarea
               id="message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={6}
-              placeholder="Conținutul emailului..."
+              placeholder="Email content..."
             />
           </div>
           
@@ -131,7 +131,7 @@ Echipa Contract Manager`);
               checked={attachPDF}
               onCheckedChange={(checked) => setAttachPDF(checked as boolean)}
             />
-            <Label htmlFor="attachPDF">Atașează contract în format PDF</Label>
+            <Label htmlFor="attachPDF">Attach contract in PDF format</Label>
           </div>
         </div>
         
@@ -139,19 +139,19 @@ Echipa Contract Manager`);
           <Button 
             variant="outline" 
             onClick={onClose}
-            title="Anulează trimiterea"
-            aria-label="Anulează trimiterea"
+            title="Cancel sending"
+            aria-label="Cancel sending"
           >
-            Anulează
+            Cancel
           </Button>
           <Button 
             onClick={handleSend} 
             disabled={isSending}
-            title="Trimite la semnat"
-            aria-label="Trimite la semnat"
+            title="Send for signing"
+            aria-label="Send for signing"
           >
             <PenTool className="h-4 w-4 mr-1" />
-            {isSending ? "Se trimite..." : "Trimite la Semnat"}
+            {isSending ? "Sending..." : "Send for Signing"}
           </Button>
         </div>
       </DialogContent>

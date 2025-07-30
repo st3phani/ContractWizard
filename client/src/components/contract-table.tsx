@@ -110,13 +110,13 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
     <Card className="shadow-sm">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>{title || "Contracte"}</CardTitle>
+          <CardTitle>{title || "Contracts"}</CardTitle>
           {showPagination && (
             <div className="flex items-center space-x-3">
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Caută contracte..."
+                  placeholder="Search contracts..."
                   value={searchTerm}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   className="pl-10"
@@ -124,14 +124,14 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
               </div>
               <Select value={statusFilter} onValueChange={handleStatusChange}>
                 <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Toate statusurile" />
+                  <SelectValue placeholder="All statuses" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Toate statusurile</SelectItem>
-                  <SelectItem value="draft">În Așteptare</SelectItem>
-                  <SelectItem value="signed">Semnat</SelectItem>
-                  <SelectItem value="completed">Finalizat</SelectItem>
-                  <SelectItem value="reserved">Rezervat</SelectItem>
+                  <SelectItem value="all">All statuses</SelectItem>
+                  <SelectItem value="draft">Pending</SelectItem>
+                  <SelectItem value="signed">Signed</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="reserved">Reserved</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -142,12 +142,12 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nr. Ordine</TableHead>
-              <TableHead>Partener</TableHead>
-              <TableHead>Tip Contract</TableHead>
-              <TableHead>Data Creării</TableHead>
+              <TableHead>Order No.</TableHead>
+              <TableHead>Partner</TableHead>
+              <TableHead>Contract Type</TableHead>
+              <TableHead>Created Date</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Acțiuni</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -167,11 +167,11 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>{contract.template?.name || 'Template șters'}</TableCell>
+                <TableCell>{contract.template?.name || 'Deleted template'}</TableCell>
                 <TableCell>{formatDate(contract.createdAt)}</TableCell>
                 <TableCell>
                   <Badge className={getStatusColor(contract.status?.statusCode || "")}>
-                    {contract.status?.statusLabel || "Necunoscut"}
+                    {contract.status?.statusLabel || "Unknown"}
                   </Badge>
                 </TableCell>
                 <TableCell>
@@ -182,8 +182,8 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                       onClick={() => canPerformActions(contract) ? onView(contract) : undefined}
                       disabled={!canPerformActions(contract)}
                       className={!canPerformActions(contract) ? "opacity-30 cursor-not-allowed" : "hover:bg-blue-50"}
-                      title="Previzualizează contractul"
-                      aria-label="Previzualizează contractul"
+                      title="Preview contract"
+                      aria-label="Preview contract"
                     >
                       <Eye className={`h-4 w-4 ${!canPerformActions(contract) ? "" : "text-blue-600"}`} />
                     </Button>
@@ -192,8 +192,8 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                       size="sm"
                       onClick={() => onEdit(contract)}
                       className="hover:bg-green-50"
-                      title="Editează contractul"
-                      aria-label="Editează contractul"
+                      title="Edit contract"
+                      aria-label="Edit contract"
                     >
                       <Edit className="h-4 w-4 text-green-600" />
                     </Button>
@@ -203,8 +203,8 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                       onClick={() => canPerformActions(contract) ? onDownload(contract) : undefined}
                       disabled={!canPerformActions(contract)}
                       className={!canPerformActions(contract) ? "opacity-30 cursor-not-allowed" : "hover:bg-indigo-50"}
-                      title="Descarcă contractul ca PDF"
-                      aria-label="Descarcă contractul ca PDF"
+                      title="Download contract as PDF"
+                      aria-label="Download contract as PDF"
                     >
                       <Download className={`h-4 w-4 ${!canPerformActions(contract) ? "" : "text-indigo-600"}`} />
                     </Button>
@@ -214,8 +214,8 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                       onClick={() => canSendContract(contract) ? setConfirmSendContract(contract) : undefined}
                       disabled={!canSendContract(contract)}
                       className={!canSendContract(contract) ? "opacity-30 cursor-not-allowed" : "hover:bg-purple-50"}
-                      title="Trimite la semnat"
-                      aria-label="Trimite la semnat"
+                      title="Send for signing"
+                      aria-label="Send for signing"
                     >
                       <PenTool className={`h-4 w-4 ${!canSendContract(contract) ? "" : "text-purple-600"}`} />
                     </Button>
@@ -225,8 +225,8 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                       onClick={() => canDeleteContract(contract) ? onDelete(contract) : undefined}
                       disabled={!canDeleteContract(contract)}
                       className={!canDeleteContract(contract) ? "opacity-30 cursor-not-allowed" : "hover:bg-red-50"}
-                      title="Șterge contractul"
-                      aria-label="Șterge contractul"
+                      title="Delete contract"
+                      aria-label="Delete contract"
                     >
                       <Trash2 className={`h-4 w-4 ${!canDeleteContract(contract) ? "" : "text-red-600"}`} />
                     </Button>
@@ -247,7 +247,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
         {showPagination && totalPages > 1 && (
           <div className="flex items-center justify-between px-6 py-4 border-t">
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-700">Afișare:</span>
+              <span className="text-sm text-gray-700">Showing:</span>
               <Select
                 value={itemsPerPage.toString()}
                 onValueChange={handleItemsPerPageChange}
@@ -263,7 +263,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                 </SelectContent>
               </Select>
               <span className="text-sm text-gray-700">
-                din {totalItems} {totalItems === 1 ? 'contract' : 'contracte'}
+                of {totalItems} {totalItems === 1 ? 'contract' : 'contracts'}
               </span>
             </div>
 
@@ -273,11 +273,11 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                 size="sm"
                 onClick={() => setCurrentPage(currentPage - 1)}
                 disabled={!hasPreviousPage}
-                title="Pagina anterioară"
-                aria-label="Pagina anterioară"
+                title="Previous page"
+                aria-label="Previous page"
               >
                 <ChevronLeft className="h-4 w-4" />
-                Anterior
+                Previous
               </Button>
               
               <div className="flex space-x-1">
@@ -288,8 +288,8 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                     size="sm"
                     onClick={() => setCurrentPage(pageNum)}
                     className="w-8 h-8 p-0"
-                    title={`Mergi la pagina ${pageNum}`}
-                    aria-label={`Mergi la pagina ${pageNum}`}
+                    title={`Go to page ${pageNum}`}
+                    aria-label={`Go to page ${pageNum}`}
                   >
                     {pageNum}
                   </Button>
@@ -301,10 +301,10 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                 size="sm"
                 onClick={() => setCurrentPage(currentPage + 1)}
                 disabled={!hasNextPage}
-                title="Pagina următoare"
-                aria-label="Pagina următoare"
+                title="Next page"
+                aria-label="Next page"
               >
-                Următor
+                Next
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
@@ -317,18 +317,18 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
     <Dialog open={!!confirmSendContract} onOpenChange={() => setConfirmSendContract(null)}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Confirmă Trimiterea la Semnare</DialogTitle>
+          <DialogTitle>Confirm Sending for Signature</DialogTitle>
           <DialogDescription>
-            Ești sigur că vrei să trimiți contractul {confirmSendContract?.orderNumber} la semnare pentru partenerul {confirmSendContract?.beneficiary?.name}?
+            Are you sure you want to send contract {confirmSendContract?.orderNumber} for signature to partner {confirmSendContract?.beneficiary?.name}?
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
           <div className="bg-amber-50 border border-amber-200 rounded-md p-3">
             <p className="text-sm text-amber-800">
-              <strong>Ce se va întâmpla:</strong><br />
-              • Un email cu link-ul de semnare va fi trimis către {confirmSendContract?.beneficiary?.email}<br />
-              • Statusul contractului va fi schimbat în "Trimis"<br />
-              • Partenerul va putea semna contractul digital
+              <strong>What will happen:</strong><br />
+              • An email with the signing link will be sent to {confirmSendContract?.beneficiary?.email}<br />
+              • Contract status will be changed to "Sent"<br />
+              • Partner will be able to digitally sign the contract
             </p>
           </div>
         </div>
@@ -337,13 +337,13 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
             variant="outline" 
             onClick={() => setConfirmSendContract(null)}
           >
-            Anulează
+            Cancel
           </Button>
           <Button 
             onClick={handleConfirmSend}
             className="bg-purple-600 hover:bg-purple-700 text-white"
           >
-            Trimite la Semnare
+            Send for Signing
           </Button>
         </DialogFooter>
       </DialogContent>

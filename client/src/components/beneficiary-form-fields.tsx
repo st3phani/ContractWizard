@@ -23,16 +23,16 @@ export function BeneficiaryFormFields({ control, watch, namePrefix = "" }: Benef
         name={`${prefix}isCompany`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Tip Partener</FormLabel>
+            <FormLabel>Partner Type</FormLabel>
             <Select onValueChange={(value) => field.onChange(value === "true")}>
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="Selectează tipul" />
+                  <SelectValue placeholder="Select type" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="false">Persoană Fizică</SelectItem>
-                <SelectItem value="true">Companie</SelectItem>
+                <SelectItem value="false">Individual</SelectItem>
+                <SelectItem value="true">Company</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />
@@ -49,9 +49,9 @@ export function BeneficiaryFormFields({ control, watch, namePrefix = "" }: Benef
             name={`${prefix}companyName`}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nume Companie *</FormLabel>
+                <FormLabel>Company Name *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Numele companiei" {...field} />
+                  <Input placeholder="Company name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -63,9 +63,9 @@ export function BeneficiaryFormFields({ control, watch, namePrefix = "" }: Benef
             name={`${prefix}companyAddress`}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Adresa Companiei *</FormLabel>
+                <FormLabel>Company Address *</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Adresa completă a companiei" rows={3} {...field} />
+                  <Textarea placeholder="Complete company address" rows={3} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -92,7 +92,7 @@ export function BeneficiaryFormFields({ control, watch, namePrefix = "" }: Benef
               name={`${prefix}companyRegistrationNumber`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nr. Înregistrare *</FormLabel>
+                  <FormLabel>Registration No. *</FormLabel>
                   <FormControl>
                     <Input placeholder="J40/1234/2023" {...field} />
                   </FormControl>
@@ -107,9 +107,9 @@ export function BeneficiaryFormFields({ control, watch, namePrefix = "" }: Benef
               control={control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Reprezentant Legal *</FormLabel>
+                  <FormLabel>Legal Representative *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Numele reprezentantului legal" {...field} />
+                    <Input placeholder="Legal representative name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -121,9 +121,9 @@ export function BeneficiaryFormFields({ control, watch, namePrefix = "" }: Benef
               name={`${prefix}cnp`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>CNP Reprezentant *</FormLabel>
+                  <FormLabel>Representative CNP *</FormLabel>
                   <FormControl>
-                    <Input placeholder="CNP reprezentant legal" {...field} />
+                    <Input placeholder="Legal representative CNP" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -140,9 +140,9 @@ export function BeneficiaryFormFields({ control, watch, namePrefix = "" }: Benef
               name={`${prefix}name`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nume Complet *</FormLabel>
+                  <FormLabel>Full Name *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Numele complet al beneficiaryului" {...field} />
+                    <Input placeholder="Partner's full name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -169,9 +169,9 @@ export function BeneficiaryFormFields({ control, watch, namePrefix = "" }: Benef
             name={`${prefix}address`}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Adresa *</FormLabel>
+                <FormLabel>Address *</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Adresa completă" rows={3} {...field} />
+                  <Textarea placeholder="Complete address" rows={3} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -189,7 +189,7 @@ export function BeneficiaryFormFields({ control, watch, namePrefix = "" }: Benef
             <FormItem>
               <FormLabel>Email *</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="adresa@email.com" {...field} />
+                <Input type="email" placeholder="email@address.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -201,7 +201,7 @@ export function BeneficiaryFormFields({ control, watch, namePrefix = "" }: Benef
           name={`${prefix}phone`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Telefon *</FormLabel>
+              <FormLabel>Phone *</FormLabel>
               <FormControl>
                 <Input placeholder="+40 xxx xxx xxx" {...field} />
               </FormControl>

@@ -16,10 +16,10 @@ import type { UserProfile } from "@shared/schema";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: BarChart3 },
-  { name: "Contract Nou", href: "/contract-form", icon: Plus },
-  { name: "Contracte", href: "/contracts", icon: FolderOpen },
-  { name: "Template-uri", href: "/templates", icon: FileText },
-  { name: "Parteneri", href: "/partners", icon: Users },
+  { name: "New Contract", href: "/contract-form", icon: Plus },
+  { name: "Contracts", href: "/contracts", icon: FolderOpen },
+  { name: "Templates", href: "/templates", icon: FileText },
+  { name: "Partners", href: "/partners", icon: Users },
 ];
 
 export default function Sidebar() {
@@ -96,24 +96,24 @@ export default function Sidebar() {
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56">
-            <DropdownMenuLabel>Contul meu</DropdownMenuLabel>
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <Link href="/profile">
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
-                <span>Profil</span>
+                <span>Profile</span>
               </DropdownMenuItem>
             </Link>
             <Link href="/settings">
               <DropdownMenuItem>
                 <Settings className="mr-2 h-4 w-4" />
-                <span>Setări</span>
+                <span>Settings</span>
               </DropdownMenuItem>
             </Link>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <LogOut className="mr-2 h-4 w-4" />
-              <span>Deconectare</span>
+              <span>Sign Out</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -14,35 +14,35 @@ interface StatsCardsProps {
 export default function StatsCards({ stats }: StatsCardsProps) {
   const cards = [
     {
-      title: "Contracte",
+      title: "Contracts",
       value: stats.totalContracts,
       icon: File,
       bgColor: "bg-yellow-100",
       iconColor: "text-yellow-700",
     },
     {
-      title: "Rezervate",
+      title: "Reserved",
       value: stats.reservedContracts,
       icon: Calendar,
       bgColor: "bg-blue-100",
       iconColor: "text-blue-600",
     },
     {
-      title: "Așteptare",
+      title: "Pending",
       value: stats.pendingContracts,
       icon: Clock,
       bgColor: "bg-orange-100",
       iconColor: "text-orange-600",
     },
     {
-      title: "Semnate",
+      title: "Signed",
       value: stats.signedContracts,
       icon: Send,
       bgColor: "bg-purple-100",
       iconColor: "text-purple-600",
     },
     {
-      title: "Finalizate",
+      title: "Completed",
       value: stats.completedContracts,
       icon: CheckCircle,
       bgColor: "bg-green-100",

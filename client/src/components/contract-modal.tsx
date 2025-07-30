@@ -41,13 +41,13 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
           if (data.content) {
             setPreviewContent(data.content);
           } else {
-            setPreviewContent("Nu s-a putut încărca conținutul contractului.");
+            setPreviewContent("Could not load contract content.");
           }
           setIsLoading(false);
         })
         .catch(error => {
           console.error('Failed to load preview:', error);
-          setPreviewContent(`Eroare la încărcarea contractului: ${error.message}`);
+          setPreviewContent(`Error loading contract: ${error.message}`);
           setIsLoading(false);
         });
     }
@@ -60,18 +60,18 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto [&>button]:right-2 [&>button]:top-2">
         <DialogHeader>
           <div className="flex justify-between items-center">
-            <DialogTitle>Previzualizare Contract</DialogTitle>
+            <DialogTitle>Contract Preview</DialogTitle>
             <div className="flex space-x-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => onDownload(contract)}
                 className="hover:bg-indigo-50 border-indigo-200"
-                title="Descarcă contractul ca PDF"
-                aria-label="Descarcă contractul ca PDF"
+                title="Download contract as PDF"
+                aria-label="Download contract as PDF"
               >
                 <Download className="h-4 w-4 mr-1 text-indigo-600" />
-                Descarcă PDF
+                Download PDF
               </Button>
               <Button
                 variant="outline"
@@ -79,11 +79,11 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
                 onClick={() => canSendContract(contract) ? onEmail(contract) : undefined}
                 disabled={!canSendContract(contract)}
                 className={!canSendContract(contract) ? "opacity-30 cursor-not-allowed" : "hover:bg-purple-50 border-purple-200"}
-                title="Trimite la semnat"
-                aria-label="Trimite la semnat"
+                title="Send for signing"
+                aria-label="Send for signing"
               >
                 <PenTool className={`h-4 w-4 mr-1 ${!canSendContract(contract) ? "" : "text-purple-600"}`} />
-                Trimite la Semnat
+                Send for Signing
               </Button>
             </div>
           </div>
@@ -92,7 +92,7 @@ export default function ContractModal({ contract, isOpen, onClose, onDownload, o
         <div className="bg-white border border-gray-200 rounded-lg p-8 min-h-96">
           <div className="space-y-6 text-sm text-gray-700 leading-relaxed">
             {isLoading ? (
-              <div className="text-center py-8">Se încarcă contractul...</div>
+              <div className="text-center py-8">Loading contract...</div>
             ) : (
               <div 
                 dangerouslySetInnerHTML={{ __html: previewContent }}

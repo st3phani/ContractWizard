@@ -68,7 +68,7 @@ export default function ContractsPage() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      console.error('Eroare la descărcarea PDF-ului:', error);
+      console.error('Error downloading PDF:', error);
     }
   };
 
@@ -76,21 +76,21 @@ export default function ContractsPage() {
     try {
       await apiRequest("POST", `/api/contracts/${contract.id}/email`, {
         recipient: contract.beneficiary.email,
-        subject: `Contract ${contract.template.name} - Nr. ${contract.orderNumber}`,
-        message: `Bună ziua,
+        subject: `Contract ${contract.template.name} - No. ${contract.orderNumber}`,
+        message: `Hello,
 
-Vă transmitem contractul pentru semnare.
+We are sending you the contract for signing.
 
-Pentru a semna contractul, vă rugăm să accesați link-ul din emailul pe care îl veți primi.
+To sign the contract, please access the link from the email you will receive.
 
-Mulțumim,
-Echipa Contract Manager`,
+Thank you,
+Contract Manager Team`,
         attachPDF: true,
       });
 
       toast({
-        title: "Succes",
-        description: "Emailul cu contractul pentru semnare a fost trimis cu succes!",
+        title: "Success",
+        description: "Email with contract for signing sent successfully!",
         className: "bg-green-600 text-white border-green-600",
       });
 
@@ -98,15 +98,15 @@ Echipa Contract Manager`,
       queryClient.invalidateQueries({ queryKey: ["/api/contracts"] });
     } catch (error) {
       toast({
-        title: "Eroare",
-        description: "A apărut o eroare la trimiterea emailului.",
+        title: "Error",
+        description: "An error occurred while sending the email.",
         variant: "destructive",
       });
     }
   };
 
   const handleDelete = (contract: ContractWithDetails) => {
-    if (confirm("Ești sigur că vrei să ștergi acest contract?")) {
+    if (confirm("Are you sure you want to delete this contract?")) {
       deleteContractMutation.mutate(contract.id);
     }
   };
@@ -114,7 +114,7 @@ Echipa Contract Manager`,
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-lg">Se încarcă contractele...</div>
+        <div className="text-lg">Loading contracts...</div>
       </div>
     );
   }
@@ -122,7 +122,7 @@ Echipa Contract Manager`,
   if (error) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-lg text-red-600">Eroare la încărcarea contractelor</div>
+        <div className="text-lg text-red-600">Error loading contracts</div>
       </div>
     );
   }
@@ -133,17 +133,17 @@ Echipa Contract Manager`,
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
         <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900">Contracte</h2>
-              <p className="text-gray-600 mt-1">Gestionează toate contractele din sistem</p>
+              <h2 className="text-2xl font-semibold text-gray-900">Contracts</h2>
+              <p className="text-gray-600 mt-1">Manage all contracts in the system</p>
             </div>
             <Link href="/contract-form">
               <Button 
                 className="bg-blue-600 hover:bg-blue-700"
-                title="Creează un contract nou"
-                aria-label="Creează un contract nou"
+                title="Create a new contract"
+                aria-label="Create a new contract"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Contract Nou
+                New Contract
               </Button>
             </Link>
           </div>
