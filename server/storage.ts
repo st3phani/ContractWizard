@@ -302,7 +302,7 @@ _________________           _________________`,
   async createBeneficiary(beneficiary: InsertBeneficiary): Promise<Beneficiary> {
     const id = this.currentBeneficiaryId++;
     const newBeneficiary: Beneficiary = {
-      ...partenery,
+      ...beneficiary,
       id,
       phone: beneficiary.phone ?? null,
       address: beneficiary.address ?? null,
@@ -340,7 +340,7 @@ _________________           _________________`,
       const template = contract.templateId ? this.contractTemplates.get(contract.templateId) : null;
       const beneficiary = contract.beneficiaryId ? this.beneficiaries.get(contract.beneficiaryId) : null;
       
-      // Handle reserved contracts with null template/partenery
+      // Handle reserved contracts with null template/beneficiary
       if (row.contract_statuses === "reserved") {
         const mockTemplate: ContractTemplate = {
           id: 0,
@@ -372,7 +372,7 @@ _________________           _________________`,
         contractsWithDetails.push({
           ...contract,
           template,
-          partenery
+          beneficiary
         });
       }
     }
@@ -422,7 +422,7 @@ _________________           _________________`,
     return {
       ...contract,
       template,
-      partenery
+      beneficiary
     };
   }
 
@@ -468,7 +468,7 @@ _________________           _________________`,
     return {
       ...contract,
       template,
-      partenery
+      beneficiary
     };
   }
 
@@ -510,7 +510,7 @@ _________________           _________________`,
     return {
       ...newContract,
       template,
-      partenery
+      beneficiary
     };
   }
 
@@ -535,7 +535,7 @@ _________________           _________________`,
     return {
       ...updated,
       template,
-      partenery
+      beneficiary
     };
   }
 
@@ -595,7 +595,7 @@ _________________           _________________`,
     
     this.contracts.set(id, reservedContract);
     
-    // Create mock template and partenery for reserved contract
+    // Create mock template and beneficiary for reserved contract
     const mockTemplate: ContractTemplate = { 
       id: 0, 
       name: "Contract Rezervat", 
@@ -974,7 +974,7 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
 
-    // Create mock template and partenery for display
+    // Create mock template and beneficiary for display
     const mockTemplate: ContractTemplate = { 
       id: 0, 
       name: "Contract Rezervat", 

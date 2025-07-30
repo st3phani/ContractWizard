@@ -23,8 +23,8 @@ function populateContractTemplate(template: string, data: any): string {
   let populated = template;
   
   // Process conditional blocks first
-  if (data.partenery) {
-    const isCompany = data.partenery.isCompany;
+  if (data.beneficiary) {
+    const isCompany = data.beneficiary.isCompany;
     
     // Process {{#if isCompany}} blocks
     const companyIfRegex = /\{\{#if\s+isCompany\}\}([\s\S]*?)\{\{\/if\}\}/g;
@@ -63,18 +63,18 @@ function populateContractTemplate(template: string, data: any): string {
   }
   
   // Partenery fields
-  if (data.partenery) {
-    populated = populated.replace(/\{\{partenery\.name\}\}/g, data.partenery.name || '');
-    populated = populated.replace(/\{\{partenery\.email\}\}/g, data.partenery.email || '');
-    populated = populated.replace(/\{\{partenery\.phone\}\}/g, data.partenery.phone || '');
-    populated = populated.replace(/\{\{partenery\.address\}\}/g, data.partenery.address || '');
-    populated = populated.replace(/\{\{partenery\.cnp\}\}/g, data.partenery.cnp || '');
-    // Company fields for partenery
-    populated = populated.replace(/\{\{partenery\.companyName\}\}/g, data.partenery.companyName || '');
-    populated = populated.replace(/\{\{partenery\.companyAddress\}\}/g, data.partenery.companyAddress || '');
-    populated = populated.replace(/\{\{partenery\.companyCui\}\}/g, data.partenery.companyCui || '');
-    populated = populated.replace(/\{\{partenery\.companyRegistrationNumber\}\}/g, data.partenery.companyRegistrationNumber || '');
-    populated = populated.replace(/\{\{partenery\.companyLegalRepresentative\}\}/g, data.partenery.name || '');
+  if (data.beneficiary) {
+    populated = populated.replace(/\{\{beneficiary\.name\}\}/g, data.beneficiary.name || '');
+    populated = populated.replace(/\{\{beneficiary\.email\}\}/g, data.beneficiary.email || '');
+    populated = populated.replace(/\{\{beneficiary\.phone\}\}/g, data.beneficiary.phone || '');
+    populated = populated.replace(/\{\{beneficiary\.address\}\}/g, data.beneficiary.address || '');
+    populated = populated.replace(/\{\{beneficiary\.cnp\}\}/g, data.beneficiary.cnp || '');
+    // Company fields for beneficiary
+    populated = populated.replace(/\{\{beneficiary\.companyName\}\}/g, data.beneficiary.companyName || '');
+    populated = populated.replace(/\{\{beneficiary\.companyAddress\}\}/g, data.beneficiary.companyAddress || '');
+    populated = populated.replace(/\{\{beneficiary\.companyCui\}\}/g, data.beneficiary.companyCui || '');
+    populated = populated.replace(/\{\{beneficiary\.companyRegistrationNumber\}\}/g, data.beneficiary.companyRegistrationNumber || '');
+    populated = populated.replace(/\{\{beneficiary\.companyLegalRepresentative\}\}/g, data.beneficiary.name || '');
   }
   
   // Contract fields
@@ -162,70 +162,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Parteneries
-  app.get("/api/parteneries", async (req, res) => {
+  app.get("/api/beneficiaries", async (req, res) => {
     try {
-      const parteneries = await storage.getBeneficiaries();
-      res.json(parteneries);
+      const beneficiaries = await storage.getBeneficiaries();
+      res.json(beneficiaries);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch parteneries" });
+      res.status(500).json({ message: "Failed to fetch beneficiaries" });
     }
   });
 
-  app.get("/api/parteneries/:id", async (req, res) => {
+  app.get("/api/beneficiaries/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const partenery = await storage.getBeneficiary(id);
-      if (!partenery) {
+      const beneficiary = await storage.getBeneficiary(id);
+      if (!beneficiary) {
         return res.status(404).json({ message: "Partenery not found" });
       }
-      res.json(partenery);
+      res.json(beneficiary);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch partenery" });
+      res.status(500).json({ message: "Failed to fetch beneficiary" });
     }
   });
 
-  app.post("/api/parteneries", async (req, res) => {
+  app.post("/api/beneficiaries", async (req, res) => {
     try {
       console.log("Received data:", req.body);
       const beneficiaryData = insertBeneficiarySchema.parse(req.body);
       console.log("Parsed data:", beneficiaryData);
       
-      // Check if partenery already exists
+      // Check if beneficiary already exists
       const existing = await storage.getBeneficiaryByEmail(beneficiaryData.email);
       if (existing) {
         return res.json(existing);
       }
       
-      const partenery = await storage.createPartenery(beneficiaryData);
-      res.json(partenery);
+      const beneficiary = await storage.createBeneficiary(beneficiaryData);
+      res.json(beneficiary);
     } catch (error) {
-      console.error("Error creating partenery:", error);
+      console.error("Error creating beneficiary:", error);
       if (error instanceof z.ZodError) {
         console.error("Zod validation errors:", error.errors);
-        return res.status(400).json({ message: "Invalid partenery data", errors: error.errors });
+        return res.status(400).json({ message: "Invalid beneficiary data", errors: error.errors });
       }
-      res.status(500).json({ message: "Failed to create partenery" });
+      res.status(500).json({ message: "Failed to create beneficiary" });
     }
   });
 
-  app.put("/api/parteneries/:id", async (req, res) => {
+  app.put("/api/beneficiaries/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const beneficiaryData = req.body;
-      const updatedPartenery = await storage.updatePartenery(id, beneficiaryData);
+      const updatedPartenery = await storage.updateBeneficiary(id, beneficiaryData);
       if (!updatedPartenery) {
         return res.status(404).json({ message: "Partenery not found" });
       }
       res.json(updatedPartenery);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid partenery data", errors: error.errors });
+        return res.status(400).json({ message: "Invalid beneficiary data", errors: error.errors });
       }
-      res.status(500).json({ message: "Failed to update partenery" });
+      res.status(500).json({ message: "Failed to update beneficiary" });
     }
   });
 
-  app.delete("/api/parteneries/:id", async (req, res) => {
+  app.delete("/api/beneficiaries/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const deleted = await storage.deleteBeneficiary(id);
@@ -234,7 +234,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json({ message: "Partenery deleted successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Failed to delete partenery" });
+      res.status(500).json({ message: "Failed to delete beneficiary" });
     }
   });
 
@@ -280,13 +280,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { beneficiaryData, contractData } = req.body;
       
-      // Validate partenery data
+      // Validate beneficiary data
       const validatedBeneficiary = insertBeneficiarySchema.parse(beneficiaryData);
       
-      // Create or get partenery
-      let partenery = await storage.getBeneficiaryByEmail(validatedBeneficiary.email);
-      if (!partenery) {
-        partenery = await storage.createPartenery(validatedBeneficiary);
+      // Create or get beneficiary
+      let beneficiary = await storage.getBeneficiaryByEmail(validatedBeneficiary.email);
+      if (!beneficiary) {
+        beneficiary = await storage.createBeneficiary(validatedBeneficiary);
       }
       
       // Get company settings for auto-population
@@ -299,7 +299,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedContract = insertContractSchema.parse({
         ...contractData,
         orderNumber,
-        parteneryId: partenery.id,
+        beneficiaryId: beneficiary.id,
         value: contractData.value || null,
         startDate: contractData.startDate ? new Date(contractData.startDate) : null,
         endDate: contractData.endDate ? new Date(contractData.endDate) : null,
@@ -334,16 +334,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { beneficiaryData, contractData } = req.body;
       console.log("Full UPDATE request body:", JSON.stringify(req.body, null, 2));
       
-      // Validate partenery data
+      // Validate beneficiary data
       const validatedBeneficiary = insertBeneficiarySchema.parse(beneficiaryData);
       
-      // Update or create partenery
-      let partenery = await storage.getBeneficiaryByEmail(validatedBeneficiary.email);
-      if (!partenery) {
-        partenery = await storage.createPartenery(validatedBeneficiary);
+      // Update or create beneficiary
+      let beneficiary = await storage.getBeneficiaryByEmail(validatedBeneficiary.email);
+      if (!beneficiary) {
+        beneficiary = await storage.createBeneficiary(validatedBeneficiary);
       } else {
-        // Update existing partenery
-        partenery = await storage.updatePartenery(partenery.id, validatedBeneficiary) || partenery;
+        // Update existing beneficiary
+        beneficiary = await storage.updateBeneficiary(beneficiary.id, validatedBeneficiary) || beneficiary;
       }
       
       // Get company settings for auto-population
@@ -358,7 +358,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Prepare update data without full validation (we're updating, not creating)
       const updateData = {
         templateId: contractData.templateId,
-        parteneryId: partenery.id,
+        beneficiaryId: beneficiary.id,
         value: contractData.value ? String(contractData.value) : null,
         currency: contractData.currency || "RON",
         startDate: contractData.startDate ? new Date(contractData.startDate) : null,
@@ -436,7 +436,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const populationData = {
         orderNumber: contract.orderNumber || 0,
         currentDate: new Date().toLocaleDateString('ro-RO'),
-        partenery: contract.partenery || {},
+        beneficiary: contract.beneficiary || {},
         contract: {
           startDate: contract.startDate?.toLocaleDateString('ro-RO') || '',
           endDate: contract.endDate?.toLocaleDateString('ro-RO') || '',
@@ -482,31 +482,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const { populateTemplate, generatePDF } = await import('../utils/pdfGenerator');
       
-      if (!contract.template?.content || !contract.partenery) {
-        return res.status(400).json({ message: "Contract template or partenery data missing" });
+      if (!contract.template?.content || !contract.beneficiary) {
+        return res.status(400).json({ message: "Contract template or beneficiary data missing" });
       }
 
       const populatedContent = populateTemplate(contract.template.content, {
         orderNumber: contract.orderNumber,
         currentDate: new Date().toLocaleDateString('ro-RO'),
-        partenery: {
-          name: contract.partenery.name,
-          email: contract.partenery.email,
-          phone: contract.partenery.phone || '',
-          address: contract.partenery.address || '',
-          cnp: contract.partenery.cnp || '',
-          companyName: contract.partenery.companyName || '',
-          companyAddress: contract.partenery.companyAddress || '',
-          companyCui: contract.partenery.companyCui || '',
-          companyRegistrationNumber: contract.partenery.companyRegistrationNumber || '',
-          companyLegalRepresentative: contract.partenery.name || '',
-          isCompany: contract.partenery.isCompany
+        beneficiary: {
+          name: contract.beneficiary.name,
+          email: contract.beneficiary.email,
+          phone: contract.beneficiary.phone || '',
+          address: contract.beneficiary.address || '',
+          cnp: contract.beneficiary.cnp || '',
+          companyName: contract.beneficiary.companyName || '',
+          companyAddress: contract.beneficiary.companyAddress || '',
+          companyCui: contract.beneficiary.companyCui || '',
+          companyRegistrationNumber: contract.beneficiary.companyRegistrationNumber || '',
+          companyLegalRepresentative: contract.beneficiary.name || '',
+          isCompany: contract.beneficiary.isCompany
         },
         contract: {
           startDate: contract.startDate?.toLocaleDateString('ro-RO') || '',
           endDate: contract.endDate?.toLocaleDateString('ro-RO') || '',
           value: contract.value || '',
           currency: contract.currency || '',
+          notes: contract.notes || '',
         },
         provider: {
           name: contract.provider?.name || '',
@@ -819,10 +820,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const userProfile = await storage.getUserProfile();
         const adminEmail = userProfile?.email || 'admin@contractmanager.ro';
 
-        // Send confirmation email to partenery
+        // Send confirmation email to beneficiary
         await sendSignedContractNotification({
           contract: signedContract,
-          recipientType: 'partenery'
+          recipientType: 'beneficiary'
         });
 
         // Send notification email to administrator
@@ -832,7 +833,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           adminEmail: adminEmail
         });
 
-        console.log('✅ Signed contract notifications sent to partenery and administrator');
+        console.log('✅ Signed contract notifications sent to beneficiary and administrator');
       } catch (emailError) {
         console.error('❌ Failed to send signed contract notifications:', emailError);
         // Don't fail the signing process if email fails
