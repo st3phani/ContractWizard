@@ -23,7 +23,7 @@ import {
   type ContractWithDetails
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 
 export interface IStorage {
   // Contract Templates
@@ -1047,7 +1047,12 @@ export class DatabaseStorage implements IStorage {
   // System Settings - Key-Value approach
   async getSystemSettings(): Promise<any> {
     try {
-      const settings = await db.select().from(systemSettings);
+      const settings = await db.select({
+        configId: systemSettings.configId,
+        path: systemSettings.path,
+        value: systemSettings.value,
+        updatedAt: sql<string>`to_char(${systemSettings.updatedAt}, 'YYYY-MM-DD HH24:MI:SS')`.as('updated_at')
+      }).from(systemSettings);
       
       // Convert key-value pairs to object format for backward compatibility
       const settingsObject: any = {
@@ -1065,14 +1070,10 @@ export class DatabaseStorage implements IStorage {
           settingsObject[key] = setting.value;
         }
         
-        // Track the latest timestamp as string
+        // Track the latest timestamp - now it's already formatted as string from DB
         if (setting.updatedAt) {
-          const formattedTimestamp = setting.updatedAt instanceof Date 
-            ? setting.updatedAt.toISOString().slice(0, 19).replace('T', ' ')
-            : String(setting.updatedAt).slice(0, 19).replace('T', ' ');
-          
-          if (!latestTimestamp || formattedTimestamp > latestTimestamp) {
-            latestTimestamp = formattedTimestamp;
+          if (!latestTimestamp || setting.updatedAt > latestTimestamp) {
+            latestTimestamp = setting.updatedAt;
           }
         }
       });
