@@ -415,18 +415,7 @@ export default function Settings() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Backup Automat</Label>
-                  <p className="text-sm text-gray-500">Efectuează backup automat al datelor zilnic</p>
-                </div>
-                <Switch
-                  checked={systemSettings.autoBackup}
-                  onCheckedChange={(checked) => 
-                    setSystemSettings({ ...systemSettings, autoBackup: checked })
-                  }
-                />
-              </div>
+
 
               <div className="flex justify-end">
                 <Button 
@@ -455,6 +444,21 @@ export default function Settings() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Backup Automat</Label>
+                  <p className="text-sm text-gray-500">Efectuează backup automat al datelor zilnic</p>
+                </div>
+                <Switch
+                  checked={systemSettings.autoBackup}
+                  onCheckedChange={(checked) => 
+                    setSystemSettings({ ...systemSettings, autoBackup: checked })
+                  }
+                />
+              </div>
+              
+              <Separator />
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Button 
                   onClick={handleExportData} 
