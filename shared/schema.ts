@@ -11,7 +11,7 @@ export const contractTemplates = pgTable("contract_templates", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const parteneri = pgTable("parteneri", {
+export const partners = pgTable("partners", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull(),
@@ -111,7 +111,7 @@ export const updateSystemSettingsSchema = z.object({
 
 
 
-export const insertBeneficiarySchema = createInsertSchema(parteneri).omit({
+export const insertBeneficiarySchema = createInsertSchema(partners).omit({
   id: true,
   createdAt: true,
 }).extend({
@@ -157,7 +157,7 @@ export const contractSigningSchema = z.object({
 export type ContractTemplate = typeof contractTemplates.$inferSelect;
 export type InsertContractTemplate = z.infer<typeof insertContractTemplateSchema>;
 
-export type Beneficiary = typeof parteneri.$inferSelect;
+export type Beneficiary = typeof partners.$inferSelect;
 export type InsertBeneficiary = z.infer<typeof insertBeneficiarySchema>;
 
 export type CompanySettings = typeof companySettings.$inferSelect;
@@ -191,7 +191,7 @@ export const contractTemplatesRelations = relations(contractTemplates, ({ many }
   contracts: many(contracts),
 }));
 
-export const parteneriRelations = relations(parteneri, ({ many }) => ({
+export const partnersRelations = relations(partners, ({ many }) => ({
   contracts: many(contracts),
 }));
 
@@ -204,9 +204,9 @@ export const contractsRelations = relations(contracts, ({ one }) => ({
     fields: [contracts.templateId],
     references: [contractTemplates.id],
   }),
-  beneficiary: one(parteneri, {
+  beneficiary: one(partners, {
     fields: [contracts.beneficiaryId],
-    references: [parteneri.id],
+    references: [partners.id],
   }),
   status: one(contractStatuses, {
     fields: [contracts.statusId],

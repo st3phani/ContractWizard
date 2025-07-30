@@ -1,7 +1,7 @@
 import { 
   contracts, 
   contractTemplates, 
-  parteneri,
+  partners,
   companySettings,
   systemSettings,
   userProfiles,
@@ -288,15 +288,15 @@ _________________           _________________`,
 
   // Parteneries
   async getBeneficiaries(): Promise<Beneficiary[]> {
-    return Array.from(this.parteneri.values());
+    return Array.from(this.partners.values());
   }
 
   async getBeneficiary(id: number): Promise<Beneficiary | undefined> {
-    return this.parteneri.get(id);
+    return this.partners.get(id);
   }
 
   async getBeneficiaryByEmail(email: string): Promise<Beneficiary | undefined> {
-    return Array.from(this.parteneri.values()).find(b => b.email === email);
+    return Array.from(this.partners.values()).find(b => b.email === email);
   }
 
   async createBeneficiary(beneficiary: InsertBeneficiary): Promise<Beneficiary> {
@@ -314,21 +314,21 @@ _________________           _________________`,
       isCompany: beneficiary.isCompany ?? false,
       createdAt: new Date()
     };
-    this.parteneri.set(id, newBeneficiary);
+    this.partners.set(id, newBeneficiary);
     return newBeneficiary;
   }
 
   async updateBeneficiary(id: number, beneficiary: Partial<InsertBeneficiary>): Promise<Beneficiary | undefined> {
-    const existing = this.parteneri.get(id);
+    const existing = this.partners.get(id);
     if (!existing) return undefined;
     
     const updated = { ...existing, ...beneficiary };
-    this.parteneri.set(id, updated);
+    this.partners.set(id, updated);
     return updated;
   }
 
   async deleteBeneficiary(id: number): Promise<boolean> {
-    return this.parteneri.delete(id);
+    return this.partners.delete(id);
   }
 
   // Contracts
@@ -338,7 +338,7 @@ _________________           _________________`,
     
     for (const contract of contractsArray) {
       const template = contract.templateId ? this.contractTemplates.get(contract.templateId) : null;
-      const beneficiary = contract.beneficiaryId ? this.parteneri.get(contract.beneficiaryId) : null;
+      const beneficiary = contract.beneficiaryId ? this.partners.get(contract.beneficiaryId) : null;
       
       // Handle reserved contracts with null template/beneficiary
       if (row.contract_statuses === "reserved") {
@@ -385,7 +385,7 @@ _________________           _________________`,
     if (!contract) return undefined;
     
     const template = contract.templateId ? this.contractTemplates.get(contract.templateId) : null;
-    const beneficiary = contract.beneficiaryId ? this.parteneri.get(contract.beneficiaryId) : null;
+    const beneficiary = contract.beneficiaryId ? this.partners.get(contract.beneficiaryId) : null;
     
     // Handle reserved contracts
     if (row.contract_statuses === "reserved") {
@@ -431,7 +431,7 @@ _________________           _________________`,
     if (!contract) return undefined;
     
     const template = contract.templateId ? this.contractTemplates.get(contract.templateId) : null;
-    const beneficiary = contract.beneficiaryId ? this.parteneri.get(contract.beneficiaryId) : null;
+    const beneficiary = contract.beneficiaryId ? this.partners.get(contract.beneficiaryId) : null;
     
     // Handle reserved contracts
     if (row.contract_statuses === "reserved") {
@@ -501,7 +501,7 @@ _________________           _________________`,
     this.contracts.set(id, newContract);
     
     const template = this.contractTemplates.get(contractData.templateId);
-    const beneficiary = this.parteneri.get(contractData.beneficiaryId);
+    const beneficiary = this.partners.get(contractData.beneficiaryId);
     
     if (!template || !beneficiary) {
       throw new Error("Template or beneficiary not found");
@@ -528,7 +528,7 @@ _________________           _________________`,
     this.contracts.set(id, updated);
     
     const template = this.contractTemplates.get(updated.templateId || 0);
-    const beneficiary = this.parteneri.get(updated.beneficiaryId || 0);
+    const beneficiary = this.partners.get(updated.beneficiaryId || 0);
     
     if (!template || !beneficiary) return undefined;
     
@@ -662,23 +662,23 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getBeneficiaries(): Promise<Beneficiary[]> {
-    const beneficiariesList = await db.select().from(parteneri);
+    const beneficiariesList = await db.select().from(partners);
     return beneficiariesList;
   }
 
   async getBeneficiary(id: number): Promise<Beneficiary | undefined> {
-    const [beneficiary] = await db.select().from(parteneri).where(eq(parteneri.id, id));
+    const [beneficiary] = await db.select().from(partners).where(eq(partners.id, id));
     return beneficiary || undefined;
   }
 
   async getBeneficiaryByEmail(email: string): Promise<Beneficiary | undefined> {
-    const [beneficiary] = await db.select().from(parteneri).where(eq(parteneri.email, email));
+    const [beneficiary] = await db.select().from(partners).where(eq(partners.email, email));
     return beneficiary || undefined;
   }
 
   async createBeneficiary(beneficiary: InsertBeneficiary): Promise<Beneficiary> {
     const [newBeneficiary] = await db
-      .insert(parteneri)
+      .insert(partners)
       .values(beneficiary)
       .returning();
     return newBeneficiary;
@@ -688,13 +688,13 @@ export class DatabaseStorage implements IStorage {
     const [updated] = await db
       .update(beneficiaries)
       .set(beneficiary)
-      .where(eq(parteneri.id, id))
+      .where(eq(partners.id, id))
       .returning();
     return updated || undefined;
   }
 
   async deleteBeneficiary(id: number): Promise<boolean> {
-    const result = await db.delete(beneficiaries).where(eq(parteneri.id, id));
+    const result = await db.delete(beneficiaries).where(eq(partners.id, id));
     return (result.rowCount ?? 0) > 0;
   }
 
@@ -704,7 +704,7 @@ export class DatabaseStorage implements IStorage {
         .select()
         .from(contracts)
         .leftJoin(contractTemplates, eq(contracts.templateId, contractTemplates.id))
-        .leftJoin(parteneri, eq(contracts.beneficiaryId, parteneri.id))
+        .leftJoin(partners, eq(contracts.beneficiaryId, partners.id))
         .leftJoin(contractStatuses, eq(contracts.statusId, contractStatuses.id))
         .orderBy(desc(contracts.id));
 
@@ -1270,7 +1270,7 @@ export class DatabaseStorage implements IStorage {
         .select()
         .from(contracts)
         .leftJoin(contractTemplates, eq(contracts.templateId, contractTemplates.id))
-        .leftJoin(parteneri, eq(contracts.beneficiaryId, parteneri.id))
+        .leftJoin(partners, eq(contracts.beneficiaryId, partners.id))
         .leftJoin(contractStatuses, eq(contracts.statusId, contractStatuses.id))
         .where(eq(contracts.signedToken, token));
 
@@ -1301,7 +1301,7 @@ export class DatabaseStorage implements IStorage {
         .select()
         .from(contracts)
         .leftJoin(contractTemplates, eq(contracts.templateId, contractTemplates.id))
-        .leftJoin(parteneri, eq(contracts.beneficiaryId, parteneri.id))
+        .leftJoin(partners, eq(contracts.beneficiaryId, partners.id))
         .leftJoin(contractStatuses, eq(contracts.statusId, contractStatuses.id))
         .where(eq(contracts.signingToken, token));
 
