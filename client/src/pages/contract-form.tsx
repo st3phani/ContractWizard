@@ -187,17 +187,19 @@ export default function ContractForm() {
 
   // Reset form with system settings when they load
   React.useEffect(() => {
+    console.log('=== CURRENCY DEBUG ===');
+    console.log('systemSettings:', systemSettings);
+    console.log('isEditing:', isEditing);
+    console.log('editContract:', editContract);
+    
     if (systemSettings && !isEditing && !editContract) {
       console.log('System settings loaded:', systemSettings);
       console.log('Setting currency to:', systemSettings.currency);
-      const currentValues = form.getValues();
-      form.reset({
-        ...currentValues,
-        contract: {
-          ...currentValues.contract,
-          currency: systemSettings.currency || 'RON'
-        }
-      });
+      
+      // Force set the currency value directly
+      form.setValue('contract.currency', systemSettings.currency || 'RON');
+      
+      console.log('Form currency after setValue:', form.getValues().contract.currency);
     }
   }, [systemSettings, isEditing, form, editContract]);
 
