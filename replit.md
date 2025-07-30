@@ -122,6 +122,8 @@ Four main entities:
 ```
 Changelog:
 
+- July 30, 2025. **SYSTEM SETTINGS JSON CACHE IMPLEMENTED** - Created automatic JSON cache system for system_settings to enable instant loading of currency, date format, and other settings. Cache file (system-settings-cache.json) is generated automatically when settings are updated and loaded first for immediate availability. Falls back to database when cache doesn't exist. Contract form now loads EUR currency instantly without waiting for database queries.
+
 - July 30, 2025. **SYSTEM SETTINGS KEY-VALUE RESTRUCTURE COMPLETED** - Successfully restructured system_settings table with key-value architecture and fixed timestamp formatting issues. Implemented PostgreSQL to_char() for consistent "YYYY-MM-DD HH24:MI:SS" format, preventing TanStack Query auto-parsing of ISO dates. System settings now persist correctly with proper timestamp display (2025-07-30 11:13:54 format).
 - July 30, 2025. **SUCCESS NOTIFICATIONS GREEN STYLING** - Updated all success toast notifications across the application to use green background (bg-green-600) with white text and borders. Applied to settings save operations, contract creation/editing, email sending, profile updates, and all other success messages for consistent visual feedback.
 - July 30, 2025. **FIXED SYSTEM SETTINGS PERSISTENCE** - Fixed bug where system settings (language, currency, date format, auto backup) were not persisting after page refresh. Added proper useQuery for /api/system-settings endpoint and useEffect to update local state when data is loaded from database. System settings now properly load and maintain their values across page refreshes.
