@@ -64,7 +64,6 @@ export default function Settings() {
         language: existingSystemSettings.language || "ro",
         currency: existingSystemSettings.currency || "RON",
         dateFormat: existingSystemSettings.dateFormat || "dd/mm/yyyy",
-        autoBackup: existingSystemSettings.autoBackup ?? true,
       });
     }
   }, [existingSystemSettings]);
@@ -74,7 +73,6 @@ export default function Settings() {
     language: "ro",
     currency: "RON",
     dateFormat: "dd/mm/yyyy",
-    autoBackup: true,
   });
 
   // Save company settings mutation
@@ -446,21 +444,6 @@ export default function Settings() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Backup Automat</Label>
-                  <p className="text-sm text-gray-500">Efectuează backup automat al datelor zilnic</p>
-                </div>
-                <Switch
-                  checked={systemSettings.autoBackup}
-                  onCheckedChange={(checked) => 
-                    setSystemSettings({ ...systemSettings, autoBackup: checked })
-                  }
-                />
-              </div>
-              
-              <Separator />
-              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Button 
                   onClick={handleExportData} 

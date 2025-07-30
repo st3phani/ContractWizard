@@ -45,7 +45,6 @@ export const systemSettings = pgTable("system_settings", {
   language: text("language").notNull().default("ro"),
   currency: text("currency").notNull().default("RON"),
   dateFormat: text("date_format").notNull().default("dd/mm/yyyy"),
-  autoBackup: boolean("auto_backup").notNull().default(true),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 

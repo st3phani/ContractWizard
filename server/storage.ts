@@ -121,7 +121,6 @@ export class MemStorage implements IStorage {
       language: "ro",
       currency: "RON",
       dateFormat: "dd/mm/yyyy",
-      autoBackup: true,
       updatedAt: new Date()
     };
   }
@@ -133,7 +132,6 @@ export class MemStorage implements IStorage {
       language: settings.language ?? "ro",
       currency: settings.currency ?? "RON", 
       dateFormat: settings.dateFormat ?? "dd/mm/yyyy",
-      autoBackup: settings.autoBackup ?? true,
       updatedAt: new Date()
     };
   }
@@ -1056,7 +1054,6 @@ export class DatabaseStorage implements IStorage {
           language: "ro",
           currency: "RON",
           dateFormat: "dd/mm/yyyy",
-          autoBackup: true,
           updatedAt: new Date()
         })
         .returning();
