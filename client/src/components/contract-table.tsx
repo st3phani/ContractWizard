@@ -37,8 +37,8 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
   const filteredContracts = contracts.filter((contract) => {
     const matchesSearch = 
       String(contract.orderNumber || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contract.beneficiary.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contract.template.name.toLowerCase().includes(searchTerm.toLowerCase());
+      contract.beneficiary?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contract.template?.name?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === "all" || contract.status?.statusCode === statusFilter;
     
@@ -319,14 +319,14 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
         <DialogHeader>
           <DialogTitle>Confirmă Trimiterea la Semnare</DialogTitle>
           <DialogDescription>
-            Ești sigur că vrei să trimiți contractul {confirmSendContract?.orderNumber} la semnare pentru beneficiaryul {confirmSendContract?.beneficiary.name}?
+            Ești sigur că vrei să trimiți contractul {confirmSendContract?.orderNumber} la semnare pentru partenerul {confirmSendContract?.beneficiary?.name}?
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
           <div className="bg-amber-50 border border-amber-200 rounded-md p-3">
             <p className="text-sm text-amber-800">
               <strong>Ce se va întâmpla:</strong><br />
-              • Un email cu link-ul de semnare va fi trimis către {confirmSendContract?.beneficiary.email}<br />
+              • Un email cu link-ul de semnare va fi trimis către {confirmSendContract?.beneficiary?.email}<br />
               • Statusul contractului va fi schimbat în "Trimis"<br />
               • Partenerul va putea semna contractul digital
             </p>

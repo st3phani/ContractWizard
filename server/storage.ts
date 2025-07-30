@@ -177,7 +177,7 @@ export class MemStorage implements IStorage {
   }
 
   private contractTemplates: Map<number, ContractTemplate>;
-  private beneficiaries: Map<number, Beneficiary>;
+  private partners: Map<number, Beneficiary>;
   private contracts: Map<number, Contract>;
   private currentTemplateId: number;
   private currentBeneficiaryId: number;
@@ -185,7 +185,7 @@ export class MemStorage implements IStorage {
 
   constructor() {
     this.contractTemplates = new Map();
-    this.beneficiaries = new Map();
+    this.partners = new Map();
     this.contracts = new Map();
     this.currentTemplateId = 1;
     this.currentBeneficiaryId = 1;
@@ -662,8 +662,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getBeneficiaries(): Promise<Beneficiary[]> {
-    const beneficiariesList = await db.select().from(partners);
-    return beneficiariesList;
+    const partnersList = await db.select().from(partners);
+    return partnersList;
   }
 
   async getBeneficiary(id: number): Promise<Beneficiary | undefined> {
@@ -686,7 +686,7 @@ export class DatabaseStorage implements IStorage {
 
   async updateBeneficiary(id: number, beneficiary: Partial<InsertBeneficiary>): Promise<Beneficiary | undefined> {
     const [updated] = await db
-      .update(beneficiaries)
+      .update(partners)
       .set(beneficiary)
       .where(eq(partners.id, id))
       .returning();
@@ -694,7 +694,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteBeneficiary(id: number): Promise<boolean> {
-    const result = await db.delete(beneficiaries).where(eq(partners.id, id));
+    const result = await db.delete(partners).where(eq(partners.id, id));
     return (result.rowCount ?? 0) > 0;
   }
 
@@ -740,7 +740,7 @@ export class DatabaseStorage implements IStorage {
           return {
             ...contract,
             template: row.contract_templates || mockTemplate,
-            beneficiary: row.beneficiaries || mockBeneficiary,
+            beneficiary: row.partners || mockBeneficiary,
             status: row.contract_statuses || null,
             provider: companySettings,
           };
@@ -749,7 +749,7 @@ export class DatabaseStorage implements IStorage {
         return {
           ...contract,
           template: row.contract_templates || null,
-          beneficiary: row.beneficiaries || null,
+          beneficiary: row.partners || null,
           status: row.contract_statuses || null,
           provider: companySettings,
         };
@@ -801,7 +801,7 @@ export class DatabaseStorage implements IStorage {
       return {
         ...contract,
         template: contract.template || mockTemplate,
-        beneficiary: contract.beneficiaries || mockBeneficiary,
+        beneficiary: contract.partners || mockBeneficiary,
         status: row.contract_statuses,
         provider: companySettings
       } as ContractWithDetails;
@@ -854,7 +854,7 @@ export class DatabaseStorage implements IStorage {
       return {
         ...contract,
         template: contract.template || mockTemplate,
-        beneficiary: contract.beneficiaries || mockBeneficiary,
+        beneficiary: contract.partners || mockBeneficiary,
         status: row.contract_statuses,
         provider: companySettings
       } as ContractWithDetails;
@@ -1285,7 +1285,7 @@ export class DatabaseStorage implements IStorage {
       return {
         ...row.contracts,
         template: row.contract_templates || null,
-        beneficiary: row.beneficiaries || null,
+        beneficiary: row.partners || null,
         status: row.contract_statuses || null,
         provider: companySettings,
       };
@@ -1316,7 +1316,7 @@ export class DatabaseStorage implements IStorage {
       return {
         ...row.contracts,
         template: row.contract_templates || null,
-        beneficiary: row.beneficiaries || null,
+        beneficiary: row.partners || null,
         status: row.contract_statuses || null,
         provider: companySettings,
       };

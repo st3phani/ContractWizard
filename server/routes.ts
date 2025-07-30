@@ -164,10 +164,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Parteneries
   app.get("/api/partners", async (req, res) => {
     try {
-      const beneficiaries = await storage.getBeneficiaries();
-      res.json(beneficiaries);
+      const partners = await storage.getBeneficiaries();
+      res.json(partners);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch beneficiaries" });
+      res.status(500).json({ message: "Failed to fetch partners" });
     }
   });
 
