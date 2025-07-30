@@ -24,6 +24,7 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql } from "drizzle-orm";
+import { saveSettingsToCache, loadSettingsFromCache, type SystemSettingsCache } from "./settings-cache";
 
 export interface IStorage {
   // Contract Templates
@@ -1044,9 +1045,17 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  // System Settings - Key-Value approach
+  // System Settings - Key-Value approach with JSON cache
   async getSystemSettings(): Promise<any> {
     try {
+      // Try loading from cache first for faster response
+      const cachedSettings = loadSettingsFromCache();
+      if (cachedSettings) {
+        console.log('📄 Using cached system settings');
+        return cachedSettings;
+      }
+
+      console.log('📄 Loading system settings from database');
       const settings = await db.select({
         configId: systemSettings.configId,
         path: systemSettings.path,
@@ -1082,6 +1091,9 @@ export class DatabaseStorage implements IStorage {
       if (latestTimestamp) {
         settingsObject.updatedAt = latestTimestamp;
       }
+
+      // Save to cache for next time
+      saveSettingsToCache(settingsObject as SystemSettingsCache);
       
       return settingsObject;
     } catch (error) {
@@ -1131,12 +1143,56 @@ export class DatabaseStorage implements IStorage {
       
       await Promise.all(updatePromises);
       
-      // Return updated settings in old format for compatibility with formatted timestamp
-      return await this.getSystemSettings();
+      // Get fresh settings from database (bypass cache)
+      console.log('📄 System settings updated - refreshing cache');
+      const freshSettings = await this.getFreshSystemSettingsFromDB();
+      
+      // Update cache with fresh data
+      saveSettingsToCache(freshSettings as SystemSettingsCache);
+      
+      return freshSettings;
     } catch (error) {
       console.error('Error updating system settings:', error);
       throw error;
     }
+  }
+
+  // Helper method to get fresh settings from DB (for cache refresh)
+  private async getFreshSystemSettingsFromDB(): Promise<any> {
+    const settings = await db.select({
+      configId: systemSettings.configId,
+      path: systemSettings.path,
+      value: systemSettings.value,
+      updatedAt: systemSettings.updatedAt
+    }).from(systemSettings);
+    
+    const settingsObject: any = {
+      id: 1,
+      updatedAt: '2025-07-30 00:00:00'
+    };
+    
+    let latestTimestamp: string = '';
+    
+    settings.forEach(setting => {
+      const key = setting.path.replace('system_', '');
+      if (key === 'autoBackup') {
+        settingsObject[key] = setting.value === 'TRUE';
+      } else {
+        settingsObject[key] = setting.value;
+      }
+      
+      if (setting.updatedAt) {
+        if (!latestTimestamp || setting.updatedAt > latestTimestamp) {
+          latestTimestamp = setting.updatedAt;
+        }
+      }
+    });
+    
+    if (latestTimestamp) {
+      settingsObject.updatedAt = latestTimestamp;
+    }
+    
+    return settingsObject;
   }
 
   // User Profile
