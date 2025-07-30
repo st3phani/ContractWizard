@@ -1051,7 +1051,7 @@ export class DatabaseStorage implements IStorage {
         configId: systemSettings.configId,
         path: systemSettings.path,
         value: systemSettings.value,
-        updatedAt: sql<string>`to_char(${systemSettings.updatedAt}, 'YYYY-MM-DD HH24:MI:SS')`.as('updated_at')
+        updatedAt: systemSettings.updatedAt
       }).from(systemSettings);
       
       // Convert key-value pairs to object format for backward compatibility
@@ -1094,7 +1094,7 @@ export class DatabaseStorage implements IStorage {
     try {
       const updatePromises = [];
       
-      const currentDateTime = new Date(); // Trigger will format this automatically
+      const currentDateTime = sql`to_char(NOW(), 'YYYY-MM-DD HH24:MI:SS')`;
       
       // Update each setting individually
       if (settingsData.language !== undefined) {

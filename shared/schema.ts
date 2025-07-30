@@ -44,7 +44,7 @@ export const systemSettings = pgTable("system_settings", {
   configId: serial("config_id").primaryKey(),
   path: text("path").notNull().unique(),
   value: text("value").notNull(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  updatedAt: text("updated_at").notNull(),
 });
 
 export const userProfiles = pgTable("user_profiles", {
