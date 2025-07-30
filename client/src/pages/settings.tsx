@@ -129,7 +129,6 @@ export default function Settings() {
     }
     if (!companySettings.legalRepresentative) {
       missingFields.push('Reprezentant Legal');
-      fieldsToFocus.push('companyLegalRepresentative');
     }
 
     if (missingFields.length > 0) {
@@ -159,7 +158,6 @@ export default function Settings() {
     }
 
     // Remove red borders on successful validation
-    const allFields = ['companyName', 'companyAddress', 'companyPhone', 'companyEmail', 'companyCui', 'companyRegistrationNumber', 'companyLegalRepresentative'];
     allFields.forEach(fieldId => {
       const element = document.getElementById(fieldId);
       if (element) {
@@ -282,9 +280,7 @@ export default function Settings() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="companyLegalRepresentative">Reprezentant Legal *</Label>
                   <Input
-                    id="companyLegalRepresentative"
                     value={companySettings.legalRepresentative}
                     onChange={(e) => {
                       setCompanySettings({ ...companySettings, legalRepresentative: e.target.value });

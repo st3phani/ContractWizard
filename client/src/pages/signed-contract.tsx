@@ -251,10 +251,10 @@ export default function SignedContractPage() {
                       <p className="font-medium">{contract.beneficiary.companyCui}</p>
                     </div>
                   )}
-                  {contract.beneficiary.companyLegalRepresentative && (
+                  {contract.beneficiary.name && contract.beneficiary.isCompany && (
                     <div>
                       <p className="text-sm font-medium text-gray-500">Reprezentant Legal</p>
-                      <p className="font-medium">{contract.beneficiary.companyLegalRepresentative}</p>
+                      <p className="font-medium">{contract.beneficiary.name}</p>
                     </div>
                   )}
                 </div>

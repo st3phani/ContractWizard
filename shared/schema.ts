@@ -23,7 +23,7 @@ export const beneficiaries = pgTable("beneficiaries", {
   companyAddress: text("company_address"),
   companyCui: text("company_cui"),
   companyRegistrationNumber: text("company_registration_number"),
-  companyLegalRepresentative: text("company_legal_representative"),
+
   isCompany: boolean("is_company").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
@@ -124,7 +124,7 @@ export const insertBeneficiarySchema = createInsertSchema(beneficiaries).omit({
   companyAddress: z.string().optional(),
   companyCui: z.string().optional(),
   companyRegistrationNumber: z.string().optional(),
-  companyLegalRepresentative: z.string().optional(),
+
 });
 
 export const insertCompanySettingsSchema = createInsertSchema(companySettings).omit({

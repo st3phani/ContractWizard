@@ -18,7 +18,7 @@ interface PDFGenerationData {
     companyAddress?: string;
     companyCui?: string;
     companyRegistrationNumber?: string;
-    companyLegalRepresentative?: string;
+
     isCompany: boolean;
   };
   contract: {
@@ -90,7 +90,7 @@ export function populateTemplate(template: string, data: PDFGenerationData): str
     '{{beneficiary.companyAddress}}': data.beneficiary.companyAddress || '',
     '{{beneficiary.companyCui}}': data.beneficiary.companyCui || '',
     '{{beneficiary.companyRegistrationNumber}}': data.beneficiary.companyRegistrationNumber || '',
-    '{{beneficiary.companyLegalRepresentative}}': data.beneficiary.companyLegalRepresentative || '',
+    '{{beneficiary.companyLegalRepresentative}}': data.beneficiary.name || '',
     '{{contract.startDate}}': data.contract.startDate,
     '{{contract.endDate}}': data.contract.endDate,
     '{{contract.value}}': data.contract.value,

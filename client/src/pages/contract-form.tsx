@@ -40,7 +40,7 @@ const contractFormSchema = z.object({
     companyAddress: z.string().optional(),
     companyCui: z.string().optional(),
     companyRegistrationNumber: z.string().optional(),
-    companyLegalRepresentative: z.string().optional(),
+
     isCompany: z.boolean().default(false),
   }).superRefine((data, ctx) => {
     if (data.isCompany) {
@@ -72,13 +72,7 @@ const contractFormSchema = z.object({
           path: ["companyRegistrationNumber"]
         });
       }
-      if (!data.companyLegalRepresentative) {
-        ctx.addIssue({
-          code: "custom",
-          message: "Reprezentantul legal este obligatoriu",
-          path: ["companyLegalRepresentative"]
-        });
-      }
+
     } else {
       if (!data.address) {
         ctx.addIssue({
@@ -132,7 +126,7 @@ export default function ContractForm() {
     companyAddress: "",
     companyCui: "",
     companyRegistrationNumber: "",
-    companyLegalRepresentative: "",
+    
     isCompany: false,
   });
 
@@ -149,7 +143,7 @@ export default function ContractForm() {
         companyAddress: "",
         companyCui: "",
         companyRegistrationNumber: "",
-        companyLegalRepresentative: "",
+        
         isCompany: false,
       },
       contract: {
@@ -212,7 +206,6 @@ export default function ContractForm() {
           companyAddress: contractData.beneficiary.companyAddress || "",
           companyCui: contractData.beneficiary.companyCui || "",
           companyRegistrationNumber: contractData.beneficiary.companyRegistrationNumber || "",
-          companyLegalRepresentative: contractData.beneficiary.companyLegalRepresentative || "",
           isCompany: contractData.beneficiary.isCompany || false,
         },
         contract: {
@@ -394,7 +387,6 @@ export default function ContractForm() {
         companyAddress: formData.beneficiary?.companyAddress || "-",
         companyCui: formData.beneficiary?.companyCui || "-",
         companyRegistrationNumber: formData.beneficiary?.companyRegistrationNumber || "-",
-        companyLegalRepresentative: formData.beneficiary?.companyLegalRepresentative || "-",
         isCompany: formData.beneficiary?.isCompany || false,
       },
       contract: {
@@ -464,7 +456,6 @@ export default function ContractForm() {
       form.setValue("beneficiary.companyAddress", newBeneficiary.companyAddress || "");
       form.setValue("beneficiary.companyCui", newBeneficiary.companyCui || "");
       form.setValue("beneficiary.companyRegistrationNumber", newBeneficiary.companyRegistrationNumber || "");
-      form.setValue("beneficiary.companyLegalRepresentative", newBeneficiary.companyLegalRepresentative || "");
       form.setValue("beneficiary.isCompany", newBeneficiary.isCompany);
       
       // Reset modal form
@@ -478,7 +469,7 @@ export default function ContractForm() {
         companyAddress: "",
         companyCui: "",
         companyRegistrationNumber: "",
-        companyLegalRepresentative: "",
+        
         isCompany: false,
       });
       
@@ -501,9 +492,6 @@ export default function ContractForm() {
     
     // For companies, set name to the legal representative name
     const dataToSend = { ...formData };
-    if (formData.isCompany && formData.companyLegalRepresentative?.trim()) {
-      dataToSend.name = formData.companyLegalRepresentative;
-    }
     
     // Validate required fields manually (same validation as in Beneficiaries page)
     const errors: { [key: string]: boolean } = {};
@@ -516,7 +504,6 @@ export default function ContractForm() {
       if (!dataToSend.companyAddress?.trim()) errors.companyAddress = true;
       if (!dataToSend.companyCui?.trim()) errors.companyCui = true;
       if (!dataToSend.companyRegistrationNumber?.trim()) errors.companyRegistrationNumber = true;
-      if (!dataToSend.companyLegalRepresentative?.trim()) errors.companyLegalRepresentative = true;
       if (!dataToSend.cnp?.trim()) errors.cnp = true;
     } else {
       if (!dataToSend.name.trim()) errors.name = true;
@@ -955,13 +942,8 @@ export default function ContractForm() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="companyLegalRepresentative">Reprezentant Legal *</Label>
                     <Input
-                      id="companyLegalRepresentative"
-                      value={formData.companyLegalRepresentative || ""}
-                      onChange={(e) => handleFieldChange('companyLegalRepresentative', e.target.value, (value) => setFormData({ ...formData, companyLegalRepresentative: value }))}
                       placeholder="Numele reprezentantului legal"
-                      className={validationErrors.companyLegalRepresentative ? "border-red-500 bg-pink-50" : ""}
                     />
                   </div>
 

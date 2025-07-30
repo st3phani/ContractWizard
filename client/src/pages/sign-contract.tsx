@@ -104,8 +104,8 @@ export default function SignContract() {
       let defaultName = contract.beneficiary.name;
       
       // If it's a company, use the legal representative
-      if (contract.beneficiary.isCompany && contract.beneficiary.companyLegalRepresentative) {
-        defaultName = contract.beneficiary.companyLegalRepresentative;
+      if (contract.beneficiary.isCompany && contract.beneficiary.name) {
+        defaultName = contract.beneficiary.name;
       }
       
       form.setValue('signedBy', defaultName);
@@ -320,9 +320,9 @@ export default function SignContract() {
                   {contract.beneficiary?.email && (
                     <p className="text-sm text-gray-600">{contract.beneficiary.email}</p>
                   )}
-                  {contract.beneficiary?.isCompany && contract.beneficiary.companyLegalRepresentative && (
+                  {contract.beneficiary?.isCompany && contract.beneficiary.name && (
                     <p className="text-sm text-gray-600">
-                      <strong>Reprezentant legal:</strong> {contract.beneficiary.companyLegalRepresentative}
+                      <strong>Reprezentant legal:</strong> {contract.beneficiary.name}
                     </p>
                   )}
                 </div>

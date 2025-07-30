@@ -74,7 +74,7 @@ function populateContractTemplate(template: string, data: any): string {
     populated = populated.replace(/\{\{beneficiary\.companyAddress\}\}/g, data.beneficiary.companyAddress || '');
     populated = populated.replace(/\{\{beneficiary\.companyCui\}\}/g, data.beneficiary.companyCui || '');
     populated = populated.replace(/\{\{beneficiary\.companyRegistrationNumber\}\}/g, data.beneficiary.companyRegistrationNumber || '');
-    populated = populated.replace(/\{\{beneficiary\.companyLegalRepresentative\}\}/g, data.beneficiary.companyLegalRepresentative || '');
+    populated = populated.replace(/\{\{beneficiary\.companyLegalRepresentative\}\}/g, data.beneficiary.name || '');
   }
   
   // Contract fields
@@ -499,7 +499,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           companyAddress: contract.beneficiary.companyAddress || '',
           companyCui: contract.beneficiary.companyCui || '',
           companyRegistrationNumber: contract.beneficiary.companyRegistrationNumber || '',
-          companyLegalRepresentative: contract.beneficiary.companyLegalRepresentative || '',
+          companyLegalRepresentative: contract.beneficiary.name || '',
           isCompany: contract.beneficiary.isCompany
         },
         contract: {

@@ -311,7 +311,6 @@ _________________           _________________`,
       companyAddress: beneficiary.companyAddress ?? null,
       companyCui: beneficiary.companyCui ?? null,
       companyRegistrationNumber: beneficiary.companyRegistrationNumber ?? null,
-      companyLegalRepresentative: beneficiary.companyLegalRepresentative ?? null,
       isCompany: beneficiary.isCompany ?? false,
       createdAt: new Date()
     };
@@ -361,7 +360,6 @@ _________________           _________________`,
           companyAddress: null,
           companyCui: null,
           companyRegistrationNumber: null,
-          companyLegalRepresentative: null,
           isCompany: false,
           createdAt: new Date()
         };
@@ -409,7 +407,6 @@ _________________           _________________`,
         companyAddress: null,
         companyCui: null,
         companyRegistrationNumber: null,
-        companyLegalRepresentative: null,
         isCompany: false,
         createdAt: new Date()
       };
@@ -456,7 +453,6 @@ _________________           _________________`,
         companyAddress: null,
         companyCui: null,
         companyRegistrationNumber: null,
-        companyLegalRepresentative: null,
         isCompany: false,
         createdAt: new Date()
       };
@@ -618,7 +614,6 @@ _________________           _________________`,
       companyAddress: null, 
       companyCui: null, 
       companyRegistrationNumber: null, 
-      companyLegalRepresentative: null, 
       isCompany: false, 
       createdAt: new Date() 
     };
@@ -739,7 +734,6 @@ export class DatabaseStorage implements IStorage {
             companyAddress: null,
             companyCui: null,
             companyRegistrationNumber: null,
-            companyLegalRepresentative: null,
             isCompany: false,
             createdAt: new Date()
           };
@@ -801,7 +795,6 @@ export class DatabaseStorage implements IStorage {
         companyAddress: null,
         companyCui: null,
         companyRegistrationNumber: null,
-        companyLegalRepresentative: null,
         isCompany: false,
         createdAt: new Date()
       };
@@ -855,7 +848,6 @@ export class DatabaseStorage implements IStorage {
         companyAddress: null,
         companyCui: null,
         companyRegistrationNumber: null,
-        companyLegalRepresentative: null,
         isCompany: false,
         createdAt: new Date()
       };
@@ -1001,7 +993,6 @@ export class DatabaseStorage implements IStorage {
       companyAddress: null, 
       companyCui: null, 
       companyRegistrationNumber: null, 
-      companyLegalRepresentative: null, 
       isCompany: false, 
       createdAt: new Date() 
     };

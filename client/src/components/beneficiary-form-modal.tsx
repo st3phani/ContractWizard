@@ -32,7 +32,6 @@ export function BeneficiaryFormModal({ isOpen, onClose, beneficiary, onSuccess }
       companyAddress: beneficiary?.companyAddress || "",
       companyCui: beneficiary?.companyCui || "",
       companyRegistrationNumber: beneficiary?.companyRegistrationNumber || "",
-      companyLegalRepresentative: beneficiary?.companyLegalRepresentative || "",
       isCompany: beneficiary?.isCompany || false,
     },
   });
