@@ -20,6 +20,7 @@ import { useLocation } from "wouter";
 import { Search, Check, Plus, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDate, parseDate, getDateInputFormat, type DateFormat } from "@/lib/dateUtils";
+import { useDateFormat } from "@/hooks/use-date-format";
 
 import type { ContractTemplate, Beneficiary, InsertBeneficiary } from "@shared/schema";
 import { insertBeneficiarySchema } from "@shared/schema";
@@ -118,12 +119,8 @@ export default function ContractForm() {
   const editContractId = urlParams.get('edit');
   const isEditing = Boolean(editContractId);
 
-  // Fetch system settings for date format and currency
-  const { data: systemSettings } = useQuery<{ dateFormat: DateFormat; currency: string }>({
-    queryKey: ["/api/system-settings"],
-  });
-
-  const dateFormat: DateFormat = systemSettings?.dateFormat || "dd/mm/yyyy";
+  // Use date format hook for consistent formatting
+  const { dateFormat, systemSettings } = useDateFormat();
 
   // Beneficiary form data for modal (same as in Beneficiaries page)
   const [formData, setFormData] = useState<InsertBeneficiary>({
@@ -794,9 +791,21 @@ export default function ContractForm() {
                           <FormLabel>Data Creării</FormLabel>
                           <FormControl>
                             <Input 
-                              type="date" 
+                              type="text" 
                               {...field}
                               placeholder={getDateInputFormat(dateFormat)}
+                              onBlur={(e) => {
+                                // Validate date format on blur
+                                const parsedDate = parseDate(e.target.value, dateFormat);
+                                if (e.target.value && !parsedDate) {
+                                  form.setError('contract.createdDate', {
+                                    type: 'manual',
+                                    message: `Format invalid. Folosește ${getDateInputFormat(dateFormat)}`
+                                  });
+                                } else {
+                                  form.clearErrors('contract.createdDate');
+                                }
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -812,9 +821,21 @@ export default function ContractForm() {
                           <FormLabel>Data Începerii *</FormLabel>
                           <FormControl>
                             <Input 
-                              type="date" 
+                              type="text" 
                               {...field}
                               placeholder={getDateInputFormat(dateFormat)}
+                              onBlur={(e) => {
+                                // Validate date format on blur
+                                const parsedDate = parseDate(e.target.value, dateFormat);
+                                if (e.target.value && !parsedDate) {
+                                  form.setError('contract.startDate', {
+                                    type: 'manual',
+                                    message: `Format invalid. Folosește ${getDateInputFormat(dateFormat)}`
+                                  });
+                                } else {
+                                  form.clearErrors('contract.startDate');
+                                }
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -830,9 +851,21 @@ export default function ContractForm() {
                           <FormLabel>Data Încheierii *</FormLabel>
                           <FormControl>
                             <Input 
-                              type="date" 
+                              type="text" 
                               {...field}
                               placeholder={getDateInputFormat(dateFormat)}
+                              onBlur={(e) => {
+                                // Validate date format on blur
+                                const parsedDate = parseDate(e.target.value, dateFormat);
+                                if (e.target.value && !parsedDate) {
+                                  form.setError('contract.endDate', {
+                                    type: 'manual',
+                                    message: `Format invalid. Folosește ${getDateInputFormat(dateFormat)}`
+                                  });
+                                } else {
+                                  form.clearErrors('contract.endDate');
+                                }
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
