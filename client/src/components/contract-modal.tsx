@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Download, PenTool, X } from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { useDateFormat } from "@/hooks/use-date-format";
 import type { ContractWithDetails } from "@shared/schema";
 
 interface ContractModalProps {
@@ -16,6 +16,7 @@ interface ContractModalProps {
 export default function ContractModal({ contract, isOpen, onClose, onDownload, onEmail }: ContractModalProps) {
   const [previewContent, setPreviewContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const { formatDate } = useDateFormat();
 
   const canSendContract = (contract: ContractWithDetails) => {
     return contract.status?.statusCode !== "reserved" && 

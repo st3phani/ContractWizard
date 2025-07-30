@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { formatDate, getStatusColor, getStatusText, getInitials, getAvatarColor } from "@/lib/utils";
+import { getStatusColor, getStatusText, getInitials, getAvatarColor } from "@/lib/utils";
+import { useDateFormat } from "@/hooks/use-date-format";
 import type { ContractWithDetails } from "@shared/schema";
 import { paginateItems, type PaginationConfig } from "@/utils/paginationUtils";
 
@@ -29,6 +30,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [confirmSendContract, setConfirmSendContract] = useState<ContractWithDetails | null>(null);
+  const { formatDate } = useDateFormat();
   // Find the highest order number to determine which contract can be deleted
   const maxOrderNumber = Math.max(...contracts.map(c => c.orderNumber || 0));
 

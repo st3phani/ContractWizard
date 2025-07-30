@@ -3,7 +3,7 @@ import { ro } from "date-fns/locale";
 
 export type DateFormat = "dd/mm/yyyy" | "mm/dd/yyyy" | "yyyy-mm-dd";
 
-export const formatDate = (date: Date | string, dateFormat: DateFormat = "dd/mm/yyyy"): string => {
+export const formatDate = (date: Date | string | null | undefined, dateFormat: DateFormat = "dd/mm/yyyy"): string => {
   if (!date) return "";
   
   const dateObj = typeof date === "string" ? new Date(date) : date;

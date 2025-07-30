@@ -1,8 +1,8 @@
 {
   "id": 1,
-  "updatedAt": "2025-07-30 11:19:42",
-  "currency": "EUR",
-  "autoBackup": true,
+  "updatedAt": "2025-07-30 12:22:30",
   "language": "en",
-  "dateFormat": "dd/mm/yyyy"
+  "autoBackup": true,
+  "dateFormat": "dd/mm/yyyy",
+  "currency": "EUR"
 }

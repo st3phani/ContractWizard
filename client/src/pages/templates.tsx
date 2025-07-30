@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { formatDate } from "@/lib/utils";
+import { useDateFormat } from "@/hooks/use-date-format";
 
 import RichTextEditor from "@/components/rich-text-editor";
 import type { ContractTemplate, InsertContractTemplate } from "@shared/schema";
@@ -29,6 +29,7 @@ export default function Templates() {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   
   const { toast } = useToast();
+  const { formatDate } = useDateFormat();
   const queryClient = useQueryClient();
 
   const { data: templates = [], isLoading } = useQuery<ContractTemplate[]>({

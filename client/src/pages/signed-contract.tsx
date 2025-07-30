@@ -7,12 +7,14 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { CheckCircle2, AlertCircle, Download, FileText, User, Building, Calendar, MapPin, Phone, Mail, Hash } from "lucide-react";
-import { formatDate, formatCurrency } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
+import { useDateFormat } from "@/hooks/use-date-format";
 import type { ContractWithDetails } from "@shared/schema";
 
 export default function SignedContractPage() {
   const [match, params] = useRoute("/signed-contract/:token");
   const { token } = params || {};
+  const { formatDate } = useDateFormat();
 
   const { data: contract, isLoading, error } = useQuery<ContractWithDetails>({
     queryKey: ["/api/contracts/signed", token],

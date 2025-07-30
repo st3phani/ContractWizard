@@ -12,7 +12,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { formatDate, getInitials, getAvatarColor } from "@/lib/utils";
+import { getInitials, getAvatarColor } from "@/lib/utils";
+import { useDateFormat } from "@/hooks/use-date-format";
 
 import { BeneficiaryFormFields } from "@/components/beneficiary-form-fields";
 import type { Beneficiary, InsertBeneficiary } from "@shared/schema";
@@ -39,6 +40,7 @@ export default function Beneficiaries() {
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { formatDate } = useDateFormat();
 
   // Fetch beneficiaries
   const { data: beneficiaries = [], isLoading } = useQuery<Beneficiary[]>({

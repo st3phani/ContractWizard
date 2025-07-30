@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Loader2, CheckCircle2, AlertCircle, FileText, User, Building, Calendar, Euro, Eye } from "lucide-react";
+import { useDateFormat } from "@/hooks/use-date-format";
 
 const contractSigningSchema = z.object({
   signedBy: z.string().min(1, "Numele este obligatoriu pentru semnare"),
@@ -28,6 +29,7 @@ export default function SignContract() {
   const [signedContract, setSignedContract] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const { formatDate } = useDateFormat();
 
   const form = useForm<ContractSigningData>({
     resolver: zodResolver(contractSigningSchema),
@@ -165,7 +167,7 @@ export default function SignContract() {
                 <p><strong>Numărul contractului:</strong> {(signedContract || contract).orderNumber}</p>
                 <p><strong>Template:</strong> {(signedContract || contract).template?.name}</p>
                 <p><strong>Semnat de:</strong> {(signedContract || contract).signedBy || form.getValues('signedBy')}</p>
-                <p><strong>Data semnării:</strong> {(signedContract || contract).signedAt ? new Date((signedContract || contract).signedAt).toLocaleDateString('ro-RO') : new Date().toLocaleDateString('ro-RO')}</p>
+                <p><strong>Data semnării:</strong> {formatDate((signedContract || contract).signedAt || new Date())}</p>
                 <p><strong>IP:</strong> {(signedContract || contract).signedIp || 'Se procesează...'}</p>
                 <p><strong>Token semnat:</strong> <span className="font-mono text-xs">{(signedContract || contract).signedToken || 'Se procesează...'}</span></p>
               </div>
@@ -221,7 +223,7 @@ export default function SignContract() {
                               case 'orderNumber':
                                 return contract.orderNumber?.toString() || '';
                               case 'currentDate':
-                                return new Date().toLocaleDateString('ro-RO');
+                                return formatDate(new Date());
                               case 'beneficiary.name':
                                 return contract.beneficiary?.name || '';
                               case 'beneficiary.address':
@@ -237,9 +239,9 @@ export default function SignContract() {
                               case 'contract.currency':
                                 return contract.currency || '';
                               case 'contract.startDate':
-                                return contract.startDate ? new Date(contract.startDate).toLocaleDateString('ro-RO') : '';
+                                return contract.startDate ? formatDate(contract.startDate) : '';
                               case 'contract.endDate':
-                                return contract.endDate ? new Date(contract.endDate).toLocaleDateString('ro-RO') : '';
+                                return contract.endDate ? formatDate(contract.endDate) : '';
                               case 'contract.notes':
                                 return contract.notes || '';
                               case 'provider.name':
@@ -275,7 +277,7 @@ export default function SignContract() {
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-gray-500">Data creării</Label>
-                  <p className="text-lg">{contract.createdAt ? new Date(contract.createdAt).toLocaleDateString('ro-RO') : 'N/A'}</p>
+                  <p className="text-lg">{formatDate(contract.createdAt) || 'N/A'}</p>
                 </div>
               </div>
 
@@ -295,8 +297,8 @@ export default function SignContract() {
                   <div>
                     <Label className="text-sm font-medium text-gray-500">Perioada</Label>
                     <p className="text-lg">
-                      {contract.startDate && new Date(contract.startDate).toLocaleDateString('ro-RO')} - {' '}
-                      {contract.endDate && new Date(contract.endDate).toLocaleDateString('ro-RO')}
+                      {contract.startDate && formatDate(contract.startDate)} - {' '}
+                      {contract.endDate && formatDate(contract.endDate)}
                     </p>
                   </div>
                 </div>
