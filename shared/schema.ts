@@ -11,7 +11,7 @@ export const contractTemplates = pgTable("contract_templates", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const parteneries = pgTable("parteneries", {
+export const beneficiaries = pgTable("beneficiaries", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull(),
@@ -74,7 +74,7 @@ export const contracts = pgTable("contracts", {
   id: serial("id").primaryKey(),
   orderNumber: integer("order_number").notNull().unique(),
   templateId: integer("template_id"),
-  parteneryId: integer("partenery_id"),
+  beneficiaryId: integer("beneficiary_id"),
   value: decimal("value", { precision: 10, scale: 2 }),
   currency: text("currency").notNull().default("RON"),
   startDate: timestamp("start_date"),
@@ -111,7 +111,7 @@ export const updateSystemSettingsSchema = z.object({
 
 
 
-export const insertBeneficiarySchema = createInsertSchema(parteneries).omit({
+export const insertBeneficiarySchema = createInsertSchema(beneficiaries).omit({
   id: true,
   createdAt: true,
 }).extend({
@@ -142,7 +142,7 @@ export const insertContractSchema = createInsertSchema(contracts).omit({
   signingToken: true,
 }).extend({
   templateId: z.number().min(1, "Template-ul este obligatoriu"),
-  parteneryId: z.number().min(1, "Beneficiarul este obligatoriu"),
+  beneficiaryId: z.number().min(1, "Beneficiarul este obligatoriu"),
   value: z.union([z.string(), z.number()]).optional().nullable(),
   startDate: z.date().optional().nullable(),
   endDate: z.date().optional().nullable(),
@@ -157,7 +157,7 @@ export const contractSigningSchema = z.object({
 export type ContractTemplate = typeof contractTemplates.$inferSelect;
 export type InsertContractTemplate = z.infer<typeof insertContractTemplateSchema>;
 
-export type Beneficiary = typeof parteneries.$inferSelect;
+export type Beneficiary = typeof beneficiaries.$inferSelect;
 export type InsertBeneficiary = z.infer<typeof insertBeneficiarySchema>;
 
 export type CompanySettings = typeof companySettings.$inferSelect;
@@ -191,7 +191,7 @@ export const contractTemplatesRelations = relations(contractTemplates, ({ many }
   contracts: many(contracts),
 }));
 
-export const parteneriesRelations = relations(parteneries, ({ many }) => ({
+export const beneficiariesRelations = relations(beneficiaries, ({ many }) => ({
   contracts: many(contracts),
 }));
 
@@ -204,9 +204,9 @@ export const contractsRelations = relations(contracts, ({ one }) => ({
     fields: [contracts.templateId],
     references: [contractTemplates.id],
   }),
-  partenery: one(parteneries, {
-    fields: [contracts.parteneryId],
-    references: [parteneries.id],
+  partenery: one(beneficiaries, {
+    fields: [contracts.beneficiaryId],
+    references: [beneficiaries.id],
   }),
   status: one(contractStatuses, {
     fields: [contracts.statusId],

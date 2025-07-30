@@ -122,6 +122,8 @@ Four main entities:
 ```
 Changelog:
 
+- July 30, 2025. **TERMINOLOGIE SCHIMBATĂ: BENEFICIARI → PARTENERI** - Modificat terminologia în întreaga interfață aplicație de la "Beneficiari/Beneficiar" la "Parteneri/Partener". Actualizat toate etichetele, navigația sidebar, formularele și textele din interfață. Păstrat numele fișierelor și structura backend pentru compatibilitate. Actualizat câmpul `company_legal_representative` să folosească `beneficiaries.name` pentru reprezentanții legali ai companiilor.
+
 - July 30, 2025. **SYSTEM DATE FORMAT CONSISTENCY IMPLEMENTED** - Created useDateFormat hook and updated all pages to respect system_dateFormat setting. Date formatting now consistent across contract forms, signing pages, signed pages, tables, and all components. Hook provides centralized date formatting using system settings with automatic cache loading for optimal performance. Contract form date inputs maintain native HTML date functionality with calendar picker while other displays use formatted dates (dd/mm/yyyy with slashes).
 
 - July 30, 2025. **SYSTEM SETTINGS JSON CACHE IMPLEMENTED** - Created automatic JSON cache system for system_settings to enable instant loading of currency, date format, and other settings. Cache file (system-settings-cache.json) is generated automatically when settings are updated and loaded first for immediate availability. Falls back to database when cache doesn't exist. Contract form now loads EUR currency instantly without waiting for database queries.

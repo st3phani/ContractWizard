@@ -164,7 +164,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Parteneries
   app.get("/api/parteneries", async (req, res) => {
     try {
-      const parteneries = await storage.getParteneries();
+      const parteneries = await storage.getBeneficiaries();
       res.json(parteneries);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch parteneries" });
@@ -174,7 +174,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/parteneries/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const partenery = await storage.getPartenery(id);
+      const partenery = await storage.getBeneficiary(id);
       if (!partenery) {
         return res.status(404).json({ message: "Partenery not found" });
       }
@@ -191,7 +191,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Parsed data:", beneficiaryData);
       
       // Check if partenery already exists
-      const existing = await storage.getParteneryByEmail(beneficiaryData.email);
+      const existing = await storage.getBeneficiaryByEmail(beneficiaryData.email);
       if (existing) {
         return res.json(existing);
       }
@@ -228,7 +228,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/parteneries/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const deleted = await storage.deletePartenery(id);
+      const deleted = await storage.deleteBeneficiary(id);
       if (!deleted) {
         return res.status(404).json({ message: "Partenery not found" });
       }
@@ -284,7 +284,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedBeneficiary = insertBeneficiarySchema.parse(beneficiaryData);
       
       // Create or get partenery
-      let partenery = await storage.getParteneryByEmail(validatedBeneficiary.email);
+      let partenery = await storage.getBeneficiaryByEmail(validatedBeneficiary.email);
       if (!partenery) {
         partenery = await storage.createPartenery(validatedBeneficiary);
       }
@@ -338,7 +338,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedBeneficiary = insertBeneficiarySchema.parse(beneficiaryData);
       
       // Update or create partenery
-      let partenery = await storage.getParteneryByEmail(validatedBeneficiary.email);
+      let partenery = await storage.getBeneficiaryByEmail(validatedBeneficiary.email);
       if (!partenery) {
         partenery = await storage.createPartenery(validatedBeneficiary);
       } else {
