@@ -37,6 +37,11 @@ export default function Settings() {
     queryKey: ["/api/company-settings"],
   });
 
+  // Fetch system settings
+  const { data: existingSystemSettings } = useQuery({
+    queryKey: ["/api/system-settings"],
+  });
+
   // Update form when data is loaded
   useEffect(() => {
     if (existingSettings) {
@@ -51,6 +56,18 @@ export default function Settings() {
       });
     }
   }, [existingSettings]);
+
+  // Update system settings when data is loaded
+  useEffect(() => {
+    if (existingSystemSettings) {
+      setSystemSettings({
+        language: existingSystemSettings.language || "ro",
+        currency: existingSystemSettings.currency || "RON",
+        dateFormat: existingSystemSettings.dateFormat || "dd/mm/yyyy",
+        autoBackup: existingSystemSettings.autoBackup ?? true,
+      });
+    }
+  }, [existingSystemSettings]);
 
   // System Settings
   const [systemSettings, setSystemSettings] = useState({
