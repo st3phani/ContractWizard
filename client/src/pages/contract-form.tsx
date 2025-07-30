@@ -790,10 +790,27 @@ export default function ContractForm() {
                         <FormItem>
                           <FormLabel>Data Creării</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="date" 
-                              {...field}
-                            />
+                            <div className="relative">
+                              <Input 
+                                type="text" 
+                                value={field.value ? formatDateWithSettings(new Date(field.value)) : formatDateWithSettings(new Date())}
+                                onChange={(e) => {
+                                  const parsedDate = parseDate(e.target.value, dateFormat);
+                                  if (parsedDate) {
+                                    field.onChange(parsedDate.toISOString().split('T')[0]);
+                                  } else {
+                                    field.onChange(e.target.value);
+                                  }
+                                }}
+                                placeholder={getDateInputFormat(dateFormat)}
+                              />
+                              <input
+                                type="date"
+                                className="absolute inset-0 opacity-0 cursor-pointer"
+                                value={field.value || new Date().toISOString().split('T')[0]}
+                                onChange={(e) => field.onChange(e.target.value)}
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -807,10 +824,27 @@ export default function ContractForm() {
                         <FormItem>
                           <FormLabel>Data Începerii *</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="date" 
-                              {...field}
-                            />
+                            <div className="relative">
+                              <Input 
+                                type="text" 
+                                value={field.value ? formatDateWithSettings(new Date(field.value)) : ""}
+                                onChange={(e) => {
+                                  const parsedDate = parseDate(e.target.value, dateFormat);
+                                  if (parsedDate) {
+                                    field.onChange(parsedDate.toISOString().split('T')[0]);
+                                  } else {
+                                    field.onChange(e.target.value);
+                                  }
+                                }}
+                                placeholder={getDateInputFormat(dateFormat)}
+                              />
+                              <input
+                                type="date"
+                                className="absolute inset-0 opacity-0 cursor-pointer"
+                                value={field.value || ""}
+                                onChange={(e) => field.onChange(e.target.value)}
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -824,10 +858,27 @@ export default function ContractForm() {
                         <FormItem>
                           <FormLabel>Data Încheierii *</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="date" 
-                              {...field}
-                            />
+                            <div className="relative">
+                              <Input 
+                                type="text" 
+                                value={field.value ? formatDateWithSettings(new Date(field.value)) : ""}
+                                onChange={(e) => {
+                                  const parsedDate = parseDate(e.target.value, dateFormat);
+                                  if (parsedDate) {
+                                    field.onChange(parsedDate.toISOString().split('T')[0]);
+                                  } else {
+                                    field.onChange(e.target.value);
+                                  }
+                                }}
+                                placeholder={getDateInputFormat(dateFormat)}
+                              />
+                              <input
+                                type="date"
+                                className="absolute inset-0 opacity-0 cursor-pointer"
+                                value={field.value || ""}
+                                onChange={(e) => field.onChange(e.target.value)}
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
