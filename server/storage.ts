@@ -113,25 +113,27 @@ export class MemStorage implements IStorage {
     };
   }
 
-  // System Settings
-  async getSystemSettings(): Promise<SystemSettings | undefined> {
-    // Return default system settings for MemStorage
+  // System Settings - Key-Value approach for MemStorage compatibility
+  async getSystemSettings(): Promise<any> {
+    // Return default system settings for MemStorage in backward-compatible format
     return {
       id: 1,
       language: "ro",
       currency: "RON",
       dateFormat: "dd/mm/yyyy",
+      autoBackup: true,
       updatedAt: new Date()
     };
   }
 
-  async updateSystemSettings(settings: InsertSystemSettings): Promise<SystemSettings> {
-    // Return updated settings for MemStorage
+  async updateSystemSettings(settings: any): Promise<any> {
+    // Return updated settings for MemStorage in backward-compatible format
     return {
       id: 1,
       language: settings.language ?? "ro",
       currency: settings.currency ?? "RON", 
       dateFormat: settings.dateFormat ?? "dd/mm/yyyy",
+      autoBackup: settings.autoBackup ?? true,
       updatedAt: new Date()
     };
   }
@@ -1042,46 +1044,77 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  // System Settings
-  async getSystemSettings(): Promise<SystemSettings | undefined> {
-    const [settings] = await db.select().from(systemSettings).limit(1);
-    
-    if (!settings) {
-      // Create default settings if none exist
-      const [created] = await db
-        .insert(systemSettings)
-        .values({
-          language: "ro",
-          currency: "RON",
-          dateFormat: "dd/mm/yyyy",
-          updatedAt: new Date()
-        })
-        .returning();
-      return created;
+  // System Settings - Key-Value approach
+  async getSystemSettings(): Promise<any> {
+    try {
+      const settings = await db.select().from(systemSettings);
+      
+      // Convert key-value pairs to object format for backward compatibility
+      const settingsObject: any = {
+        id: 1, // Keep for compatibility
+        updatedAt: new Date()
+      };
+      
+      settings.forEach(setting => {
+        const key = setting.path.replace('system_', '');
+        if (key === 'autoBackup') {
+          settingsObject[key] = setting.value === 'TRUE';
+        } else {
+          settingsObject[key] = setting.value;
+        }
+      });
+      
+      return settingsObject;
+    } catch (error) {
+      console.error('Error getting system settings:', error);
+      return undefined;
     }
-    
-    return settings;
   }
 
-  async updateSystemSettings(settingsData: InsertSystemSettings): Promise<SystemSettings> {
-    // Check if settings exist
-    const existing = await this.getSystemSettings();
-    
-    if (existing) {
-      // Update existing settings
-      const [updated] = await db
-        .update(systemSettings)
-        .set({ ...settingsData, updatedAt: new Date() })
-        .where(eq(systemSettings.id, existing.id))
-        .returning();
-      return updated;
-    } else {
-      // Create new settings
-      const [created] = await db
-        .insert(systemSettings)
-        .values(settingsData)
-        .returning();
-      return created;
+  async updateSystemSettings(settingsData: any): Promise<any> {
+    try {
+      const updatePromises = [];
+      
+      // Update each setting individually
+      if (settingsData.language !== undefined) {
+        updatePromises.push(
+          db.update(systemSettings)
+            .set({ value: settingsData.language, updatedAt: new Date() })
+            .where(eq(systemSettings.path, 'system_language'))
+        );
+      }
+      
+      if (settingsData.currency !== undefined) {
+        updatePromises.push(
+          db.update(systemSettings)
+            .set({ value: settingsData.currency, updatedAt: new Date() })
+            .where(eq(systemSettings.path, 'system_currency'))
+        );
+      }
+      
+      if (settingsData.dateFormat !== undefined) {
+        updatePromises.push(
+          db.update(systemSettings)
+            .set({ value: settingsData.dateFormat, updatedAt: new Date() })
+            .where(eq(systemSettings.path, 'system_dateFormat'))
+        );
+      }
+      
+      if (settingsData.autoBackup !== undefined) {
+        updatePromises.push(
+          db.update(systemSettings)
+            .set({ value: settingsData.autoBackup ? 'TRUE' : 'FALSE', updatedAt: new Date() })
+            .where(eq(systemSettings.path, 'system_autoBackup'))
+        );
+      }
+      
+      await Promise.all(updatePromises);
+      
+      // Return updated settings in old format for compatibility
+      return await this.getSystemSettings();
+    } catch (error) {
+      console.error('Error updating system settings:', error);
+      throw error;
     }
   }
 

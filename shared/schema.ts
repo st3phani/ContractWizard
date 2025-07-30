@@ -97,8 +97,16 @@ export const insertContractTemplateSchema = createInsertSchema(contractTemplates
 });
 
 export const insertSystemSettingsSchema = createInsertSchema(systemSettings).omit({
-  id: true,
+  configId: true,
   updatedAt: true,
+});
+
+// Custom schema for system settings update that accepts the old format
+export const updateSystemSettingsSchema = z.object({
+  language: z.string().optional(),
+  currency: z.string().optional(),
+  dateFormat: z.string().optional(),
+  autoBackup: z.boolean().optional(),
 });
 
 

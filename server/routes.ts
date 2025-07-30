@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { sendContractEmail, testEmailConnection, sendSignedContractNotification } from "./email";
 import { getEmailLogs, clearEmailLogs, getLatestEmails } from "./email-log";
 import { contractStatusUpdater } from "./contract-status-updater";
-import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema, insertSystemSettingsSchema, insertUserProfileSchema, insertContractStatusSchema, contractSigningSchema } from "@shared/schema";
+import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema, insertSystemSettingsSchema, insertUserProfileSchema, insertContractStatusSchema, contractSigningSchema, updateSystemSettingsSchema } from "@shared/schema";
 import { z } from "zod";
 import { nanoid } from "nanoid";
 
@@ -863,7 +863,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/system-settings", async (req, res) => {
     try {
-      const validatedData = insertSystemSettingsSchema.parse(req.body);
+      // Use the custom schema that accepts the old format
+      const validatedData = updateSystemSettingsSchema.parse(req.body);
       const updatedSettings = await storage.updateSystemSettings(validatedData);
       res.json(updatedSettings);
     } catch (error) {
