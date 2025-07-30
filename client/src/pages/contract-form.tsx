@@ -188,6 +188,8 @@ export default function ContractForm() {
   // Update currency when system settings load (for new contracts)
   React.useEffect(() => {
     if (systemSettings && !isEditing) {
+      console.log('System settings loaded:', systemSettings);
+      console.log('Setting currency to:', systemSettings.currency);
       form.setValue('contract.currency', systemSettings.currency || 'RON');
     }
   }, [systemSettings, isEditing, form]);
