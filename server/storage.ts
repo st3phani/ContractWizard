@@ -212,9 +212,9 @@ CIF [CIF Companie], reprezentată legal prin [Reprezentant Legal],
 
 și
 
-BENEFICIAR: {{partenery.name}}, 
-domiciliat în {{partenery.address}}, 
-CNP/CUI: {{partenery.cnp}}, 
+BENEFICIAR: {{beneficiary.name}}, 
+domiciliat în {{beneficiary.address}}, 
+CNP/CUI: {{beneficiary.cnp}}, 
 în calitate de partener,
 
 S-a încheiat prezentul contract având următoarele clauze:
@@ -235,9 +235,9 @@ Părțile își asumă obligațiile prevăzute în legislația în vigoare și �
 PRESTATOR                    BENEFICIAR
 _________________           _________________`,
         fields: JSON.stringify([
-          { name: "partenery.name", type: "text", required: true },
-          { name: "partenery.address", type: "textarea", required: true },
-          { name: "partenery.cnp", type: "text", required: true },
+          { name: "beneficiary.name", type: "text", required: true },
+          { name: "beneficiary.address", type: "textarea", required: true },
+          { name: "beneficiary.cnp", type: "text", required: true },
           { name: "contract.value", type: "number", required: true },
           { name: "contract.currency", type: "select", options: ["RON", "EUR", "USD"], required: true },
           { name: "contract.startDate", type: "date", required: true },
@@ -304,14 +304,14 @@ _________________           _________________`,
     const newBeneficiary: Beneficiary = {
       ...partenery,
       id,
-      phone: partenery.phone ?? null,
-      address: partenery.address ?? null,
-      cnp: partenery.cnp ?? null,
-      companyName: partenery.companyName ?? null,
-      companyAddress: partenery.companyAddress ?? null,
-      companyCui: partenery.companyCui ?? null,
-      companyRegistrationNumber: partenery.companyRegistrationNumber ?? null,
-      isCompany: partenery.isCompany ?? false,
+      phone: beneficiary.phone ?? null,
+      address: beneficiary.address ?? null,
+      cnp: beneficiary.cnp ?? null,
+      companyName: beneficiary.companyName ?? null,
+      companyAddress: beneficiary.companyAddress ?? null,
+      companyCui: beneficiary.companyCui ?? null,
+      companyRegistrationNumber: beneficiary.companyRegistrationNumber ?? null,
+      isCompany: beneficiary.isCompany ?? false,
       createdAt: new Date()
     };
     this.beneficiaries.set(id, newBeneficiary);
@@ -322,7 +322,7 @@ _________________           _________________`,
     const existing = this.beneficiaries.get(id);
     if (!existing) return undefined;
     
-    const updated = { ...existing, ...partenery };
+    const updated = { ...existing, ...beneficiary };
     this.beneficiaries.set(id, updated);
     return updated;
   }
@@ -338,10 +338,10 @@ _________________           _________________`,
     
     for (const contract of contractsArray) {
       const template = contract.templateId ? this.contractTemplates.get(contract.templateId) : null;
-      const partenery = contract.parteneryId ? this.beneficiaries.get(contract.parteneryId) : null;
+      const beneficiary = contract.beneficiaryId ? this.beneficiaries.get(contract.beneficiaryId) : null;
       
       // Handle reserved contracts with null template/partenery
-      if (contract.status === "reserved") {
+      if (row.contract_statuses === "reserved") {
         const mockTemplate: ContractTemplate = {
           id: 0,
           name: "Template Rezervat",
@@ -385,10 +385,10 @@ _________________           _________________`,
     if (!contract) return undefined;
     
     const template = contract.templateId ? this.contractTemplates.get(contract.templateId) : null;
-    const partenery = contract.parteneryId ? this.beneficiaries.get(contract.parteneryId) : null;
+    const beneficiary = contract.beneficiaryId ? this.beneficiaries.get(contract.beneficiaryId) : null;
     
     // Handle reserved contracts
-    if (contract.status === "reserved") {
+    if (row.contract_statuses === "reserved") {
       const mockTemplate: ContractTemplate = {
         id: 0,
         name: "Template Rezervat",
@@ -431,10 +431,10 @@ _________________           _________________`,
     if (!contract) return undefined;
     
     const template = contract.templateId ? this.contractTemplates.get(contract.templateId) : null;
-    const partenery = contract.parteneryId ? this.beneficiaries.get(contract.parteneryId) : null;
+    const beneficiary = contract.beneficiaryId ? this.beneficiaries.get(contract.beneficiaryId) : null;
     
     // Handle reserved contracts
-    if (contract.status === "reserved") {
+    if (row.contract_statuses === "reserved") {
       const mockTemplate: ContractTemplate = {
         id: 0,
         name: "Template Rezervat",
@@ -480,7 +480,7 @@ _________________           _________________`,
       id,
       orderNumber: contractData.orderNumber,
       templateId: contractData.templateId,
-      parteneryId: contractData.parteneryId,
+      beneficiaryId: contractData.beneficiaryId,
       value: contractData.value ? String(contractData.value) : null,
       currency: contractData.currency ?? "RON",
       startDate: contractData.startDate ?? null,
@@ -501,10 +501,10 @@ _________________           _________________`,
     this.contracts.set(id, newContract);
     
     const template = this.contractTemplates.get(contractData.templateId);
-    const partenery = this.beneficiaries.get(contractData.parteneryId);
+    const beneficiary = this.beneficiaries.get(contractData.beneficiaryId);
     
     if (!template || !beneficiary) {
-      throw new Error("Template or partenery not found");
+      throw new Error("Template or beneficiary not found");
     }
     
     return {
@@ -528,7 +528,7 @@ _________________           _________________`,
     this.contracts.set(id, updated);
     
     const template = this.contractTemplates.get(updated.templateId || 0);
-    const partenery = this.beneficiaries.get(updated.parteneryId || 0);
+    const beneficiary = this.beneficiaries.get(updated.beneficiaryId || 0);
     
     if (!template || !beneficiary) return undefined;
     
@@ -575,7 +575,7 @@ _________________           _________________`,
       id,
       orderNumber,
       templateId: null,
-      parteneryId: null,
+      beneficiaryId: null,
       value: null,
       currency: "RON",
       startDate: null,
@@ -667,13 +667,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getBeneficiary(id: number): Promise<Beneficiary | undefined> {
-    const [partenery] = await db.select().from(beneficiaries).where(eq(beneficiaries.id, id));
-    return partenery || undefined;
+    const [beneficiary] = await db.select().from(beneficiaries).where(eq(beneficiaries.id, id));
+    return beneficiary || undefined;
   }
 
   async getBeneficiaryByEmail(email: string): Promise<Beneficiary | undefined> {
-    const [partenery] = await db.select().from(beneficiaries).where(eq(beneficiaries.email, email));
-    return partenery || undefined;
+    const [beneficiary] = await db.select().from(beneficiaries).where(eq(beneficiaries.email, email));
+    return beneficiary || undefined;
   }
 
   async createBeneficiary(beneficiary: InsertBeneficiary): Promise<Beneficiary> {
@@ -704,7 +704,7 @@ export class DatabaseStorage implements IStorage {
         .select()
         .from(contracts)
         .leftJoin(contractTemplates, eq(contracts.templateId, contractTemplates.id))
-        .leftJoin(beneficiaries, eq(contracts.parteneryId, beneficiaries.id))
+        .leftJoin(beneficiaries, eq(contracts.beneficiaryId, beneficiaries.id))
         .leftJoin(contractStatuses, eq(contracts.statusId, contractStatuses.id))
         .orderBy(desc(contracts.id));
 
@@ -714,8 +714,8 @@ export class DatabaseStorage implements IStorage {
       return result.map(row => {
         const contract = row.contracts;
         
-        // Handle reserved contracts with parteneryId = 0 or templateId = 0
-        if (contract.parteneryId === 0 || contract.templateId === 0) {
+        // Handle reserved contracts with beneficiaryId = 0 or templateId = 0
+        if (contract.beneficiaryId === 0 || contract.templateId === 0) {
           const mockTemplate: ContractTemplate = {
             id: 0,
             name: "Template Rezervat",
@@ -775,8 +775,8 @@ export class DatabaseStorage implements IStorage {
     // Get company settings for provider data
     const companySettings = await this.getCompanySettings();
     
-    // Handle reserved contracts with parteneryId = 0 or templateId = 0
-    if (contract.parteneryId === 0 || contract.templateId === 0) {
+    // Handle reserved contracts with beneficiaryId = 0 or templateId = 0
+    if (contract.beneficiaryId === 0 || contract.templateId === 0) {
       const mockTemplate: ContractTemplate = {
         id: 0,
         name: "Template Rezervat",
@@ -801,8 +801,8 @@ export class DatabaseStorage implements IStorage {
       return {
         ...contract,
         template: contract.template || mockTemplate,
-        beneficiary: contract.partenery || mockBeneficiary,
-        status: contract.status,
+        beneficiary: contract.beneficiaries || mockBeneficiary,
+        status: row.contract_statuses,
         provider: companySettings
       } as ContractWithDetails;
     }
@@ -828,8 +828,8 @@ export class DatabaseStorage implements IStorage {
     // Get company settings for provider data
     const companySettings = await this.getCompanySettings();
     
-    // Handle reserved contracts with parteneryId = 0 or templateId = 0
-    if (contract.parteneryId === 0 || contract.templateId === 0) {
+    // Handle reserved contracts with beneficiaryId = 0 or templateId = 0
+    if (contract.beneficiaryId === 0 || contract.templateId === 0) {
       const mockTemplate: ContractTemplate = {
         id: 0,
         name: "Template Rezervat",
@@ -854,8 +854,8 @@ export class DatabaseStorage implements IStorage {
       return {
         ...contract,
         template: contract.template || mockTemplate,
-        beneficiary: contract.partenery || mockBeneficiary,
-        status: contract.status,
+        beneficiary: contract.beneficiaries || mockBeneficiary,
+        status: row.contract_statuses,
         provider: companySettings
       } as ContractWithDetails;
     }
@@ -964,7 +964,7 @@ export class DatabaseStorage implements IStorage {
       .values({
         orderNumber,
         templateId: 0,
-        parteneryId: 0,
+        beneficiaryId: 0,
         value: null,
         currency: "RON",
         startDate: null,
@@ -1270,7 +1270,7 @@ export class DatabaseStorage implements IStorage {
         .select()
         .from(contracts)
         .leftJoin(contractTemplates, eq(contracts.templateId, contractTemplates.id))
-        .leftJoin(beneficiaries, eq(contracts.parteneryId, beneficiaries.id))
+        .leftJoin(beneficiaries, eq(contracts.beneficiaryId, beneficiaries.id))
         .leftJoin(contractStatuses, eq(contracts.statusId, contractStatuses.id))
         .where(eq(contracts.signedToken, token));
 
@@ -1301,7 +1301,7 @@ export class DatabaseStorage implements IStorage {
         .select()
         .from(contracts)
         .leftJoin(contractTemplates, eq(contracts.templateId, contractTemplates.id))
-        .leftJoin(beneficiaries, eq(contracts.parteneryId, beneficiaries.id))
+        .leftJoin(beneficiaries, eq(contracts.beneficiaryId, beneficiaries.id))
         .leftJoin(contractStatuses, eq(contracts.statusId, contractStatuses.id))
         .where(eq(contracts.signingToken, token));
 
@@ -1376,9 +1376,9 @@ CIF [CIF Companie], reprezentată legal prin [Reprezentant Legal],
 
 și
 
-BENEFICIAR: {{partenery.name}}, 
-domiciliat în {{partenery.address}}, 
-CNP/CUI: {{partenery.cnp}}, 
+BENEFICIAR: {{beneficiary.name}}, 
+domiciliat în {{beneficiary.address}}, 
+CNP/CUI: {{beneficiary.cnp}}, 
 în calitate de partener,
 
 S-a încheiat prezentul contract având următoarele clauze:
@@ -1399,9 +1399,9 @@ Părțile își asumă obligațiile prevăzute în legislația în vigoare și �
 PRESTATOR                    BENEFICIAR
 _________________           _________________`,
         fields: JSON.stringify([
-          { name: "partenery.name", type: "text", required: true },
-          { name: "partenery.address", type: "textarea", required: true },
-          { name: "partenery.cnp", type: "text", required: true },
+          { name: "beneficiary.name", type: "text", required: true },
+          { name: "beneficiary.address", type: "textarea", required: true },
+          { name: "beneficiary.cnp", type: "text", required: true },
           { name: "contract.value", type: "number", required: true },
           { name: "contract.currency", type: "select", options: ["RON", "EUR", "USD"], required: true },
           { name: "contract.startDate", type: "date", required: true },

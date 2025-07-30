@@ -204,7 +204,7 @@ export const contractsRelations = relations(contracts, ({ one }) => ({
     fields: [contracts.templateId],
     references: [contractTemplates.id],
   }),
-  partenery: one(beneficiaries, {
+  beneficiary: one(beneficiaries, {
     fields: [contracts.beneficiaryId],
     references: [beneficiaries.id],
   }),
@@ -216,7 +216,7 @@ export const contractsRelations = relations(contracts, ({ one }) => ({
 
 export type ContractWithDetails = Contract & {
   template: ContractTemplate | null;
-  partenery: Beneficiary | null;
+  beneficiary: Beneficiary | null;
   status: ContractStatus | null;
   provider?: CompanySettings | null;
 };
