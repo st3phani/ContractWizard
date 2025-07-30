@@ -134,7 +134,7 @@ export class MemStorage implements IStorage {
       currency: settings.currency ?? "RON", 
       dateFormat: settings.dateFormat ?? "dd/mm/yyyy",
       autoBackup: settings.autoBackup ?? true,
-      updatedAt: new Date()
+      updatedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
     };
   }
 
@@ -1052,7 +1052,7 @@ export class DatabaseStorage implements IStorage {
       // Convert key-value pairs to object format for backward compatibility
       const settingsObject: any = {
         id: 1, // Keep for compatibility
-        updatedAt: new Date()
+        updatedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
       };
       
       settings.forEach(setting => {
@@ -1061,6 +1061,11 @@ export class DatabaseStorage implements IStorage {
           settingsObject[key] = setting.value === 'TRUE';
         } else {
           settingsObject[key] = setting.value;
+        }
+        // Update the updatedAt with the latest timestamp from any setting
+        if (setting.updatedAt) {
+          const formattedDate = new Date(setting.updatedAt).toISOString().slice(0, 19).replace('T', ' ');
+          settingsObject.updatedAt = formattedDate;
         }
       });
       
@@ -1075,11 +1080,13 @@ export class DatabaseStorage implements IStorage {
     try {
       const updatePromises = [];
       
+      const currentDateTime = new Date();
+      
       // Update each setting individually
       if (settingsData.language !== undefined) {
         updatePromises.push(
           db.update(systemSettings)
-            .set({ value: settingsData.language, updatedAt: new Date() })
+            .set({ value: settingsData.language, updatedAt: currentDateTime })
             .where(eq(systemSettings.path, 'system_language'))
         );
       }
@@ -1087,7 +1094,7 @@ export class DatabaseStorage implements IStorage {
       if (settingsData.currency !== undefined) {
         updatePromises.push(
           db.update(systemSettings)
-            .set({ value: settingsData.currency, updatedAt: new Date() })
+            .set({ value: settingsData.currency, updatedAt: currentDateTime })
             .where(eq(systemSettings.path, 'system_currency'))
         );
       }
@@ -1095,7 +1102,7 @@ export class DatabaseStorage implements IStorage {
       if (settingsData.dateFormat !== undefined) {
         updatePromises.push(
           db.update(systemSettings)
-            .set({ value: settingsData.dateFormat, updatedAt: new Date() })
+            .set({ value: settingsData.dateFormat, updatedAt: currentDateTime })
             .where(eq(systemSettings.path, 'system_dateFormat'))
         );
       }
@@ -1103,7 +1110,7 @@ export class DatabaseStorage implements IStorage {
       if (settingsData.autoBackup !== undefined) {
         updatePromises.push(
           db.update(systemSettings)
-            .set({ value: settingsData.autoBackup ? 'TRUE' : 'FALSE', updatedAt: new Date() })
+            .set({ value: settingsData.autoBackup ? 'TRUE' : 'FALSE', updatedAt: currentDateTime })
             .where(eq(systemSettings.path, 'system_autoBackup'))
         );
       }
