@@ -47,8 +47,12 @@ export default function Parteneries() {
     queryKey: ["/api/beneficiaries"],
   });
 
+  console.log("Beneficiaries data:", beneficiaries);
+  console.log("Is loading:", isLoading);
+  console.log("Total items:", beneficiaries.length);
+
   // Filter and sort beneficiaries based on search query and ID descending
-  const filteredParteneries = beneficiaries
+  const filteredBeneficiaries = beneficiaries
     .filter(beneficiary =>
       beneficiary.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       beneficiary.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -60,7 +64,7 @@ export default function Parteneries() {
 
   // Apply pagination using utils
   const paginationConfig: PaginationConfig = { currentPage, itemsPerPage };
-  const paginationResult = paginateItems(filteredParteneries, paginationConfig);
+  const paginationResult = paginateItems(filteredBeneficiaries, paginationConfig);
   
   const {
     items: paginatedBeneficiaries,
@@ -301,7 +305,9 @@ export default function Parteneries() {
               {isLoading ? (
                 <div className="text-center py-8">Se încarcă...</div>
               ) : (
-                <Table>
+                <>
+                  {paginatedBeneficiaries.length > 0 ? (
+                    <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>ID</TableHead>
@@ -393,14 +399,14 @@ export default function Parteneries() {
                         </TableCell>
                       </TableRow>
                     ))}
-                  </TableBody>
-                </Table>
-              )}
-              
-              {totalItems === 0 && !isLoading && (
-                <div className="text-center py-8 text-gray-500">
-                  {searchQuery ? "Nu au fost găsiți parteneri care să corespundă căutării" : "Nu au fost găsiți parteneri"}
-                </div>
+                    </TableBody>
+                  </Table>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      {searchQuery ? "Nu au fost găsiți parteneri care să corespundă căutării" : "Nu au fost găsiți parteneri"}
+                    </div>
+                  )}
+                </>
               )}
 
               {/* Pagination Controls */}
