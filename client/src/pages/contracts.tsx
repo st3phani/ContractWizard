@@ -96,6 +96,7 @@ Contract Manager Team`,
 
       // Invalidate queries to refresh the data
       queryClient.invalidateQueries({ queryKey: ["/api/contracts"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/contracts/${contract.id}/history`] });
     } catch (error) {
       toast({
         title: "Error",
