@@ -74,7 +74,6 @@ export class ContractLoggerService {
     actionCode: string;
     ipAddress?: string;
     userAgent?: string;
-    additionalData?: object;
   }) {
     try {
       const logEntry: InsertContractLoggerHistory = {
@@ -83,7 +82,6 @@ export class ContractLoggerService {
         actionCode: data.actionCode,
         ipAddress: data.ipAddress || null,
         userAgent: data.userAgent || null,
-        additionalData: data.additionalData ? JSON.stringify(data.additionalData) : null,
       };
 
       const [result] = await db.insert(contractLoggerHistory)

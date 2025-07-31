@@ -19,7 +19,6 @@ interface ContractLogEntry {
   };
   ipAddress?: string;
   userAgent?: string;
-  additionalData?: string;
   createdAt: string;
   partner?: {
     id: number;
@@ -105,14 +104,7 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
     });
   };
 
-  const parseAdditionalData = (additionalDataString?: string) => {
-    if (!additionalDataString) return null;
-    try {
-      return JSON.parse(additionalDataString);
-    } catch {
-      return null;
-    }
-  };
+
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -139,7 +131,6 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
             <div className="space-y-4">
               {Array.isArray(logHistory) && logHistory.map((entry: ContractLogEntry, index: number) => {
                 console.log(`Entry ${index + 1}:`, entry);
-                const additionalData = parseAdditionalData(entry.additionalData);
                 
                 return (
                   <div
@@ -186,19 +177,7 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                       )}
                     </div>
 
-                    {additionalData && (
-                      <div className="mt-3 p-3 bg-gray-50 rounded-md">
-                        <p className="text-sm font-medium text-gray-700 mb-2">Additional Details:</p>
-                        <div className="text-sm text-gray-600">
-                          {Object.entries(additionalData).map(([key, value]) => (
-                            <div key={key} className="flex justify-between py-1">
-                              <span className="capitalize">{key.replace(/([A-Z])/g, ' $1').toLowerCase()}:</span>
-                              <span className="font-mono text-right">{String(value)}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+
 
                     {entry.userAgent && (
                       <div className="mt-3 text-xs text-gray-500 truncate">

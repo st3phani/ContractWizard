@@ -328,11 +328,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         actionCode: "contract_created",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
-        additionalData: {
-          orderNumber: contract.orderNumber,
-          templateId: contract.templateId,
-          value: contract.value,
-        }
       });
       
       res.json(contract);
@@ -408,10 +403,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         actionCode: "contract_edited",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
-        additionalData: {
-          orderNumber: contract.orderNumber,
-          changes: updateData,
-        }
       });
       
       console.log("Contract update successful, returning:", contract);
@@ -500,9 +491,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         actionCode: "contract_preview_accessed",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
-        additionalData: {
-          orderNumber: contract.orderNumber,
-        }
       });
       
       console.log('Populated result:', populatedContent);
@@ -581,11 +569,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         actionCode: "contract_pdf_downloaded",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
-        additionalData: {
-          orderNumber: contract.orderNumber,
-          filename: filename,
-          isSigned: contract.status?.statusCode === 'signed',
-        }
       });
       
       res.setHeader('Content-Type', 'application/pdf');
@@ -640,9 +623,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         actionCode: "contract_reserved",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
-        additionalData: {
-          orderNumber: contract.orderNumber,
-        }
       });
       
       res.json(contract);
@@ -699,12 +679,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         actionCode: "contract_sent_for_signing",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
-        additionalData: {
-          orderNumber: contractToEmail.orderNumber,
-          recipient: recipient,
-          subject: subject,
-          signingToken: signingToken,
-        }
       });
       
       res.json({ 
@@ -816,10 +790,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         actionCode: "signing_page_viewed",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
-        additionalData: {
-          orderNumber: contract.orderNumber,
-          signingToken: token,
-        }
       });
 
       res.json(contract);
@@ -870,10 +840,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         actionCode: "signed_contract_page_viewed",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
-        additionalData: {
-          orderNumber: contract.orderNumber,
-          signedToken: token,
-        }
       });
 
       res.json(contract);
@@ -953,11 +919,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           actionCode: "signed_contract_sent",
           ipAddress: ContractLoggerService.getClientIP(req),
           userAgent: ContractLoggerService.getUserAgent(req),
-          additionalData: {
-            orderNumber: contract.orderNumber,
-            adminEmail: adminEmail,
-            sentToBoth: true,
-          }
         });
       } catch (emailError) {
         console.error('❌ Failed to send signed contract notifications:', emailError);
@@ -971,12 +932,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         actionCode: "contract_signed",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
-        additionalData: {
-          orderNumber: contract.orderNumber,
-          signedBy: validation.data.signedBy,
-          signedIp: clientIp,
-          signedToken: signedContract.signedToken,
-        }
       });
 
       res.json({ 

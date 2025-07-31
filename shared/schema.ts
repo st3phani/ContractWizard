@@ -85,7 +85,6 @@ export const contractLoggerHistory = pgTable("contract_logger_history", {
   actionCode: text("action_code").notNull(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
-  additionalData: text("additional_data"), // JSON string for extra context
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
