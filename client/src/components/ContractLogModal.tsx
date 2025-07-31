@@ -9,12 +9,22 @@ interface ContractLogEntry {
   id: number;
   contractId: number;
   partnerId?: number;
-  actionCode: string;
+  actionCode: {
+    id: number;
+    actionCode: string;
+    actionName: string;
+    description: string;
+    createdAt: string;
+  };
   ipAddress?: string;
   userAgent?: string;
   additionalData?: string;
   createdAt: string;
-  actionName?: string;
+  partner?: {
+    id: number;
+    name: string;
+    email: string;
+  };
 }
 
 interface ContractLogModalProps {
@@ -25,13 +35,13 @@ interface ContractLogModalProps {
 }
 
 export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onClose }: ContractLogModalProps) {
-  const { data: logHistory, isLoading } = useQuery({
+  const { data: logHistory = [], isLoading } = useQuery<ContractLogEntry[]>({
     queryKey: ['/api/contracts', contractId, 'history'],
     enabled: isOpen && !!contractId,
   });
 
-  const getActionBadgeVariant = (actionCode: string): "default" | "secondary" | "destructive" | "outline" => {
-    switch (actionCode) {
+  const getActionBadgeVariant = (actionCodeString: string): "default" | "secondary" | "destructive" | "outline" => {
+    switch (actionCodeString) {
       case 'contract_created':
       case 'contract_reserved':
         return 'default';
@@ -54,8 +64,8 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
     }
   };
 
-  const getActionIcon = (actionCode: string) => {
-    switch (actionCode) {
+  const getActionIcon = (actionCodeString: string) => {
+    switch (actionCodeString) {
       case 'contract_created':
       case 'contract_reserved':
       case 'contract_edited':
@@ -113,14 +123,14 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
               <p className="mt-2 text-sm text-gray-500">Loading contract history...</p>
             </div>
-          ) : !logHistory || logHistory.length === 0 ? (
+          ) : !Array.isArray(logHistory) || logHistory.length === 0 ? (
             <div className="text-center py-8">
               <Activity className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500">No activity logs found for this contract.</p>
             </div>
           ) : (
             <div className="space-y-4">
-              {logHistory.map((entry: ContractLogEntry) => {
+              {Array.isArray(logHistory) && logHistory.map((entry: ContractLogEntry) => {
                 const additionalData = parseAdditionalData(entry.additionalData);
                 
                 return (
@@ -131,11 +141,11 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
-                          {getActionIcon(entry.actionCode)}
+                          {getActionIcon(entry.actionCode.actionCode)}
                         </div>
                         <div>
-                          <Badge variant={getActionBadgeVariant(entry.actionCode)}>
-                            {entry.actionName || entry.actionCode}
+                          <Badge variant={getActionBadgeVariant(entry.actionCode.actionCode)}>
+                            {entry.actionCode.actionName}
                           </Badge>
                         </div>
                       </div>
@@ -154,11 +164,11 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                         </div>
                       )}
                       
-                      {entry.partnerId && (
+                      {entry.partner && (
                         <div className="flex items-center gap-2">
                           <User className="h-4 w-4 text-gray-400" />
-                          <span className="text-gray-600">Partner ID:</span>
-                          <span>{entry.partnerId}</span>
+                          <span className="text-gray-600">Partner:</span>
+                          <span>{entry.partner.name}</span>
                         </div>
                       )}
                     </div>
