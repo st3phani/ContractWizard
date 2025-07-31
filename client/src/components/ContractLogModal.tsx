@@ -155,6 +155,11 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                           <Badge variant={getActionBadgeVariant(entry.actionCode?.actionCode || 'unknown')}>
                             {entry.actionCode?.actionName || 'Unknown Action'}
                           </Badge>
+                          {entry.actionCode?.description && (
+                            <p className="text-sm text-gray-600 mt-1">
+                              {entry.actionCode.description}
+                            </p>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-500">
