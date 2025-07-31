@@ -981,12 +981,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Log contract signing action
+      const accessedUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
       await ContractLoggerService.logAction({
         contractId: contract.id,
         partnerId: contract.beneficiaryId || undefined,
         actionCode: "contract_signed",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
+        additionalData: {
+          accessedUrl: accessedUrl,
+          signedToken: signedContract.signedToken,
+          signingToken: token
+        }
       });
 
       res.json({ 

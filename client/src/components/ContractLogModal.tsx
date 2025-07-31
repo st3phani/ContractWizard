@@ -26,6 +26,7 @@ interface ContractLogEntry {
     subject?: string;
     accessedUrl?: string;
     previewContext?: string;
+    signedToken?: string;
   };
   createdAt: string;
   partner?: {
@@ -203,7 +204,7 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                     </div>
 
                     {/* Additional Data Section for various action codes */}
-                    {entry.additionalData && (entry.actionCode?.actionCode === 'contract_sent_for_signing' || entry.actionCode?.actionCode === 'signing_page_viewed' || entry.actionCode?.actionCode === 'contract_preview_accessed') && (
+                    {entry.additionalData && (entry.actionCode?.actionCode === 'contract_sent_for_signing' || entry.actionCode?.actionCode === 'signing_page_viewed' || entry.actionCode?.actionCode === 'contract_preview_accessed' || entry.actionCode?.actionCode === 'contract_signed') && (
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                           <Globe className="h-4 w-4" />
@@ -211,7 +212,9 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                             ? 'Detalii trimitere pentru semnare' 
                             : entry.actionCode?.actionCode === 'signing_page_viewed'
                             ? 'Detalii acces pagină de semnare'
-                            : 'Detalii preview contract'}
+                            : entry.actionCode?.actionCode === 'contract_preview_accessed'
+                            ? 'Detalii preview contract'
+                            : 'Detalii semnare contract'}
                         </h4>
                         <div className="grid grid-cols-1 gap-3 text-sm">
                           {entry.additionalData.signingUrl && (
@@ -271,6 +274,13 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                               <span className="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded">
                                 {entry.additionalData.previewContext}
                               </span>
+                            </div>
+                          )}
+                          {entry.additionalData.signedToken && (
+                            <div className="flex items-center gap-2">
+                              <FileText className="h-4 w-4 text-green-500" />
+                              <span className="text-gray-600">Token contract semnat:</span>
+                              <span className="font-mono text-xs bg-green-50 text-green-600 px-2 py-1 rounded">{entry.additionalData.signedToken}</span>
                             </div>
                           )}
                         </div>
