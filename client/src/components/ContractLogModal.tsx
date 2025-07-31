@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileText, Calendar, User, Globe, Activity } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 
 interface ContractLogEntry {
   id: number;
@@ -35,10 +36,24 @@ interface ContractLogModalProps {
 }
 
 export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onClose }: ContractLogModalProps) {
+  // Clear cache when modal opens to ensure fresh data
+  if (isOpen && contractId) {
+    queryClient.removeQueries({ queryKey: ['/api/contracts', contractId, 'history'] });
+  }
+
   const { data: logHistory = [], isLoading } = useQuery<ContractLogEntry[]>({
     queryKey: ['/api/contracts', contractId, 'history'],
     enabled: isOpen && !!contractId,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+    cacheTime: 0,
   });
+
+  console.log('Modal opened for contract:', contractId);
+  console.log('Raw logHistory data:', logHistory);
+  console.log('logHistory length:', logHistory?.length);
+  console.log('Is loading:', isLoading);
 
   const getActionBadgeVariant = (actionCodeString: string): "default" | "secondary" | "destructive" | "outline" => {
     switch (actionCodeString) {
@@ -131,7 +146,8 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
           ) : (
             <div className="space-y-4">
               {Array.isArray(logHistory) && logHistory.map((entry: ContractLogEntry) => {
-                console.log('Log entry:', entry); // Debug log
+                console.log('Processing entry:', entry);
+                console.log('ActionCode object:', entry.actionCode);
                 const additionalData = parseAdditionalData(entry.additionalData);
                 
                 return (
