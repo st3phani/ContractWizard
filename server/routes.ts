@@ -1137,11 +1137,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/contracts/:id/history", async (req, res) => {
     try {
       const contractId = parseInt(req.params.id);
+      console.log(`🔍 History API called for contract ID: ${contractId}`);
+      
       if (isNaN(contractId)) {
         return res.status(400).json({ message: "Invalid contract ID" });
       }
       
       const history = await ContractLoggerService.getContractHistory(contractId);
+      console.log(`📊 API returning ${history.length} entries for contract ${contractId}`);
       res.json(history);
     } catch (error) {
       console.error("Error fetching contract history:", error);

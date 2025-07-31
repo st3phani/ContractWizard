@@ -99,7 +99,8 @@ export class ContractLoggerService {
   }
 
   static async getContractHistory(contractId: number) {
-    return await db.query.contractLoggerHistory.findMany({
+    console.log(`🔍 Getting contract history for contract ID: ${contractId}`);
+    const result = await db.query.contractLoggerHistory.findMany({
       where: (history, { eq }) => eq(history.contractId, contractId),
       with: {
         partner: true,
@@ -107,6 +108,8 @@ export class ContractLoggerService {
       },
       orderBy: (history, { desc }) => [desc(history.createdAt)],
     });
+    console.log(`📊 Found ${result.length} history entries for contract ${contractId}`);
+    return result;
   }
 
   static async getAllHistory(limit: number = 100) {
