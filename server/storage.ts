@@ -348,7 +348,7 @@ _________________           _________________`,
       const beneficiary = contract.beneficiaryId ? this.partners.get(contract.beneficiaryId) : null;
       
       // Handle reserved contracts with null template/beneficiary
-      if (row.contract_statuses === "reserved") {
+      if (contract.status === "reserved") {
         const mockTemplate: ContractTemplate = {
           id: 0,
           name: "Template Rezervat",
@@ -395,7 +395,7 @@ _________________           _________________`,
     const beneficiary = contract.beneficiaryId ? this.partners.get(contract.beneficiaryId) : null;
     
     // Handle reserved contracts
-    if (row.contract_statuses === "reserved") {
+    if (contract.status === "reserved") {
       const mockTemplate: ContractTemplate = {
         id: 0,
         name: "Template Rezervat",
@@ -441,7 +441,7 @@ _________________           _________________`,
     const beneficiary = contract.beneficiaryId ? this.partners.get(contract.beneficiaryId) : null;
     
     // Handle reserved contracts
-    if (row.contract_statuses === "reserved") {
+    if (contract.status === "reserved") {
       const mockTemplate: ContractTemplate = {
         id: 0,
         name: "Template Rezervat",
@@ -764,7 +764,7 @@ export class DatabaseStorage implements IStorage {
             ...contract,
             template: row.contract_templates || mockTemplate,
             beneficiary: row.partners || mockBeneficiary,
-            status: row.contract_statuses || null,
+            status: contract.status || null,
             provider: companySettings,
           };
         }
@@ -773,7 +773,7 @@ export class DatabaseStorage implements IStorage {
           ...contract,
           template: row.contract_templates || null,
           beneficiary: row.partners || null,
-          status: row.contract_statuses || null,
+          status: contract.status || null,
           provider: companySettings,
         };
       });
@@ -824,8 +824,8 @@ export class DatabaseStorage implements IStorage {
       return {
         ...contract,
         template: contract.template || mockTemplate,
-        beneficiary: contract.partners || mockBeneficiary,
-        status: row.contract_statuses,
+        beneficiary: contract.beneficiary || mockBeneficiary,
+        status: contract.status,
         provider: companySettings
       } as ContractWithDetails;
     }
@@ -877,8 +877,8 @@ export class DatabaseStorage implements IStorage {
       return {
         ...contract,
         template: contract.template || mockTemplate,
-        beneficiary: contract.partners || mockBeneficiary,
-        status: row.contract_statuses,
+        beneficiary: contract.beneficiary || mockBeneficiary,
+        status: contract.status,
         provider: companySettings
       } as ContractWithDetails;
     }
@@ -1314,7 +1314,7 @@ export class DatabaseStorage implements IStorage {
         ...row.contracts,
         template: row.contract_templates || null,
         beneficiary: row.partners || null,
-        status: row.contract_statuses || null,
+        status: contract.status || null,
         provider: companySettings,
       };
     } catch (error) {
@@ -1345,7 +1345,7 @@ export class DatabaseStorage implements IStorage {
         ...row.contracts,
         template: row.contract_templates || null,
         beneficiary: row.partners || null,
-        status: row.contract_statuses || null,
+        status: contract.status || null,
         provider: companySettings,
       };
     } catch (error) {
