@@ -131,6 +131,7 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
           ) : (
             <div className="space-y-4">
               {Array.isArray(logHistory) && logHistory.map((entry: ContractLogEntry) => {
+                console.log('Log entry:', entry); // Debug log
                 const additionalData = parseAdditionalData(entry.additionalData);
                 
                 return (
