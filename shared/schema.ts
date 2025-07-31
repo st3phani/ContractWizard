@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, timestamp, decimal, boolean, varchar, date } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, timestamp, decimal, boolean, varchar, date, json } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -85,6 +85,7 @@ export const contractLoggerHistory = pgTable("contract_logger_history", {
   actionCode: text("action_code").notNull(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
+  additionalData: json("additional_data"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

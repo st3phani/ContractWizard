@@ -679,13 +679,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         sentAt: new Date() 
       });
       
-      // Log contract sent for signing action
+      // Create signing URL and log contract sent for signing action
+      const signingUrl = `https://${process.env.REPLIT_DEV_DOMAIN || 'localhost:5000'}/sign-contract/${signingToken}`;
       await ContractLoggerService.logAction({
         contractId: id,
         partnerId: contractToEmail.beneficiaryId || undefined,
         actionCode: "contract_sent_for_signing",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
+        additionalData: {
+          signingUrl: signingUrl,
+          signingToken: signingToken,
+          recipientEmail: recipient,
+          subject: subject
+        }
       });
       
       res.json({ 

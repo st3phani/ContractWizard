@@ -19,6 +19,12 @@ interface ContractLogEntry {
   };
   ipAddress?: string;
   userAgent?: string;
+  additionalData?: {
+    signingUrl?: string;
+    signingToken?: string;
+    recipientEmail?: string;
+    subject?: string;
+  };
   createdAt: string;
   partner?: {
     id: number;
@@ -193,6 +199,50 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                         </div>
                       )}
                     </div>
+
+                    {/* Additional Data Section for contract_sent_for_signing */}
+                    {entry.additionalData && entry.actionCode?.actionCode === 'contract_sent_for_signing' && (
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+                          <Globe className="h-4 w-4" />
+                          Detalii trimitere pentru semnare
+                        </h4>
+                        <div className="grid grid-cols-1 gap-3 text-sm">
+                          {entry.additionalData.signingUrl && (
+                            <div className="flex items-start gap-2">
+                              <Globe className="h-4 w-4 text-blue-500 mt-0.5" />
+                              <div>
+                                <span className="text-gray-600">URL de semnare:</span>
+                                <div className="mt-1">
+                                  <a 
+                                    href={entry.additionalData.signingUrl} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:text-blue-800 font-mono text-xs break-all underline"
+                                  >
+                                    {entry.additionalData.signingUrl}
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          {entry.additionalData.signingToken && (
+                            <div className="flex items-center gap-2">
+                              <FileText className="h-4 w-4 text-green-500" />
+                              <span className="text-gray-600">Token de semnare:</span>
+                              <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">{entry.additionalData.signingToken}</span>
+                            </div>
+                          )}
+                          {entry.additionalData.recipientEmail && (
+                            <div className="flex items-center gap-2">
+                              <User className="h-4 w-4 text-purple-500" />
+                              <span className="text-gray-600">Email destinatar:</span>
+                              <span className="font-mono text-xs">{entry.additionalData.recipientEmail}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
