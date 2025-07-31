@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, Download, PenTool, Trash2, Search, Edit, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, Download, PenTool, Trash2, Search, Edit, ChevronLeft, ChevronRight, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -12,6 +12,7 @@ import { getStatusColor, getStatusText, getInitials, getAvatarColor } from "@/li
 import { useDateFormat } from "@/hooks/use-date-format";
 import type { ContractWithDetails } from "@shared/schema";
 import { paginateItems, type PaginationConfig } from "@/utils/paginationUtils";
+import { ContractLogModal } from "@/components/ContractLogModal";
 
 interface ContractTableProps {
   contracts: ContractWithDetails[];
@@ -30,6 +31,8 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [confirmSendContract, setConfirmSendContract] = useState<ContractWithDetails | null>(null);
+  const [logModalOpen, setLogModalOpen] = useState(false);
+  const [selectedContractForLog, setSelectedContractForLog] = useState<ContractWithDetails | null>(null);
   const { formatDate } = useDateFormat();
   // Find the highest order number to determine which contract can be deleted
   const maxOrderNumber = Math.max(...contracts.map(c => c.orderNumber || 0));
@@ -87,6 +90,16 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
       onEmail(confirmSendContract);
       setConfirmSendContract(null);
     }
+  };
+
+  const handleViewLog = (contract: ContractWithDetails) => {
+    setSelectedContractForLog(contract);
+    setLogModalOpen(true);
+  };
+
+  const handleCloseLogModal = () => {
+    setLogModalOpen(false);
+    setSelectedContractForLog(null);
   };
 
   // Reset to first page when filters change
@@ -222,6 +235,16 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                     <Button
                       variant="ghost"
                       size="sm"
+                      onClick={() => handleViewLog(contract)}
+                      className="hover:bg-orange-50"
+                      title="View contract log history"
+                      aria-label="View contract log history"
+                    >
+                      <Activity className="h-4 w-4 text-orange-600" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => canDeleteContract(contract) ? onDelete(contract) : undefined}
                       disabled={!canDeleteContract(contract)}
                       className={!canDeleteContract(contract) ? "opacity-30 cursor-not-allowed" : "hover:bg-red-50"}
@@ -348,6 +371,16 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
         </DialogFooter>
       </DialogContent>
     </Dialog>
+
+    {/* Contract Log Modal */}
+    {selectedContractForLog && (
+      <ContractLogModal
+        contractId={selectedContractForLog.id}
+        contractOrderNumber={selectedContractForLog.orderNumber || 0}
+        isOpen={logModalOpen}
+        onClose={handleCloseLogModal}
+      />
+    )}
   </>
   );
 }
