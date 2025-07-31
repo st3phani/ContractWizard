@@ -67,7 +67,7 @@ export default function SignContract() {
         },
         body: JSON.stringify({
           signingToken: token,
-          previewContext: 'signing_page'
+          previewContext: 'Contract Signing Page'
         }),
       });
     } catch (error) {
