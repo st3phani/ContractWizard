@@ -395,9 +395,9 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     
     y += 3;
     pdf.setFontSize(9);
-    const parteneryName = contract.partenery?.isCompany ? 
-      contract.partenery?.companyName : 
-      contract.partenery?.name;
+    const parteneryName = contract.beneficiary?.isCompany ? 
+      contract.beneficiary?.companyName : 
+      contract.beneficiary?.name;
     
     pdf.text(parteneryName || 'N/A', margin + 90, y);
     y += 4;

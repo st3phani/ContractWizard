@@ -268,8 +268,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.get("/api/contracts/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
     try {
-      const id = parseInt(req.params.id);
       console.log(`🔍 Fetching contract with ID: ${id}`);
       const contract = await storage.getContract(id);
       if (!contract) {
@@ -529,7 +529,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const populatedContent = populateTemplate(contract.template.content, {
         orderNumber: contract.orderNumber,
         currentDate: new Date().toLocaleDateString('ro-RO'),
-        beneficiary: {
+        partenery: {
           name: contract.beneficiary.name,
           email: contract.beneficiary.email,
           phone: contract.beneficiary.phone || '',
@@ -539,7 +539,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           companyAddress: contract.beneficiary.companyAddress || '',
           companyCui: contract.beneficiary.companyCui || '',
           companyRegistrationNumber: contract.beneficiary.companyRegistrationNumber || '',
-          companyLegalRepresentative: contract.beneficiary.name || '',
           isCompany: contract.beneficiary.isCompany
         },
         contract: {
