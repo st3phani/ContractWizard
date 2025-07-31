@@ -137,7 +137,7 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                     key={entry.id}
                     className="border rounded-lg p-4 bg-white hover:bg-gray-50 transition-colors"
                   >
-                    <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
                           {getActionIcon(entry.actionCode?.actionCode || 'unknown')}
