@@ -1314,7 +1314,7 @@ export class DatabaseStorage implements IStorage {
         ...row.contracts,
         template: row.contract_templates || null,
         beneficiary: row.partners || null,
-        status: contract.status || null,
+        status: row.contract_statuses || null,
         provider: companySettings,
       };
     } catch (error) {
