@@ -798,12 +798,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Log signing page view
+      const accessedUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
       await ContractLoggerService.logAction({
         contractId: contract.id,
         partnerId: contract.beneficiaryId || undefined,
         actionCode: "signing_page_viewed",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
+        additionalData: {
+          accessedUrl: accessedUrl,
+          signingToken: token
+        }
       });
 
       res.json(contract);
