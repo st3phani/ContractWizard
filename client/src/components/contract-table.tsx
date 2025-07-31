@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, Download, PenTool, Trash2, Search, Edit, ChevronLeft, ChevronRight, Activity } from "lucide-react";
+import { Eye, Download, PenTool, Trash2, Search, Edit, ChevronLeft, ChevronRight, Activity, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -25,6 +25,9 @@ interface ContractTableProps {
   title?: string;
 }
 
+type SortField = 'orderNumber' | 'createdAt';
+type SortDirection = 'asc' | 'desc';
+
 export default function ContractTable({ contracts, onView, onEdit, onDownload, onEmail, onDelete, showPagination = true, title }: ContractTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -33,9 +36,30 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
   const [confirmSendContract, setConfirmSendContract] = useState<ContractWithDetails | null>(null);
   const [logModalOpen, setLogModalOpen] = useState(false);
   const [selectedContractForLog, setSelectedContractForLog] = useState<ContractWithDetails | null>(null);
+  const [sortField, setSortField] = useState<SortField>('orderNumber');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const { formatDate } = useDateFormat();
   // Find the highest order number to determine which contract can be deleted
   const maxOrderNumber = Math.max(...contracts.map(c => c.orderNumber || 0));
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+    setCurrentPage(1); // Reset to first page when sorting
+  };
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="h-4 w-4 text-gray-400" />;
+    }
+    return sortDirection === 'asc' 
+      ? <ArrowUp className="h-4 w-4 text-blue-600" />
+      : <ArrowDown className="h-4 w-4 text-blue-600" />;
+  };
 
   const filteredContracts = contracts.filter((contract) => {
     const matchesSearch = 
@@ -48,18 +72,42 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
     return matchesSearch && matchesStatus;
   });
 
+  // Apply sorting
+  const sortedContracts = [...filteredContracts].sort((a, b) => {
+    let aValue: any = a[sortField];
+    let bValue: any = b[sortField];
+
+    // Handle date sorting
+    if (sortField === 'createdAt') {
+      aValue = new Date(aValue || 0).getTime();
+      bValue = new Date(bValue || 0).getTime();
+    }
+
+    // Handle number sorting
+    if (sortField === 'orderNumber') {
+      aValue = aValue || 0;
+      bValue = bValue || 0;
+    }
+
+    if (sortDirection === 'asc') {
+      return aValue > bValue ? 1 : -1;
+    } else {
+      return aValue < bValue ? 1 : -1;
+    }
+  });
+
   // Apply pagination using utils (only if showPagination is true)
-  let paginatedContracts = filteredContracts;
-  let totalItems = filteredContracts.length;
+  let paginatedContracts = sortedContracts;
+  let totalItems = sortedContracts.length;
   let totalPages = 1;
   let hasNextPage = false;
   let hasPreviousPage = false;
   let startIndex = 0;
-  let endIndex = filteredContracts.length;
+  let endIndex = sortedContracts.length;
 
   if (showPagination) {
     const paginationConfig: PaginationConfig = { currentPage, itemsPerPage };
-    const paginationResult = paginateItems(filteredContracts, paginationConfig);
+    const paginationResult = paginateItems(sortedContracts, paginationConfig);
     
     paginatedContracts = paginationResult.items;
     totalItems = paginationResult.totalItems;
@@ -155,10 +203,30 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Order No.</TableHead>
+              <TableHead>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleSort('orderNumber')}
+                  className="flex items-center gap-2 h-auto p-0 font-medium hover:bg-transparent"
+                >
+                  Order No.
+                  {getSortIcon('orderNumber')}
+                </Button>
+              </TableHead>
               <TableHead>Partner</TableHead>
               <TableHead>Contract Type</TableHead>
-              <TableHead>Created Date</TableHead>
+              <TableHead>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleSort('createdAt')}
+                  className="flex items-center gap-2 h-auto p-0 font-medium hover:bg-transparent"
+                >
+                  Created Date
+                  {getSortIcon('createdAt')}
+                </Button>
+              </TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
