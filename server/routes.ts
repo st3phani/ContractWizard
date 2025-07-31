@@ -968,12 +968,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('✅ Signed contract notifications sent to beneficiary and administrator');
         
         // Log signed contract sent action
+        const signedContractUrl = `${req.protocol}://${req.get('host')}/signed-contract/${signedContract.signedToken}`;
         await ContractLoggerService.logAction({
           contractId: contract.id,
           partnerId: contract.beneficiaryId || undefined,
           actionCode: "signed_contract_sent",
           ipAddress: ContractLoggerService.getClientIP(req),
           userAgent: ContractLoggerService.getUserAgent(req),
+          additionalData: {
+            signedContractUrl: signedContractUrl,
+            signedToken: signedContract.signedToken,
+            recipientEmail: contract.beneficiary?.email,
+            adminEmail: adminEmail
+          }
         });
       } catch (emailError) {
         console.error('❌ Failed to send signed contract notifications:', emailError);

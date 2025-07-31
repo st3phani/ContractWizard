@@ -27,6 +27,8 @@ interface ContractLogEntry {
     accessedUrl?: string;
     previewContext?: string;
     signedToken?: string;
+    signedContractUrl?: string;
+    adminEmail?: string;
   };
   createdAt: string;
   partner?: {
@@ -204,7 +206,7 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                     </div>
 
                     {/* Additional Data Section for various action codes */}
-                    {entry.additionalData && (entry.actionCode?.actionCode === 'contract_sent_for_signing' || entry.actionCode?.actionCode === 'signing_page_viewed' || entry.actionCode?.actionCode === 'contract_preview_accessed' || entry.actionCode?.actionCode === 'contract_signed') && (
+                    {entry.additionalData && (entry.actionCode?.actionCode === 'contract_sent_for_signing' || entry.actionCode?.actionCode === 'signing_page_viewed' || entry.actionCode?.actionCode === 'contract_preview_accessed' || entry.actionCode?.actionCode === 'contract_signed' || entry.actionCode?.actionCode === 'signed_contract_sent') && (
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                           <Globe className="h-4 w-4" />
@@ -214,7 +216,9 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                             ? 'Detalii acces pagină de semnare'
                             : entry.actionCode?.actionCode === 'contract_preview_accessed'
                             ? 'Detalii preview contract'
-                            : 'Detalii semnare contract'}
+                            : entry.actionCode?.actionCode === 'contract_signed'
+                            ? 'Detalii semnare contract'
+                            : 'Detalii trimitere contract semnat'}
                         </h4>
                         <div className="grid grid-cols-1 gap-3 text-sm">
                           {entry.additionalData.signingUrl && (
@@ -281,6 +285,31 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                               <FileText className="h-4 w-4 text-green-500" />
                               <span className="text-gray-600">Token contract semnat:</span>
                               <span className="font-mono text-xs bg-green-50 text-green-600 px-2 py-1 rounded">{entry.additionalData.signedToken}</span>
+                            </div>
+                          )}
+                          {entry.additionalData.signedContractUrl && (
+                            <div className="flex items-start gap-2">
+                              <Globe className="h-4 w-4 text-green-500 mt-0.5" />
+                              <div>
+                                <span className="text-gray-600">Link contract semnat:</span>
+                                <div className="mt-1">
+                                  <a 
+                                    href={entry.additionalData.signedContractUrl} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-green-600 hover:text-green-800 font-mono text-xs break-all underline"
+                                  >
+                                    {entry.additionalData.signedContractUrl}
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          {entry.additionalData.adminEmail && (
+                            <div className="flex items-center gap-2">
+                              <User className="h-4 w-4 text-blue-500" />
+                              <span className="text-gray-600">Email administrator:</span>
+                              <span className="font-mono text-xs">{entry.additionalData.adminEmail}</span>
                             </div>
                           )}
                         </div>
