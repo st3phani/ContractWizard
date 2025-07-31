@@ -29,6 +29,9 @@ interface ContractLogEntry {
     signedToken?: string;
     signedContractUrl?: string;
     adminEmail?: string;
+    downloadUrl?: string;
+    filename?: string;
+    contractStatus?: string;
   };
   createdAt: string;
   partner?: {
@@ -206,7 +209,7 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                     </div>
 
                     {/* Additional Data Section for various action codes */}
-                    {entry.additionalData && (entry.actionCode?.actionCode === 'contract_sent_for_signing' || entry.actionCode?.actionCode === 'signing_page_viewed' || entry.actionCode?.actionCode === 'contract_preview_accessed' || entry.actionCode?.actionCode === 'contract_signed' || entry.actionCode?.actionCode === 'signed_contract_sent' || entry.actionCode?.actionCode === 'signed_contract_page_viewed') && (
+                    {entry.additionalData && (entry.actionCode?.actionCode === 'contract_sent_for_signing' || entry.actionCode?.actionCode === 'signing_page_viewed' || entry.actionCode?.actionCode === 'contract_preview_accessed' || entry.actionCode?.actionCode === 'contract_signed' || entry.actionCode?.actionCode === 'signed_contract_sent' || entry.actionCode?.actionCode === 'signed_contract_page_viewed' || entry.actionCode?.actionCode === 'contract_pdf_downloaded') && (
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                           <Globe className="h-4 w-4" />
@@ -220,7 +223,9 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                             ? 'Detalii semnare contract'
                             : entry.actionCode?.actionCode === 'signed_contract_sent'
                             ? 'Detalii trimitere contract semnat'
-                            : 'Detalii acces contract semnat'}
+                            : entry.actionCode?.actionCode === 'signed_contract_page_viewed'
+                            ? 'Detalii acces contract semnat'
+                            : 'Detalii descărcare PDF'}
                         </h4>
                         <div className="grid grid-cols-1 gap-3 text-sm">
                           {entry.additionalData.signingUrl && (
@@ -312,6 +317,38 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                               <User className="h-4 w-4 text-blue-500" />
                               <span className="text-gray-600">Email administrator:</span>
                               <span className="font-mono text-xs">{entry.additionalData.adminEmail}</span>
+                            </div>
+                          )}
+                          {entry.additionalData.downloadUrl && (
+                            <div className="flex items-start gap-2">
+                              <Globe className="h-4 w-4 text-blue-500 mt-0.5" />
+                              <div>
+                                <span className="text-gray-600">URL descărcare:</span>
+                                <div className="mt-1">
+                                  <a 
+                                    href={entry.additionalData.downloadUrl} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:text-blue-800 font-mono text-xs break-all underline"
+                                  >
+                                    {entry.additionalData.downloadUrl}
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          {entry.additionalData.filename && (
+                            <div className="flex items-center gap-2">
+                              <FileText className="h-4 w-4 text-purple-500" />
+                              <span className="text-gray-600">Nume fișier:</span>
+                              <span className="font-mono text-xs bg-purple-50 text-purple-600 px-2 py-1 rounded">{entry.additionalData.filename}</span>
+                            </div>
+                          )}
+                          {entry.additionalData.contractStatus && (
+                            <div className="flex items-center gap-2">
+                              <Activity className="h-4 w-4 text-gray-500" />
+                              <span className="text-gray-600">Status contract:</span>
+                              <span className="text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">{entry.additionalData.contractStatus}</span>
                             </div>
                           )}
                         </div>
