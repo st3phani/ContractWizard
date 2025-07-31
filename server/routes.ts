@@ -496,7 +496,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Log contract preview access
       await ContractLoggerService.logAction({
         contractId: contract.id,
-        partnerId: contract.beneficiaryId,
+        partnerId: contract.beneficiaryId || undefined,
         actionCode: "contract_preview_accessed",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
@@ -551,7 +551,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           endDate: contract.endDate?.toLocaleDateString('ro-RO') || '',
           value: contract.value || '',
           currency: contract.currency || '',
-          notes: contract.notes || '',
+          notes: '',
         },
         provider: {
           name: contract.provider?.name || '',
@@ -577,7 +577,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Log PDF download action
       await ContractLoggerService.logAction({
         contractId: contract.id,
-        partnerId: contract.beneficiaryId,
+        partnerId: contract.beneficiaryId || undefined,
         actionCode: "contract_pdf_downloaded",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
@@ -695,7 +695,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Log contract sent for signing action
       await ContractLoggerService.logAction({
         contractId: id,
-        partnerId: contractToEmail.beneficiaryId,
+        partnerId: contractToEmail.beneficiaryId || undefined,
         actionCode: "contract_sent_for_signing",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
@@ -812,7 +812,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Log signing page view
       await ContractLoggerService.logAction({
         contractId: contract.id,
-        partnerId: contract.beneficiaryId,
+        partnerId: contract.beneficiaryId || undefined,
         actionCode: "signing_page_viewed",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
@@ -866,7 +866,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Log signed contract page view
       await ContractLoggerService.logAction({
         contractId: contract.id,
-        partnerId: contract.beneficiaryId,
+        partnerId: contract.beneficiaryId || undefined,
         actionCode: "signed_contract_page_viewed",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
@@ -949,7 +949,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Log signed contract sent action
         await ContractLoggerService.logAction({
           contractId: contract.id,
-          partnerId: contract.beneficiaryId,
+          partnerId: contract.beneficiaryId || undefined,
           actionCode: "signed_contract_sent",
           ipAddress: ContractLoggerService.getClientIP(req),
           userAgent: ContractLoggerService.getUserAgent(req),
@@ -967,7 +967,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Log contract signing action
       await ContractLoggerService.logAction({
         contractId: contract.id,
-        partnerId: contract.beneficiaryId,
+        partnerId: contract.beneficiaryId || undefined,
         actionCode: "contract_signed",
         ipAddress: ContractLoggerService.getClientIP(req),
         userAgent: ContractLoggerService.getUserAgent(req),
