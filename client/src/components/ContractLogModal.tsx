@@ -206,7 +206,7 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                     </div>
 
                     {/* Additional Data Section for various action codes */}
-                    {entry.additionalData && (entry.actionCode?.actionCode === 'contract_sent_for_signing' || entry.actionCode?.actionCode === 'signing_page_viewed' || entry.actionCode?.actionCode === 'contract_preview_accessed' || entry.actionCode?.actionCode === 'contract_signed' || entry.actionCode?.actionCode === 'signed_contract_sent') && (
+                    {entry.additionalData && (entry.actionCode?.actionCode === 'contract_sent_for_signing' || entry.actionCode?.actionCode === 'signing_page_viewed' || entry.actionCode?.actionCode === 'contract_preview_accessed' || entry.actionCode?.actionCode === 'contract_signed' || entry.actionCode?.actionCode === 'signed_contract_sent' || entry.actionCode?.actionCode === 'signed_contract_page_viewed') && (
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                           <Globe className="h-4 w-4" />
@@ -218,7 +218,9 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                             ? 'Detalii preview contract'
                             : entry.actionCode?.actionCode === 'contract_signed'
                             ? 'Detalii semnare contract'
-                            : 'Detalii trimitere contract semnat'}
+                            : entry.actionCode?.actionCode === 'signed_contract_sent'
+                            ? 'Detalii trimitere contract semnat'
+                            : 'Detalii acces contract semnat'}
                         </h4>
                         <div className="grid grid-cols-1 gap-3 text-sm">
                           {entry.additionalData.signingUrl && (
