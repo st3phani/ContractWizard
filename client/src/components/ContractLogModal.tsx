@@ -32,6 +32,8 @@ interface ContractLogEntry {
     downloadUrl?: string;
     filename?: string;
     contractStatus?: string;
+    sourcePage?: string;
+    refererUrl?: string;
   };
   createdAt: string;
   partner?: {
@@ -349,6 +351,31 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                               <Activity className="h-4 w-4 text-gray-500" />
                               <span className="text-gray-600">Status contract:</span>
                               <span className="text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">{entry.additionalData.contractStatus}</span>
+                            </div>
+                          )}
+                          {entry.additionalData.sourcePage && (
+                            <div className="flex items-center gap-2">
+                              <Globe className="h-4 w-4 text-green-500" />
+                              <span className="text-gray-600">Pagină sursă:</span>
+                              <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">{entry.additionalData.sourcePage}</span>
+                            </div>
+                          )}
+                          {entry.additionalData.refererUrl && entry.additionalData.refererUrl !== 'Direct Access' && (
+                            <div className="flex items-start gap-2">
+                              <Globe className="h-4 w-4 text-orange-500 mt-0.5" />
+                              <div>
+                                <span className="text-gray-600">URL pagină sursă:</span>
+                                <div className="mt-1">
+                                  <a 
+                                    href={entry.additionalData.refererUrl} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-orange-600 hover:text-orange-800 font-mono text-xs break-all underline"
+                                  >
+                                    {entry.additionalData.refererUrl}
+                                  </a>
+                                </div>
+                              </div>
                             </div>
                           )}
                         </div>

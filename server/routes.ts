@@ -571,6 +571,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Log PDF download action
       const downloadUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+      const referer = req.headers.referer || req.headers.referrer;
+      let sourcePage = 'Direct Access';
+      
+      if (referer) {
+        if (referer.includes('/signed-contract/')) {
+          sourcePage = 'Signed Contract Page';
+        } else if (referer.includes('/sign-contract/')) {
+          sourcePage = 'Contract Signing Page';
+        } else if (referer.includes('/contracts')) {
+          sourcePage = 'Contracts Management Page';
+        } else {
+          sourcePage = 'Other Page';
+        }
+      }
+      
       await ContractLoggerService.logAction({
         contractId: contract.id,
         partnerId: contract.beneficiaryId || undefined,
@@ -580,7 +595,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         additionalData: {
           downloadUrl: downloadUrl,
           filename: filename,
-          contractStatus: contract.status?.statusCode || 'unknown'
+          contractStatus: contract.status?.statusCode || 'unknown',
+          sourcePage: sourcePage,
+          refererUrl: referer || 'Direct Access'
         }
       });
       
