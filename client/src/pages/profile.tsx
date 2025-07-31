@@ -81,7 +81,7 @@ export default function Profile() {
     },
     onError: () => {
       toast({
-        title: "Eroare",
+        title: "Error",
         description: "A apărut o eroare la actualizarea profilului",
         variant: "destructive",
       });
@@ -120,7 +120,7 @@ export default function Profile() {
     },
     onError: (error: Error) => {
       toast({
-        title: "Eroare",
+        title: "Error",
         description: error.message,
         variant: "destructive",
       });
@@ -172,7 +172,7 @@ export default function Profile() {
 
       toast({
         title: "Error",
-        description: `Următoarele câmpuri sunt obligatorii: ${missingFields.join(', ')}`,
+        description: `The following fields are required: ${missingFields.join(', ')}`,
         variant: "destructive",
       });
 
@@ -196,15 +196,15 @@ export default function Profile() {
     const fieldsToFocus = [];
 
     if (!passwordData.currentPassword) {
-      missingFields.push('Parola curentă');
+      missingFields.push('Current Password');
       fieldsToFocus.push('currentPassword');
     }
     if (!passwordData.newPassword) {
-      missingFields.push('Parola nouă');
+      missingFields.push('New Password');
       fieldsToFocus.push('newPassword');
     }
     if (!passwordData.confirmPassword) {
-      missingFields.push('Confirmarea parolei');
+      missingFields.push('Password Confirmation');
       fieldsToFocus.push('confirmPassword');
     }
 
@@ -237,8 +237,8 @@ export default function Profile() {
         confirmField.focus();
       }
       toast({
-        title: "Eroare",
-        description: "Parola nouă și confirmarea nu coincid",
+        title: "Error",
+        description: "New Password și confirmarea nu coincid",
         variant: "destructive",
       });
       return;
@@ -252,8 +252,8 @@ export default function Profile() {
         newPasswordField.focus();
       }
       toast({
-        title: "Eroare",
-        description: "Parola nouă trebuie să aibă cel puțin 6 caractere",
+        title: "Error",
+        description: "New Password trebuie să aibă cel puțin 6 caractere",
         variant: "destructive",
       });
       return;
@@ -280,8 +280,8 @@ export default function Profile() {
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900">Profil Administrator</h2>
-              <p className="text-gray-600 mt-1">Gestionați informațiile dvs. personale</p>
+              <h2 className="text-2xl font-semibold text-gray-900">Administrator Profile</h2>
+              <p className="text-gray-600 mt-1">Manage your personal information</p>
             </div>
           </div>
         </header>
@@ -294,13 +294,13 @@ export default function Profile() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <User className="h-5 w-5 mr-2" />
-                  Informații Personale
+                  Personal Information
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">Prenume *</Label>
+                  <Label htmlFor="firstName">First Name *</Label>
                   <Input
                     id="firstName"
                     value={profileData.firstName}
@@ -315,7 +315,7 @@ export default function Profile() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Nume *</Label>
+                  <Label htmlFor="lastName">Last Name *</Label>
                   <Input
                     id="lastName"
                     value={profileData.lastName}
@@ -370,7 +370,7 @@ export default function Profile() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="role">Rol *</Label>
+                <Label htmlFor="role">Role *</Label>
                 <div className="relative">
                   <Shield className="absolute left-3 top-3 h-4 w-4 text-gray-400 z-10" />
                   <Select 
@@ -385,12 +385,12 @@ export default function Profile() {
                     }}
                   >
                     <SelectTrigger id="role" className="pl-10">
-                      <SelectValue placeholder="Selectează rolul" />
+                      <SelectValue placeholder="Select role" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="administrator">Administrator</SelectItem>
                       <SelectItem value="manager">Manager</SelectItem>
-                      <SelectItem value="user">Utilizator</SelectItem>
+                      <SelectItem value="user">User</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -416,12 +416,12 @@ export default function Profile() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Lock className="h-5 w-5 mr-2" />
-                  Schimbare Parolă
+                  Change Password
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                <Label htmlFor="currentPassword">Parola Curentă *</Label>
+                <Label htmlFor="currentPassword">Current Password *</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
@@ -440,8 +440,8 @@ export default function Profile() {
                     type="button"
                     onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
                     className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                    title={showPasswords.current ? "Ascunde parola" : "Arată parola"}
-                    aria-label={showPasswords.current ? "Ascunde parola" : "Arată parola"}
+                    title={showPasswords.current ? "Hide password" : "Show password"}
+                    aria-label={showPasswords.current ? "Hide password" : "Show password"}
                   >
                     {showPasswords.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -449,7 +449,7 @@ export default function Profile() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="newPassword">Parola Nouă *</Label>
+                <Label htmlFor="newPassword">New Password *</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
@@ -475,7 +475,7 @@ export default function Profile() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmă Parola Nouă *</Label>
+                <Label htmlFor="confirmPassword">Confirm New Password *</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
@@ -509,7 +509,7 @@ export default function Profile() {
                   aria-label="Actualizează parola contului"
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  {updatePasswordMutation.isPending ? "Se actualizează..." : "Actualizează Parola"}
+                  {updatePasswordMutation.isPending ? "Se actualizează..." : "Update Password"}
                 </Button>
               </div>
               </CardContent>

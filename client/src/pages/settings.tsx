@@ -479,7 +479,7 @@ export default function Settings() {
 
               <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
                 <p className="text-sm text-yellow-800">
-                  <strong>Atenție:</strong> Operațiunile de export/import pot dura câteva minute în funcție de cantitatea de date.
+                  <strong>Warning:</strong> Export/import operations may take several minutes depending on the amount of data.
                 </p>
               </div>
 
@@ -488,12 +488,12 @@ export default function Settings() {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center">
                     <TestTube className="h-4 w-4 mr-2" />
-                    <span className="font-medium">Test Sistem Email</span>
+                    <span className="font-medium">Email System Test</span>
                   </div>
                   <EmailTest />
                 </div>
                 <p className="text-sm text-gray-600">
-                  Testează funcționalitatea de trimitere email folosind MailHog pentru dezvoltare.
+                  Test email sending functionality using MailHog for development.
                 </p>
               </div>
             </CardContent>

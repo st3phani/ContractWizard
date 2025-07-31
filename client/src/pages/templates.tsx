@@ -176,7 +176,7 @@ export default function Templates() {
         <div className="p-6">
           <Card>
             <CardHeader>
-              <CardTitle>Lista Template-uri</CardTitle>
+              <CardTitle>Template List</CardTitle>
             </CardHeader>
             <CardContent>
               {isLoading ? (
