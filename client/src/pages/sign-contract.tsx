@@ -55,6 +55,34 @@ export default function SignContract() {
     retry: false
   });
 
+  // Function to log contract preview access
+  const logPreviewAccess = async () => {
+    if (!contract?.id || !token) return;
+    
+    try {
+      await fetch(`/api/contracts/${contract.id}/log-preview`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          signingToken: token,
+          previewContext: 'signing_page'
+        }),
+      });
+    } catch (error) {
+      console.error('Failed to log preview access:', error);
+    }
+  };
+
+  // Handle preview open with logging
+  const handlePreviewOpen = (open: boolean) => {
+    setPreviewOpen(open);
+    if (open) {
+      logPreviewAccess();
+    }
+  };
+
   // Sign contract mutation
   const signMutation = useMutation({
     mutationFn: async (data: ContractSigningData) => {
@@ -199,7 +227,7 @@ export default function SignContract() {
                   <FileText className="h-5 w-5 mr-2" />
                   Contract Details
                 </div>
-                <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+                <Dialog open={previewOpen} onOpenChange={handlePreviewOpen}>
                   <DialogTrigger asChild>
                     <Button variant="outline" size="sm" className="flex items-center">
                       <Eye className="h-4 w-4 mr-2" />

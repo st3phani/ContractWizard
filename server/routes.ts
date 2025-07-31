@@ -783,6 +783,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Log contract preview access (public endpoint)
+  app.post("/api/contracts/:id/log-preview", async (req, res) => {
+    try {
+      const contractId = parseInt(req.params.id);
+      const { signingToken, previewContext } = req.body;
+      
+      if (isNaN(contractId)) {
+        return res.status(400).json({ message: "Invalid contract ID" });
+      }
+
+      // Get contract to verify it exists and get partner info
+      const contract = await storage.getContract(contractId);
+      if (!contract) {
+        return res.status(404).json({ message: "Contract not found" });
+      }
+
+      // Log contract preview access
+      await ContractLoggerService.logAction({
+        contractId: contractId,
+        partnerId: contract.beneficiaryId || undefined,
+        actionCode: "contract_preview_accessed",
+        ipAddress: ContractLoggerService.getClientIP(req),
+        userAgent: ContractLoggerService.getUserAgent(req),
+        additionalData: {
+          signingToken: signingToken || undefined,
+          previewContext: previewContext || 'unknown'
+        }
+      });
+
+      res.json({ success: true, message: "Preview access logged successfully" });
+    } catch (error) {
+      console.error("Log preview access error:", error);
+      res.status(500).json({ message: "Failed to log preview access" });
+    }
+  });
+
   // Get contract for signing (public endpoint)
   app.get("/api/contracts/sign/:token", async (req, res) => {
     try {

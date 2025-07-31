@@ -25,6 +25,7 @@ interface ContractLogEntry {
     recipientEmail?: string;
     subject?: string;
     accessedUrl?: string;
+    previewContext?: string;
   };
   createdAt: string;
   partner?: {
@@ -202,11 +203,15 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                     </div>
 
                     {/* Additional Data Section for various action codes */}
-                    {entry.additionalData && (entry.actionCode?.actionCode === 'contract_sent_for_signing' || entry.actionCode?.actionCode === 'signing_page_viewed') && (
+                    {entry.additionalData && (entry.actionCode?.actionCode === 'contract_sent_for_signing' || entry.actionCode?.actionCode === 'signing_page_viewed' || entry.actionCode?.actionCode === 'contract_preview_accessed') && (
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                           <Globe className="h-4 w-4" />
-                          {entry.actionCode?.actionCode === 'contract_sent_for_signing' ? 'Detalii trimitere pentru semnare' : 'Detalii acces pagină de semnare'}
+                          {entry.actionCode?.actionCode === 'contract_sent_for_signing' 
+                            ? 'Detalii trimitere pentru semnare' 
+                            : entry.actionCode?.actionCode === 'signing_page_viewed'
+                            ? 'Detalii acces pagină de semnare'
+                            : 'Detalii preview contract'}
                         </h4>
                         <div className="grid grid-cols-1 gap-3 text-sm">
                           {entry.additionalData.signingUrl && (
@@ -257,6 +262,15 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                               <User className="h-4 w-4 text-purple-500" />
                               <span className="text-gray-600">Email destinatar:</span>
                               <span className="font-mono text-xs">{entry.additionalData.recipientEmail}</span>
+                            </div>
+                          )}
+                          {entry.additionalData.previewContext && (
+                            <div className="flex items-center gap-2">
+                              <Eye className="h-4 w-4 text-purple-500" />
+                              <span className="text-gray-600">Context preview:</span>
+                              <span className="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded">
+                                {entry.additionalData.previewContext}
+                              </span>
                             </div>
                           )}
                         </div>
