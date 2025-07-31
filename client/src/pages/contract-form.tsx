@@ -188,7 +188,7 @@ export default function ContractForm() {
       const contractData = editContract;
       console.log("Setting form with contract data:", contractData);
       console.log("Template ID from contract:", contractData.templateId);
-      setSelectedBeneficiary(contractData.beneficiary);
+      setSelectedBeneficiary(contractData.beneficiary || null);
       
       // Format dates for form inputs
       const createdDate = contractData.createdAt ? new Date(contractData.createdAt).toISOString().split('T')[0] : '';
@@ -197,16 +197,16 @@ export default function ContractForm() {
       
       const formValues = {
         beneficiary: {
-          name: contractData.beneficiary.name || "",
-          email: contractData.beneficiary.email || "",
-          phone: contractData.beneficiary.phone || "",
-          address: contractData.beneficiary.address || "",
-          cnp: contractData.beneficiary.cnp || "",
-          companyName: contractData.beneficiary.companyName || "",
-          companyAddress: contractData.beneficiary.companyAddress || "",
-          companyCui: contractData.beneficiary.companyCui || "",
-          companyRegistrationNumber: contractData.beneficiary.companyRegistrationNumber || "",
-          isCompany: contractData.beneficiary.isCompany || false,
+          name: contractData.beneficiary?.name || "",
+          email: contractData.beneficiary?.email || "",
+          phone: contractData.beneficiary?.phone || "",
+          address: contractData.beneficiary?.address || "",
+          cnp: contractData.beneficiary?.cnp || "",
+          companyName: contractData.beneficiary?.companyName || "",
+          companyAddress: contractData.beneficiary?.companyAddress || "",
+          companyCui: contractData.beneficiary?.companyCui || "",
+          companyRegistrationNumber: contractData.beneficiary?.companyRegistrationNumber || "",
+          isCompany: contractData.beneficiary?.isCompany || false,
         },
         contract: {
           templateId: contractData.templateId,

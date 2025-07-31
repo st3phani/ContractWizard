@@ -270,12 +270,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/contracts/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
+      console.log(`🔍 Fetching contract with ID: ${id}`);
       const contract = await storage.getContract(id);
       if (!contract) {
+        console.log(`❌ Contract ${id} not found`);
         return res.status(404).json({ message: "Contract not found" });
       }
+      console.log(`✅ Contract ${id} found:`, { 
+        id: contract.id, 
+        orderNumber: contract.orderNumber,
+        hasBeneficiary: !!contract.beneficiary 
+      });
       res.json(contract);
     } catch (error) {
+      console.error(`❌ Error fetching contract ${id}:`, error);
       res.status(500).json({ message: "Failed to fetch contract" });
     }
   });
