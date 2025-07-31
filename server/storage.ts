@@ -764,7 +764,7 @@ export class DatabaseStorage implements IStorage {
             ...contract,
             template: row.contract_templates || mockTemplate,
             beneficiary: row.partners || mockBeneficiary,
-            status: contract.status || null,
+            status: row.contract_statuses || null,
             provider: companySettings,
           };
         }
@@ -773,7 +773,7 @@ export class DatabaseStorage implements IStorage {
           ...contract,
           template: row.contract_templates || null,
           beneficiary: row.partners || null,
-          status: contract.status || null,
+          status: row.contract_statuses || null,
           provider: companySettings,
         };
       });
