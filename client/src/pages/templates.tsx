@@ -180,7 +180,7 @@ export default function Templates() {
             </CardHeader>
             <CardContent>
               {isLoading ? (
-                <div className="text-center py-8">Se încarcă template-urile...</div>
+                <div className="text-center py-8">Loading templates...</div>
               ) : templates.length > 0 ? (
                 <Table>
                   <TableHeader>

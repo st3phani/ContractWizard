@@ -514,12 +514,12 @@ function ContractStatusesSection() {
       <CardHeader>
         <CardTitle className="flex items-center">
           <Shield className="h-5 w-5 mr-2" />
-          Statusuri Contracte
+          Contract Statuses
         </CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="text-center py-4">Se încarcă statusurile...</div>
+          <div className="text-center py-4">Loading statuses...</div>
         ) : (
           <div className="space-y-2">
             {statuses?.map((status) => (
