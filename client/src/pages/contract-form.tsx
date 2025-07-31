@@ -31,8 +31,8 @@ const contractFormSchema = z.object({
   // Beneficiary data
   beneficiary: z.object({
     name: z.string().min(1, "Numele este obligatoriu"),
-    email: z.string().email("Email invalid").min(1, "Email-ul este obligatoriu"),
-    phone: z.string().min(1, "Telefonul este obligatoriu"),
+    email: z.string().email("Invalid email").min(1, "Email is required"),
+    phone: z.string().min(1, "Phone is required"),
     address: z.string().optional(),
     cnp: z.string().min(1, "CNP este obligatoriu"),
     // Company fields
@@ -54,14 +54,14 @@ const contractFormSchema = z.object({
       if (!data.companyAddress) {
         ctx.addIssue({
           code: "custom",
-          message: "Adresa companiei este obligatorie",
+          message: "Company address is required",
           path: ["companyAddress"]
         });
       }
       if (!data.companyCui) {
         ctx.addIssue({
           code: "custom",
-          message: "CUI-ul companiei este obligatoriu",
+          message: "Company CUI is required",
           path: ["companyCui"]
         });
       }
@@ -77,7 +77,7 @@ const contractFormSchema = z.object({
       if (!data.address) {
         ctx.addIssue({
           code: "custom",
-          message: "Adresa este obligatorie",
+          message: "Address is required",
           path: ["address"]
         });
       }
@@ -894,7 +894,7 @@ export default function ContractForm() {
               <>
                 {/* Company Fields */}
                 <div className="space-y-2">
-                  <Label htmlFor="companyName">Nume Companie *</Label>
+                  <Label htmlFor="companyName">Company Name *</Label>
                   <Input
                     id="companyName"
                     value={formData.companyName || ""}
@@ -905,20 +905,20 @@ export default function ContractForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="companyAddress">Adresa Companiei *</Label>
+                  <Label htmlFor="companyAddress">Company Address *</Label>
                   <Textarea
                     id="companyAddress"
                     value={formData.companyAddress || ""}
                     onChange={(e) => handleFieldChange('companyAddress', e.target.value, (value) => setFormData({ ...formData, companyAddress: value }))}
                     rows={3}
-                    placeholder="Adresa completă a companiei"
+                    placeholder="Complete company address"
                     className={validationErrors.companyAddress ? "border-red-500 bg-pink-50" : ""}
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="companyCui">CUI Companie *</Label>
+                    <Label htmlFor="companyCui">Company CUI *</Label>
                     <Input
                       id="companyCui"
                       value={formData.companyCui || ""}
@@ -987,7 +987,7 @@ export default function ContractForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="address">Adresa *</Label>
+                  <Label htmlFor="address">Address *</Label>
                   <Textarea
                     id="address"
                     value={formData.address || ""}

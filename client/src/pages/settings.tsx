@@ -104,15 +104,15 @@ export default function Settings() {
     const fieldsToFocus = [];
 
     if (!companySettings.name) {
-      missingFields.push('Nume Companie');
+      missingFields.push('Company Name');
       fieldsToFocus.push('companyName');
     }
     if (!companySettings.address) {
-      missingFields.push('Adresa');
+      missingFields.push('Address');
       fieldsToFocus.push('companyAddress');
     }
     if (!companySettings.phone) {
-      missingFields.push('Telefon');
+      missingFields.push('Phone');
       fieldsToFocus.push('companyPhone');
     }
     if (!companySettings.email) {
@@ -124,7 +124,7 @@ export default function Settings() {
       fieldsToFocus.push('companyCui');
     }
     if (!companySettings.registrationNumber) {
-      missingFields.push('Număr Înregistrare');
+      missingFields.push('Registration Number');
       fieldsToFocus.push('companyRegistrationNumber');
     }
     if (!companySettings.legalRepresentative) {
@@ -215,8 +215,8 @@ export default function Settings() {
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900">Setări</h2>
-              <p className="text-gray-600 mt-1">Configurați aplicația conform nevoilor dvs.</p>
+              <h2 className="text-2xl font-semibold text-gray-900">Settings</h2>
+              <p className="text-gray-600 mt-1">Configure the application according to your needs.</p>
             </div>
           </div>
         </header>
@@ -228,13 +228,13 @@ export default function Settings() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Building className="h-5 w-5 mr-2" />
-                Informații Companie
+                Company Information
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="companyName">Nume Companie *</Label>
+                  <Label htmlFor="companyName">Company Name *</Label>
                   <Input
                     id="companyName"
                     value={companySettings.name}
@@ -266,7 +266,7 @@ export default function Settings() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="companyRegistrationNumber">Nr. Registrul Comerțului *</Label>
+                  <Label htmlFor="companyRegistrationNumber">Trade Registry No. *</Label>
                   <Input
                     id="companyRegistrationNumber"
                     value={companySettings.registrationNumber}
@@ -295,7 +295,7 @@ export default function Settings() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="companyAddress">Adresa *</Label>
+                <Label htmlFor="companyAddress">Address *</Label>
                 <Textarea
                   id="companyAddress"
                   value={companySettings.address}
@@ -312,7 +312,7 @@ export default function Settings() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="companyPhone">Telefon *</Label>
+                  <Label htmlFor="companyPhone">Phone *</Label>
                   <Input
                     id="companyPhone"
                     value={companySettings.phone}
@@ -361,13 +361,13 @@ export default function Settings() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Shield className="h-5 w-5 mr-2" />
-                Setări Sistem
+                System Settings
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="language">Limbă</Label>
+                  <Label htmlFor="language">Language</Label>
                   <Select value={systemSettings.language} onValueChange={(value) => 
                     setSystemSettings({ ...systemSettings, language: value })
                   }>
@@ -375,14 +375,14 @@ export default function Settings() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="ro">Română</SelectItem>
+                      <SelectItem value="ro">Romanian</SelectItem>
                       <SelectItem value="en">English</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="currency">Moneda Implicită</Label>
+                  <Label htmlFor="currency">Default Currency</Label>
                   <Select value={systemSettings.currency} onValueChange={(value) => 
                     setSystemSettings({ ...systemSettings, currency: value })
                   }>
@@ -398,7 +398,7 @@ export default function Settings() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="dateFormat">Format Dată</Label>
+                  <Label htmlFor="dateFormat">Date Format</Label>
                   <Select value={systemSettings.dateFormat} onValueChange={(value) => 
                     setSystemSettings({ ...systemSettings, dateFormat: value })
                   }>
@@ -439,14 +439,14 @@ export default function Settings() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Database className="h-5 w-5 mr-2" />
-                Gestionare Date
+                Data Management
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Backup Automat</Label>
-                  <p className="text-sm text-gray-500">Efectuează backup automat al datelor zilnic</p>
+                  <Label>Automatic Backup</Label>
+                  <p className="text-sm text-gray-500">Perform automatic daily data backup</p>
                 </div>
                 <Switch
                   checked={systemSettings.autoBackup}
@@ -462,18 +462,18 @@ export default function Settings() {
                 <Button 
                   onClick={handleExportData} 
                   variant="outline"
-                  title="Exportă toate datele aplicației"
-                  aria-label="Exportă toate datele aplicației"
+                  title="Export all application data"
+                  aria-label="Export all application data"
                 >
-                  Export Date
+                  Export Data
                 </Button>
                 <Button 
                   onClick={handleImportData} 
                   variant="outline"
-                  title="Importă date în aplicație"
-                  aria-label="Importă date în aplicație"
+                  title="Import data into application"
+                  aria-label="Import data into application"
                 >
-                  Import Date
+                  Import Data
                 </Button>
               </div>
 
