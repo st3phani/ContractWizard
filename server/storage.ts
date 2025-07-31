@@ -6,6 +6,8 @@ import {
   systemSettings,
   userProfiles,
   contractStatuses,
+  contractLoggerActionCodes,
+  contractLoggerHistory,
   type Contract, 
   type ContractTemplate, 
   type Beneficiary,
@@ -13,6 +15,8 @@ import {
   type SystemSettings,
   type UserProfile,
   type ContractStatus,
+  type ContractLoggerActionCode,
+  type ContractLoggerHistory,
   type InsertContract, 
   type InsertContractTemplate, 
   type InsertBeneficiary,
@@ -82,6 +86,9 @@ export interface IStorage {
   createContractStatus(status: InsertContractStatus): Promise<ContractStatus>;
   updateContractStatus(id: number, status: InsertContractStatus): Promise<ContractStatus | undefined>;
   deleteContractStatus(id: number): Promise<boolean>;
+
+  // Contract Logger Action Codes
+  getContractLoggerActionCodes(): Promise<ContractLoggerActionCode[]>;
 
   // Contract Signing
   getContractBySigningToken(token: string): Promise<ContractWithDetails | undefined>;
@@ -565,6 +572,22 @@ _________________           _________________`,
     const contracts = Array.from(this.contracts.values());
     const maxOrderNumber = contracts.reduce((max, contract) => Math.max(max, contract.orderNumber), 0);
     return maxOrderNumber + 1;
+  }
+
+  async getContractLoggerActionCodes(): Promise<ContractLoggerActionCode[]> {
+    // Return mock action codes for MemStorage
+    return [
+      { id: 1, code: "contract_reserved", description: "Contract has been reserved" },
+      { id: 2, code: "contract_created", description: "Contract has been created" },
+      { id: 3, code: "contract_edited", description: "Contract has been edited" },
+      { id: 4, code: "contract_sent_for_signing", description: "Contract has been sent for signing" },
+      { id: 5, code: "signing_page_viewed", description: "Contract signing page has been viewed" },
+      { id: 6, code: "contract_preview_accessed", description: "Contract preview has been accessed" },
+      { id: 7, code: "contract_signed", description: "Contract has been signed" },
+      { id: 8, code: "signed_contract_sent", description: "Signed contract notifications have been sent" },
+      { id: 9, code: "signed_contract_page_viewed", description: "Signed contract page has been viewed" },
+      { id: 10, code: "contract_pdf_downloaded", description: "Contract PDF has been downloaded" }
+    ];
   }
 
   async reserveContract(orderNumber: number, companySettings: CompanySettings, customCreatedDate?: string): Promise<ContractWithDetails> {
@@ -1262,6 +1285,11 @@ export class DatabaseStorage implements IStorage {
   async deleteContractStatus(id: number): Promise<boolean> {
     const result = await db.delete(contractStatuses).where(eq(contractStatuses.id, id));
     return (result.rowCount ?? 0) > 0;
+  }
+
+  async getContractLoggerActionCodes(): Promise<ContractLoggerActionCode[]> {
+    const actionCodes = await db.select().from(contractLoggerActionCodes);
+    return actionCodes;
   }
 
   async getContractBySignedToken(token: string): Promise<ContractWithDetails | undefined> {

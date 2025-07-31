@@ -68,6 +68,27 @@ export const contractStatuses = pgTable("contract_statuses", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+// Contract Logger History Action Codes Table
+export const contractLoggerActionCodes = pgTable("contract_logger_action_codes", {
+  id: serial("id").primaryKey(),
+  actionCode: text("action_code").notNull().unique(),
+  actionName: text("action_name").notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Contract Logger History Table
+export const contractLoggerHistory = pgTable("contract_logger_history", {
+  id: serial("id").primaryKey(),
+  contractId: integer("contract_id").notNull(),
+  partnerId: integer("partner_id"),
+  actionCode: text("action_code").notNull(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  additionalData: text("additional_data"), // JSON string for extra context
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 
 
 export const contracts = pgTable("contracts", {
@@ -183,6 +204,22 @@ export const insertContractStatusSchema = createInsertSchema(contractStatuses).o
 export type ContractStatus = typeof contractStatuses.$inferSelect;
 export type InsertContractStatus = z.infer<typeof insertContractStatusSchema>;
 
+export const insertContractLoggerActionCodeSchema = createInsertSchema(contractLoggerActionCodes).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type ContractLoggerActionCode = typeof contractLoggerActionCodes.$inferSelect;
+export type InsertContractLoggerActionCode = z.infer<typeof insertContractLoggerActionCodeSchema>;
+
+export const insertContractLoggerHistorySchema = createInsertSchema(contractLoggerHistory).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type ContractLoggerHistory = typeof contractLoggerHistory.$inferSelect;
+export type InsertContractLoggerHistory = z.infer<typeof insertContractLoggerHistorySchema>;
+
 export type Contract = typeof contracts.$inferSelect;
 export type InsertContract = z.infer<typeof insertContractSchema>;
 
@@ -193,13 +230,33 @@ export const contractTemplatesRelations = relations(contractTemplates, ({ many }
 
 export const partnersRelations = relations(partners, ({ many }) => ({
   contracts: many(contracts),
+  loggerHistory: many(contractLoggerHistory),
 }));
 
 export const contractStatusesRelations = relations(contractStatuses, ({ many }) => ({
   contracts: many(contracts),
 }));
 
-export const contractsRelations = relations(contracts, ({ one }) => ({
+export const contractLoggerActionCodesRelations = relations(contractLoggerActionCodes, ({ many }) => ({
+  loggerHistory: many(contractLoggerHistory),
+}));
+
+export const contractLoggerHistoryRelations = relations(contractLoggerHistory, ({ one }) => ({
+  contract: one(contracts, {
+    fields: [contractLoggerHistory.contractId],
+    references: [contracts.id],
+  }),
+  partner: one(partners, {
+    fields: [contractLoggerHistory.partnerId],
+    references: [partners.id],
+  }),
+  actionCode: one(contractLoggerActionCodes, {
+    fields: [contractLoggerHistory.actionCode],
+    references: [contractLoggerActionCodes.actionCode],
+  }),
+}));
+
+export const contractsRelations = relations(contracts, ({ one, many }) => ({
   template: one(contractTemplates, {
     fields: [contracts.templateId],
     references: [contractTemplates.id],
@@ -212,6 +269,7 @@ export const contractsRelations = relations(contracts, ({ one }) => ({
     fields: [contracts.statusId],
     references: [contractStatuses.id],
   }),
+  loggerHistory: many(contractLoggerHistory),
 }));
 
 export type ContractWithDetails = Contract & {

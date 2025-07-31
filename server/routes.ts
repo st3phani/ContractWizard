@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { sendContractEmail, testEmailConnection, sendSignedContractNotification } from "./email";
 import { getEmailLogs, clearEmailLogs, getLatestEmails } from "./email-log";
 import { contractStatusUpdater } from "./contract-status-updater";
+import { ContractLoggerService } from "./services/contractLogger";
 import { insertContractSchema, insertBeneficiarySchema, insertContractTemplateSchema, insertCompanySettingsSchema, insertSystemSettingsSchema, insertUserProfileSchema, insertContractStatusSchema, contractSigningSchema, updateSystemSettingsSchema } from "@shared/schema";
 import { z } from "zod";
 import { nanoid } from "nanoid";
@@ -94,6 +95,9 @@ function populateContractTemplate(template: string, data: any): string {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Initialize contract logger action codes
+  const { initializeContractLoggerActionCodes } = await import('./services/initializeContractLogger');
+  await initializeContractLoggerActionCodes();
   
   // Contract Templates
   app.get("/api/contract-templates", async (req, res) => {
@@ -316,6 +320,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Pass custom created date if provided
       const customCreatedDate = contractData.createdDate;
       const contract = await storage.createContract(validatedContract);
+      
+      // Log contract creation action
+      await ContractLoggerService.logAction({
+        contractId: contract.id,
+        partnerId: beneficiary.id,
+        actionCode: "contract_created",
+        ipAddress: ContractLoggerService.getClientIP(req),
+        userAgent: ContractLoggerService.getUserAgent(req),
+        additionalData: {
+          orderNumber: contract.orderNumber,
+          templateId: contract.templateId,
+          value: contract.value,
+        }
+      });
+      
       res.json(contract);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -381,6 +400,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Contract update failed - contract not found");
         return res.status(404).json({ message: "Contract not found" });
       }
+      
+      // Log contract edit action
+      await ContractLoggerService.logAction({
+        contractId: contract.id,
+        partnerId: beneficiary.id,
+        actionCode: "contract_edited",
+        ipAddress: ContractLoggerService.getClientIP(req),
+        userAgent: ContractLoggerService.getUserAgent(req),
+        additionalData: {
+          orderNumber: contract.orderNumber,
+          changes: updateData,
+        }
+      });
       
       console.log("Contract update successful, returning:", contract);
       res.json(contract);
@@ -461,6 +493,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const populatedContent = populateContractTemplate(contract.template.content, populationData);
       
+      // Log contract preview access
+      await ContractLoggerService.logAction({
+        contractId: contract.id,
+        partnerId: contract.beneficiaryId,
+        actionCode: "contract_preview_accessed",
+        ipAddress: ContractLoggerService.getClientIP(req),
+        userAgent: ContractLoggerService.getUserAgent(req),
+        additionalData: {
+          orderNumber: contract.orderNumber,
+        }
+      });
+      
       console.log('Populated result:', populatedContent);
       
       res.json({ content: populatedContent });
@@ -530,6 +574,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         filename = `contract-${contract.orderNumber}.pdf`;
       }
       
+      // Log PDF download action
+      await ContractLoggerService.logAction({
+        contractId: contract.id,
+        partnerId: contract.beneficiaryId,
+        actionCode: "contract_pdf_downloaded",
+        ipAddress: ContractLoggerService.getClientIP(req),
+        userAgent: ContractLoggerService.getUserAgent(req),
+        additionalData: {
+          orderNumber: contract.orderNumber,
+          filename: filename,
+          isSigned: contract.status?.statusCode === 'signed',
+        }
+      });
+      
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
       res.send(pdfBuffer);
@@ -575,6 +633,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const orderNumber = await storage.getNextOrderNumber();
       const customCreatedDate = contractData?.createdDate;
       const contract = await storage.reserveContract(orderNumber, companySettings, customCreatedDate);
+      
+      // Log contract reservation action
+      await ContractLoggerService.logAction({
+        contractId: contract.id,
+        actionCode: "contract_reserved",
+        ipAddress: ContractLoggerService.getClientIP(req),
+        userAgent: ContractLoggerService.getUserAgent(req),
+        additionalData: {
+          orderNumber: contract.orderNumber,
+        }
+      });
+      
       res.json(contract);
     } catch (error) {
       console.error("Reserve contract error:", error);
@@ -620,6 +690,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.updateContract(id, { 
         statusId: 5, 
         sentAt: new Date() 
+      });
+      
+      // Log contract sent for signing action
+      await ContractLoggerService.logAction({
+        contractId: id,
+        partnerId: contractToEmail.beneficiaryId,
+        actionCode: "contract_sent_for_signing",
+        ipAddress: ContractLoggerService.getClientIP(req),
+        userAgent: ContractLoggerService.getUserAgent(req),
+        additionalData: {
+          orderNumber: contractToEmail.orderNumber,
+          recipient: recipient,
+          subject: subject,
+          signingToken: signingToken,
+        }
       });
       
       res.json({ 
@@ -724,6 +809,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Contract has already been signed" });
       }
 
+      // Log signing page view
+      await ContractLoggerService.logAction({
+        contractId: contract.id,
+        partnerId: contract.beneficiaryId,
+        actionCode: "signing_page_viewed",
+        ipAddress: ContractLoggerService.getClientIP(req),
+        userAgent: ContractLoggerService.getUserAgent(req),
+        additionalData: {
+          orderNumber: contract.orderNumber,
+          signingToken: token,
+        }
+      });
+
       res.json(contract);
     } catch (error) {
       console.error("Get contract for signing error:", error);
@@ -764,6 +862,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
       }
+
+      // Log signed contract page view
+      await ContractLoggerService.logAction({
+        contractId: contract.id,
+        partnerId: contract.beneficiaryId,
+        actionCode: "signed_contract_page_viewed",
+        ipAddress: ContractLoggerService.getClientIP(req),
+        userAgent: ContractLoggerService.getUserAgent(req),
+        additionalData: {
+          orderNumber: contract.orderNumber,
+          signedToken: token,
+        }
+      });
 
       res.json(contract);
     } catch (error) {
@@ -834,10 +945,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
 
         console.log('✅ Signed contract notifications sent to beneficiary and administrator');
+        
+        // Log signed contract sent action
+        await ContractLoggerService.logAction({
+          contractId: contract.id,
+          partnerId: contract.beneficiaryId,
+          actionCode: "signed_contract_sent",
+          ipAddress: ContractLoggerService.getClientIP(req),
+          userAgent: ContractLoggerService.getUserAgent(req),
+          additionalData: {
+            orderNumber: contract.orderNumber,
+            adminEmail: adminEmail,
+            sentToBoth: true,
+          }
+        });
       } catch (emailError) {
         console.error('❌ Failed to send signed contract notifications:', emailError);
         // Don't fail the signing process if email fails
       }
+
+      // Log contract signing action
+      await ContractLoggerService.logAction({
+        contractId: contract.id,
+        partnerId: contract.beneficiaryId,
+        actionCode: "contract_signed",
+        ipAddress: ContractLoggerService.getClientIP(req),
+        userAgent: ContractLoggerService.getUserAgent(req),
+        additionalData: {
+          orderNumber: contract.orderNumber,
+          signedBy: validation.data.signedBy,
+          signedIp: clientIp,
+          signedToken: signedContract.signedToken,
+        }
+      });
 
       res.json({ 
         message: "Contract signed successfully",
@@ -990,6 +1130,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting contract status:", error);
       res.status(500).json({ error: "Failed to delete contract status" });
+    }
+  });
+
+  // Contract Logger History endpoints
+  app.get("/api/contracts/:id/history", async (req, res) => {
+    try {
+      const contractId = parseInt(req.params.id);
+      if (isNaN(contractId)) {
+        return res.status(400).json({ message: "Invalid contract ID" });
+      }
+      
+      const history = await ContractLoggerService.getContractHistory(contractId);
+      res.json(history);
+    } catch (error) {
+      console.error("Error fetching contract history:", error);
+      res.status(500).json({ message: "Failed to fetch contract history" });
+    }
+  });
+
+  app.get("/api/contract-logger/history", async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 100;
+      const history = await ContractLoggerService.getAllHistory(limit);
+      res.json(history);
+    } catch (error) {
+      console.error("Error fetching contract logger history:", error);
+      res.status(500).json({ message: "Failed to fetch contract logger history" });
+    }
+  });
+
+  app.get("/api/contract-logger/action-codes", async (req, res) => {
+    try {
+      const actionCodes = await storage.getContractLoggerActionCodes();
+      res.json(actionCodes);
+    } catch (error) {
+      console.error("Error fetching action codes:", error);
+      res.status(500).json({ message: "Failed to fetch action codes" });
     }
   });
 
