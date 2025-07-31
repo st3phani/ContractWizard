@@ -146,11 +146,6 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                           <Badge variant={getActionBadgeVariant(entry.actionCode?.actionCode || 'unknown')}>
                             {entry.actionCode?.actionName || 'Unknown Action'}
                           </Badge>
-                          {entry.actionCode?.description && (
-                            <p className="text-sm text-gray-600 mt-1">
-                              {entry.actionCode.description}
-                            </p>
-                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-500">
@@ -165,6 +160,14 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                         <span className="text-gray-600">Log ID:</span>
                         <span className="font-mono">#{entry.id}</span>
                       </div>
+
+                      {entry.actionCode?.description && (
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-gray-400" />
+                          <span className="text-gray-600">Description:</span>
+                          <span>{entry.actionCode.description}</span>
+                        </div>
+                      )}
 
                       {entry.ipAddress && (
                         <div className="flex items-center gap-2">
