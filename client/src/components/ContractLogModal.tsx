@@ -141,11 +141,11 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
-                          {getActionIcon(entry.actionCode.actionCode)}
+                          {getActionIcon(entry.actionCode?.actionCode || 'unknown')}
                         </div>
                         <div>
-                          <Badge variant={getActionBadgeVariant(entry.actionCode.actionCode)}>
-                            {entry.actionCode.actionName}
+                          <Badge variant={getActionBadgeVariant(entry.actionCode?.actionCode || 'unknown')}>
+                            {entry.actionCode?.actionName || 'Unknown Action'}
                           </Badge>
                         </div>
                       </div>
