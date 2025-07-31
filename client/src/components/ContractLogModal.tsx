@@ -37,13 +37,15 @@ interface ContractLogModalProps {
 
 export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onClose }: ContractLogModalProps) {
   const { data: logHistory = [], isLoading } = useQuery<ContractLogEntry[]>({
-    queryKey: ['/api/contracts', contractId, 'history'],
+    queryKey: [`/api/contracts/${contractId}/history`],
     enabled: isOpen && !!contractId,
   });
 
   console.log('Modal opened for contract:', contractId);
+  console.log('Query key:', ['/api/contracts', contractId, 'history']);
   console.log('Raw logHistory data:', logHistory);
   console.log('logHistory length:', logHistory?.length);
+  console.log('First entry:', logHistory[0]);
 
   const getActionBadgeVariant = (actionCodeString: string): "default" | "secondary" | "destructive" | "outline" => {
     switch (actionCodeString) {
