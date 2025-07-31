@@ -154,20 +154,20 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                       </div>
                     </div>
                     
+                    {entry.actionCode?.description && (
+                      <div className="flex items-center gap-2 text-sm mb-3">
+                        <FileText className="h-4 w-4 text-gray-400" />
+                        <span className="text-gray-600">Description:</span>
+                        <span>{entry.actionCode.description}</span>
+                      </div>
+                    )}
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-gray-400" />
                         <span className="text-gray-600">Log ID:</span>
                         <span className="font-mono">#{entry.id}</span>
                       </div>
-
-                      {entry.actionCode?.description && (
-                        <div className="flex items-center gap-2">
-                          <FileText className="h-4 w-4 text-gray-400" />
-                          <span className="text-gray-600">Description:</span>
-                          <span>{entry.actionCode.description}</span>
-                        </div>
-                      )}
 
                       {entry.ipAddress && (
                         <div className="flex items-center gap-2">
