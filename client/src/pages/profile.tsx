@@ -288,16 +288,17 @@ export default function Profile() {
 
         {/* Content */}
         <div className="p-6">
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 max-w-7xl">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 max-w-7xl items-start">
             {/* Profile Information Card */}
-            <Card className="w-full">
+            <Card className="w-full flex flex-col">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <User className="h-5 w-5 mr-2" />
                   Personal Information
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
+              <div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="firstName">First Name *</Label>
