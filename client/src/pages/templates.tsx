@@ -201,9 +201,10 @@ export default function Templates() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handlePreviewTemplate(template)}
+                              className="hover:bg-blue-50"
                               title="Preview Template"
                             >
-                              <Eye className="h-4 w-4" />
+                              <Eye className="h-4 w-4 text-blue-600" />
                             </Button>
                             <Button
                               variant="ghost"
@@ -217,27 +218,30 @@ export default function Templates() {
                                 });
                                 setIsCreateModalOpen(true);
                               }}
+                              className="hover:bg-green-50"
                               title="Edit template"
                               aria-label="Edit template"
                             >
-                              <Edit className="h-4 w-4" />
+                              <Edit className="h-4 w-4 text-green-600" />
                             </Button>
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => handleDuplicateTemplate(template)}
+                              className="hover:bg-indigo-50"
                               title="Duplicate Template"
                             >
-                              <Copy className="h-4 w-4" />
+                              <Copy className="h-4 w-4 text-indigo-600" />
                             </Button>
                             <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => handleDeleteTemplate(template.id)}
+                              className="hover:bg-red-50"
                               title="Delete template"
                               aria-label="Delete template"
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <Trash2 className="h-4 w-4 text-red-600" />
                             </Button>
                           </div>
                         </TableCell>
