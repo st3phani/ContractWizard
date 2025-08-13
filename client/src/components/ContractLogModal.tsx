@@ -178,7 +178,7 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                       </div>
                     )}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div className="flex flex-wrap items-center gap-4 text-sm">
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-gray-400" />
                         <span className="text-gray-600">Log ID:</span>
@@ -200,19 +200,15 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                           <span>{entry.partner.name}</span>
                         </div>
                       )}
-                    </div>
 
-                    {entry.userAgent && (
-                      <div className="flex items-start gap-2 text-sm mt-3">
-                        <Activity className="h-4 w-4 text-gray-400 mt-0.5" />
-                        <div className="flex-1">
+                      {entry.userAgent && (
+                        <div className="flex items-center gap-2">
+                          <Activity className="h-4 w-4 text-gray-400" />
                           <span className="text-gray-600">User Agent:</span>
-                          <div className="mt-1">
-                            <span className="font-mono text-xs text-gray-700 break-all">{entry.userAgent}</span>
-                          </div>
+                          <span className="font-mono text-xs truncate max-w-xs">{entry.userAgent}</span>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
 
                     {/* Additional Data Section for various action codes */}
                     {entry.additionalData && (entry.actionCode?.actionCode === 'contract_sent_for_signing' || entry.actionCode?.actionCode === 'signing_page_viewed' || entry.actionCode?.actionCode === 'contract_preview_accessed' || entry.actionCode?.actionCode === 'contract_signed' || entry.actionCode?.actionCode === 'signed_contract_sent' || entry.actionCode?.actionCode === 'signed_contract_page_viewed' || entry.actionCode?.actionCode === 'contract_pdf_downloaded') && (
