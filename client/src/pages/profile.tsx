@@ -396,11 +396,11 @@ export default function Profile() {
                 </div>
               </div>
 
-              <div className="flex justify-end pt-4">
+              <div className="flex justify-end pt-4 border-t border-gray-100 mt-4">
                 <Button 
                   onClick={handleSave}
                   disabled={updateProfileMutation.isPending || isLoading}
-                  className="bg-blue-600 hover:bg-blue-700 w-[140px]"
+                  className="bg-blue-600 hover:bg-blue-700"
                   title="Save profile information"
                   aria-label="Save profile information"
                 >
@@ -500,11 +500,11 @@ export default function Profile() {
                 </div>
               </div>
 
-              <div className="flex justify-end pt-4">
+              <div className="flex justify-end pt-4 border-t border-gray-100 mt-4">
                 <Button 
                   onClick={handlePasswordSave}
                   disabled={updatePasswordMutation.isPending}
-                  className="bg-green-600 hover:bg-green-700 w-[140px]"
+                  className="bg-green-600 hover:bg-green-700"
                   title="Actualizează parola contului"
                   aria-label="Actualizează parola contului"
                 >
