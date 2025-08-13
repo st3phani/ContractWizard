@@ -400,7 +400,7 @@ export default function Profile() {
                 <Button 
                   onClick={handleSave}
                   disabled={updateProfileMutation.isPending || isLoading}
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-blue-600 hover:bg-blue-700 w-[140px]"
                   title="Save profile information"
                   aria-label="Save profile information"
                 >
@@ -504,7 +504,7 @@ export default function Profile() {
                 <Button 
                   onClick={handlePasswordSave}
                   disabled={updatePasswordMutation.isPending}
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-green-600 hover:bg-green-700 w-[140px]"
                   title="Actualizează parola contului"
                   aria-label="Actualizează parola contului"
                 >
