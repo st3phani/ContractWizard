@@ -218,25 +218,25 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                         <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                           <Globe className="h-4 w-4" />
                           {entry.actionCode?.actionCode === 'contract_sent_for_signing' 
-                            ? 'Detalii trimitere pentru semnare' 
+                            ? 'Contract Sending Details' 
                             : entry.actionCode?.actionCode === 'signing_page_viewed'
-                            ? 'Detalii acces pagină de semnare'
+                            ? 'Signing Page Access Details'
                             : entry.actionCode?.actionCode === 'contract_preview_accessed'
-                            ? 'Detalii preview contract'
+                            ? 'Contract Preview Details'
                             : entry.actionCode?.actionCode === 'contract_signed'
-                            ? 'Detalii semnare contract'
+                            ? 'Contract Signing Details'
                             : entry.actionCode?.actionCode === 'signed_contract_sent'
-                            ? 'Detalii trimitere contract semnat'
+                            ? 'Signed Contract Sending Details'
                             : entry.actionCode?.actionCode === 'signed_contract_page_viewed'
-                            ? 'Detalii acces contract semnat'
-                            : 'Detalii descărcare PDF'}
+                            ? 'Signed Contract Access Details'
+                            : 'PDF Download Details'}
                         </h4>
                         <div className="grid grid-cols-1 gap-3 text-sm">
                           {entry.additionalData.signingUrl && (
                             <div className="flex items-start gap-2">
                               <Globe className="h-4 w-4 text-blue-500 mt-0.5" />
                               <div>
-                                <span className="text-gray-600">URL de semnare:</span>
+                                <span className="text-gray-600">Signing URL:</span>
                                 <div className="mt-1">
                                   <a 
                                     href={entry.additionalData.signingUrl} 
@@ -254,7 +254,7 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                             <div className="flex items-start gap-2">
                               <Globe className="h-4 w-4 text-orange-500 mt-0.5" />
                               <div>
-                                <span className="text-gray-600">URL accesat:</span>
+                                <span className="text-gray-600">Accessed URL:</span>
                                 <div className="mt-1">
                                   <a 
                                     href={entry.additionalData.accessedUrl} 
@@ -271,21 +271,21 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                           {entry.additionalData.signingToken && (
                             <div className="flex items-center gap-2">
                               <FileText className="h-4 w-4 text-green-500" />
-                              <span className="text-gray-600">Token de semnare:</span>
+                              <span className="text-gray-600">Signing Token:</span>
                               <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">{entry.additionalData.signingToken}</span>
                             </div>
                           )}
                           {entry.additionalData.recipientEmail && (
                             <div className="flex items-center gap-2">
                               <User className="h-4 w-4 text-purple-500" />
-                              <span className="text-gray-600">Email destinatar:</span>
+                              <span className="text-gray-600">Recipient Email:</span>
                               <span className="font-mono text-xs">{entry.additionalData.recipientEmail}</span>
                             </div>
                           )}
                           {entry.additionalData.previewContext && (
                             <div className="flex items-center gap-2">
                               <Eye className="h-4 w-4 text-purple-500" />
-                              <span className="text-gray-600">Context preview:</span>
+                              <span className="text-gray-600">Preview Context:</span>
                               <span className="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded">
                                 {entry.additionalData.previewContext}
                               </span>
@@ -294,7 +294,7 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                           {entry.additionalData.signedToken && (
                             <div className="flex items-center gap-2">
                               <FileText className="h-4 w-4 text-green-500" />
-                              <span className="text-gray-600">Token contract semnat:</span>
+                              <span className="text-gray-600">Signed Contract Token:</span>
                               <span className="font-mono text-xs bg-green-50 text-green-600 px-2 py-1 rounded">{entry.additionalData.signedToken}</span>
                             </div>
                           )}
@@ -302,7 +302,7 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                             <div className="flex items-start gap-2">
                               <Globe className="h-4 w-4 text-green-500 mt-0.5" />
                               <div>
-                                <span className="text-gray-600">Link contract semnat:</span>
+                                <span className="text-gray-600">Signed Contract Link:</span>
                                 <div className="mt-1">
                                   <a 
                                     href={entry.additionalData.signedContractUrl} 
@@ -319,7 +319,7 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                           {entry.additionalData.adminEmail && (
                             <div className="flex items-center gap-2">
                               <User className="h-4 w-4 text-blue-500" />
-                              <span className="text-gray-600">Email administrator:</span>
+                              <span className="text-gray-600">Administrator Email:</span>
                               <span className="font-mono text-xs">{entry.additionalData.adminEmail}</span>
                             </div>
                           )}
@@ -327,7 +327,7 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                             <div className="flex items-start gap-2">
                               <Globe className="h-4 w-4 text-blue-500 mt-0.5" />
                               <div>
-                                <span className="text-gray-600">URL descărcare:</span>
+                                <span className="text-gray-600">Download URL:</span>
                                 <div className="mt-1">
                                   <a 
                                     href={entry.additionalData.downloadUrl} 
@@ -344,21 +344,21 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                           {entry.additionalData.filename && (
                             <div className="flex items-center gap-2">
                               <FileText className="h-4 w-4 text-purple-500" />
-                              <span className="text-gray-600">Nume fișier:</span>
+                              <span className="text-gray-600">Filename:</span>
                               <span className="font-mono text-xs bg-purple-50 text-purple-600 px-2 py-1 rounded">{entry.additionalData.filename}</span>
                             </div>
                           )}
                           {entry.additionalData.contractStatus && (
                             <div className="flex items-center gap-2">
                               <Activity className="h-4 w-4 text-gray-500" />
-                              <span className="text-gray-600">Status contract:</span>
+                              <span className="text-gray-600">Contract Status:</span>
                               <span className="text-xs text-gray-600 bg-gray-50 px-2 py-1 rounded">{entry.additionalData.contractStatus}</span>
                             </div>
                           )}
                           {entry.additionalData.sourcePage && (
                             <div className="flex items-center gap-2">
                               <Globe className="h-4 w-4 text-green-500" />
-                              <span className="text-gray-600">Pagină sursă:</span>
+                              <span className="text-gray-600">Source Page:</span>
                               <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">{entry.additionalData.sourcePage}</span>
                             </div>
                           )}
@@ -366,7 +366,7 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                             <div className="flex items-start gap-2">
                               <Globe className="h-4 w-4 text-orange-500 mt-0.5" />
                               <div>
-                                <span className="text-gray-600">URL pagină sursă:</span>
+                                <span className="text-gray-600">Source Page URL:</span>
                                 <div className="mt-1">
                                   <a 
                                     href={entry.additionalData.refererUrl} 
