@@ -178,7 +178,7 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                       </div>
                     )}
 
-                    <div className="flex flex-wrap items-center gap-4 text-sm">
+                    <div className="space-y-2 text-sm">
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-gray-400" />
                         <span className="text-gray-600">Log ID:</span>
@@ -202,10 +202,12 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                       )}
 
                       {entry.userAgent && (
-                        <div className="flex items-center gap-2">
-                          <Activity className="h-4 w-4 text-gray-400" />
-                          <span className="text-gray-600">User Agent:</span>
-                          <span className="font-mono text-xs truncate max-w-xs">{entry.userAgent}</span>
+                        <div className="flex items-start gap-2">
+                          <Activity className="h-4 w-4 text-gray-400 mt-0.5" />
+                          <div>
+                            <span className="text-gray-600">User Agent:</span>
+                            <div className="font-mono text-xs text-gray-700 break-all mt-1">{entry.userAgent}</div>
+                          </div>
                         </div>
                       )}
                     </div>
