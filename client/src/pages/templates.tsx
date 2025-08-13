@@ -12,7 +12,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useDateFormat } from "@/hooks/use-date-format";
 
 import RichTextEditor from "@/components/rich-text-editor";
-import type { ContractTemplate, InsertContractTemplate } from "@shared/schema";
+import type { ContractTemplate, ContractTemplateWithUsage, InsertContractTemplate } from "@shared/schema";
 
 
 export default function Templates() {
@@ -32,7 +32,7 @@ export default function Templates() {
   const { formatDate } = useDateFormat();
   const queryClient = useQueryClient();
 
-  const { data: templates = [], isLoading } = useQuery<ContractTemplate[]>({
+  const { data: templates = [], isLoading } = useQuery<ContractTemplateWithUsage[]>({
     queryKey: ["/api/contract-templates"],
   });
 
@@ -236,12 +236,13 @@ export default function Templates() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleDeleteTemplate(template.id)}
-                              className="hover:bg-red-50"
-                              title="Delete template"
-                              aria-label="Delete template"
+                              onClick={() => !template.isUsed ? handleDeleteTemplate(template.id) : undefined}
+                              disabled={template.isUsed}
+                              className={template.isUsed ? "opacity-30 cursor-not-allowed" : "hover:bg-red-50"}
+                              title={template.isUsed ? "Cannot delete - template is used in contracts" : "Delete template"}
+                              aria-label={template.isUsed ? "Cannot delete - template is used in contracts" : "Delete template"}
                             >
-                              <Trash2 className="h-4 w-4 text-red-600" />
+                              <Trash2 className={`h-4 w-4 ${template.isUsed ? "text-gray-400" : "text-red-600"}`} />
                             </Button>
                           </div>
                         </TableCell>

@@ -103,7 +103,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/contract-templates", async (req, res) => {
     try {
       const templates = await storage.getContractTemplates();
-      res.json(templates);
+      const contracts = await storage.getContracts();
+      
+      // Add isUsed property to each template
+      const templatesWithUsage = templates.map(template => {
+        const isUsed = contracts.some(contract => contract.templateId === template.id);
+        return { ...template, isUsed };
+      });
+      
+      res.json(templatesWithUsage);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch contract templates" });
     }

@@ -176,6 +176,7 @@ export const contractSigningSchema = z.object({
 });
 
 export type ContractTemplate = typeof contractTemplates.$inferSelect;
+export type ContractTemplateWithUsage = ContractTemplate & { isUsed?: boolean };
 export type InsertContractTemplate = z.infer<typeof insertContractTemplateSchema>;
 
 export type Beneficiary = typeof partners.$inferSelect;
