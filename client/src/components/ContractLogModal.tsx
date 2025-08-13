@@ -200,15 +200,19 @@ export function ContractLogModal({ contractId, contractOrderNumber, isOpen, onCl
                           <span>{entry.partner.name}</span>
                         </div>
                       )}
-
-                      {entry.userAgent && (
-                        <div className="flex items-center gap-2">
-                          <Activity className="h-4 w-4 text-gray-400" />
-                          <span className="text-gray-600">User Agent:</span>
-                          <span className="font-mono text-xs">{entry.userAgent}</span>
-                        </div>
-                      )}
                     </div>
+
+                    {entry.userAgent && (
+                      <div className="flex items-start gap-2 text-sm mt-3">
+                        <Activity className="h-4 w-4 text-gray-400 mt-0.5" />
+                        <div className="flex-1">
+                          <span className="text-gray-600">User Agent:</span>
+                          <div className="mt-1">
+                            <span className="font-mono text-xs text-gray-700 break-all">{entry.userAgent}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Additional Data Section for various action codes */}
                     {entry.additionalData && (entry.actionCode?.actionCode === 'contract_sent_for_signing' || entry.actionCode?.actionCode === 'signing_page_viewed' || entry.actionCode?.actionCode === 'contract_preview_accessed' || entry.actionCode?.actionCode === 'contract_signed' || entry.actionCode?.actionCode === 'signed_contract_sent' || entry.actionCode?.actionCode === 'signed_contract_page_viewed' || entry.actionCode?.actionCode === 'contract_pdf_downloaded') && (
