@@ -131,25 +131,29 @@ Contract Manager Team`,
   return (
     <>
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm p-6">
+      <header className="bg-white border-b border-gray-200 shadow-sm p-6">
         <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-semibold text-gray-900">Contracts</h2>
               <p className="text-gray-600 mt-1">Manage all contracts in the system</p>
             </div>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                console.log("Button clicked, navigating to contract-form");
-                setLocation("/contract-form");
-              }}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              title="Create a new contract"
-              aria-label="Create a new contract"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              New Contract
-            </button>
+            <div>
+              <button
+                type="button"
+                onClick={() => {
+                  console.log("Button clicked, navigating to contract-form");
+                  setLocation("/contract-form");
+                }}
+                onMouseDown={() => console.log("Mouse down on button")}
+                onMouseUp={() => console.log("Mouse up on button")}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                title="Create a new contract"
+                aria-label="Create a new contract"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                New Contract
+              </button>
+            </div>
           </div>
         </header>
 
