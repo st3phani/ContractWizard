@@ -137,15 +137,24 @@ Contract Manager Team`,
               <h2 className="text-2xl font-semibold text-gray-900">Contracts</h2>
               <p className="text-gray-600 mt-1">Manage all contracts in the system</p>
             </div>
-            <a 
-              href="/contract-form"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 no-underline"
-              title="Create a new contract"
-              aria-label="Create a new contract"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              New Contract
-            </a>
+            <div>
+              <button
+                type="button"
+                onClick={() => {
+                  console.log("Direct navigation attempt");
+                  window.location.href = '/contract-form';
+                }}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                title="Create a new contract"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                New Contract
+              </button>
+              <br/>
+              <small style={{ color: '#666', marginTop: '4px', display: 'block' }}>
+                Debug: <a href="/contract-form" style={{ color: '#0066cc' }}>Direct link test</a>
+              </small>
+            </div>
           </div>
         </header>
 
