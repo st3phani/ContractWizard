@@ -373,7 +373,7 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     pdf.text(`Token: ${contract.signingToken || 'N/A'}`, margin, y);
     
     // Reset y for partenery signature  
-    y -= 15;
+    y -= 11; // Reduced from 15 to 11 to add more space
     
     // Beneficiar signature box with gray border and rounded corners
     pdf.setDrawColor(128, 128, 128); // Gray color (RGB: 128, 128, 128)
