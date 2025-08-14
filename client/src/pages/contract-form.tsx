@@ -324,6 +324,8 @@ export default function ContractForm() {
     console.log("=== onSubmit DEBUG ===");
     console.log("onSubmit called with data:", JSON.stringify(data, null, 2));
     console.log("Form errors before submit:", JSON.stringify(form.formState.errors, null, 2));
+    console.log("Form values:", JSON.stringify(form.getValues(), null, 2));
+    console.log("Form is valid:", form.formState.isValid);
     console.log("Is editing mode:", isEditing);
     console.log("Edit contract ID:", editContractId);
     console.log("Contract mutation pending:", contractMutation.isPending);
@@ -345,6 +347,7 @@ export default function ContractForm() {
     
     if (Object.keys(errors).length > 0) {
       console.log("Form has validation errors, not submitting");
+      console.log("Detailed errors:", JSON.stringify(errors, null, 2));
       // Find the first error field
       let firstErrorField = null;
       
@@ -844,18 +847,42 @@ export default function ContractForm() {
                 >
                   {reserveContractMutation.isPending ? "Reserving..." : "Reserve Contract"}
                 </Button>
-                <Button 
-                  type="submit" 
-                  disabled={contractMutation.isPending}
-                  className="bg-blue-600 hover:bg-blue-700"
-                  title={isEditing ? "Update contract" : "Generate contract"}
-                  aria-label={isEditing ? "Update contract" : "Generate contract"}
-                >
-                  {contractMutation.isPending ? 
-                    (isEditing ? "Updating..." : "Creating...") : 
-                    (isEditing ? "Update Contract" : "Generate Contract")
-                  }
-                </Button>
+                <div className="space-x-2 flex">
+                  <Button 
+                    type="submit" 
+                    disabled={contractMutation.isPending}
+                    className="bg-blue-600 hover:bg-blue-700"
+                    title={isEditing ? "Update contract" : "Generate contract"}
+                    aria-label={isEditing ? "Update contract" : "Generate contract"}
+                    onClick={() => {
+                      console.log("Generate Contract button clicked!");
+                      console.log("Form state:", {
+                        isValid: form.formState.isValid,
+                        errors: form.formState.errors,
+                        values: form.getValues()
+                      });
+                    }}
+                  >
+                    {contractMutation.isPending ? 
+                      (isEditing ? "Updating..." : "Creating...") : 
+                      (isEditing ? "Update Contract" : "Generate Contract")
+                    }
+                  </Button>
+                  
+                  {/* Debug button to trigger onSubmit directly */}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="bg-red-500 hover:bg-red-600 text-white border-red-500"
+                    onClick={() => {
+                      console.log("Debug button clicked - calling onSubmit directly");
+                      const formData = form.getValues();
+                      onSubmit(formData);
+                    }}
+                  >
+                    Debug Submit
+                  </Button>
+                </div>
               </div>
             </form>
           </Form>
