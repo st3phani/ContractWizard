@@ -364,42 +364,31 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                 size="sm"
                 onClick={() => setCurrentPage(currentPage - 1)}
                 disabled={!hasPreviousPage}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Previous page"
                 aria-label="Previous page"
               >
-                <ChevronLeft className="h-4 w-4" />
-                Previous
+                Pagina anterioară
               </Button>
               
               <div className="flex items-center space-x-1">
-                {generatePageNumbers(currentPage, totalPages).map((pageItem, index) => {
-                  if (pageItem === 'ellipsis') {
-                    return (
-                      <span key={`ellipsis-${index}`} className="flex items-center justify-center w-10 h-8 px-2 py-1 text-gray-500 text-sm">
-                        ...
-                      </span>
-                    );
-                  }
-                  
-                  const pageNum = pageItem as number;
-                  return (
-                    <Button
-                      key={pageNum}
-                      variant={currentPage === pageNum ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setCurrentPage(pageNum)}
-                      className={`min-w-[2.5rem] h-8 px-2 py-0 text-sm font-medium flex items-center justify-center ${
-                        currentPage === pageNum 
-                          ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700" 
-                          : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-                      }`}
-                      title={`Go to page ${pageNum}`}
-                      aria-label={`Go to page ${pageNum}`}
-                    >
-                      {pageNum}
-                    </Button>
-                  );
-                })}
+                {generatePageNumbers(currentPage, totalPages).map((pageNum) => (
+                  <Button
+                    key={pageNum}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`min-w-[2.5rem] h-8 px-3 py-0 text-sm font-medium flex items-center justify-center rounded border ${
+                      currentPage === pageNum 
+                        ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700" 
+                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                    }`}
+                    title={`Go to page ${pageNum}`}
+                    aria-label={`Go to page ${pageNum}`}
+                  >
+                    {pageNum}
+                  </Button>
+                ))}
               </div>
 
               <Button
@@ -407,11 +396,11 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                 size="sm"
                 onClick={() => setCurrentPage(currentPage + 1)}
                 disabled={!hasNextPage}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Next page"
                 aria-label="Next page"
               >
-                Next
-                <ChevronRight className="h-4 w-4" />
+                Pagina următoare
               </Button>
             </div>
           </div>

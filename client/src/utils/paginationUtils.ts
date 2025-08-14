@@ -41,87 +41,42 @@ export function paginateItems<T>(
   };
 }
 
-// Generate page numbers for pagination controls with smart ellipsis
+// Generate page numbers for pagination controls based on current page position
 export function generatePageNumbers(
   currentPage: number, 
   totalPages: number, 
-  maxVisible: number = 5
-): (number | 'ellipsis')[] {
-  if (totalPages <= 7) {
-    // If total pages is small (7 or less), show all pages
+  maxVisible: number = 7
+): number[] {
+  if (totalPages <= maxVisible) {
+    // If total pages is small, show all pages
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
-  const result: (number | 'ellipsis')[] = [];
+  const result: number[] = [];
+  const halfVisible = Math.floor(maxVisible / 2);
 
-  // Always show first 3 pages
-  result.push(1, 2, 3);
+  // Calculate start and end positions
+  let start = Math.max(1, currentPage - halfVisible);
+  let end = Math.min(totalPages, currentPage + halfVisible);
 
-  // Check if current page is in the first group
-  if (currentPage <= 3) {
-    // Current page is in first 3, just add ellipsis and last 3
-    result.push('ellipsis');
-  }
-  // Check if current page is close to first group (4, 5, 6)
-  else if (currentPage >= 4 && currentPage <= 6) {
-    // Extend first group to include current page
-    for (let i = 4; i <= Math.min(6, currentPage + 1); i++) {
-      result.push(i);
-    }
-    // Add ellipsis before last 3 if there's space
-    if (totalPages > 9) {
-      result.push('ellipsis');
-    }
-  }
-  // Check if current page is close to last group
-  else if (currentPage > totalPages - 6 && currentPage <= totalPages - 3) {
-    // Add ellipsis after first 3
-    result.push('ellipsis');
-    // Add pages around current page that don't overlap with last 3
-    const start = Math.max(4, totalPages - 5);
-    const end = totalPages - 3;
-    for (let i = start; i <= end; i++) {
-      if (!result.includes(i)) {
-        result.push(i);
-      }
-    }
-  }
-  // Current page is in the middle
-  else {
-    result.push('ellipsis');
-    
-    // Add current page with one page before and after
-    const start = currentPage - 1;
-    const end = currentPage + 1;
-    for (let i = start; i <= end; i++) {
-      result.push(i);
-    }
-    
-    result.push('ellipsis');
+  // Adjust if we're near the beginning
+  if (currentPage <= halfVisible) {
+    start = 1;
+    end = Math.min(maxVisible, totalPages);
   }
 
-  // Always show last 3 pages
-  if (totalPages > 2) {
-    const lastThree = [totalPages - 2, totalPages - 1, totalPages];
-    for (const page of lastThree) {
-      if (!result.includes(page)) {
-        result.push(page);
-      }
-    }
+  // Adjust if we're near the end
+  if (currentPage > totalPages - halfVisible) {
+    start = Math.max(1, totalPages - maxVisible + 1);
+    end = totalPages;
   }
 
-  // Remove duplicates while preserving order
-  const seen = new Set<number | 'ellipsis'>();
-  const final: (number | 'ellipsis')[] = [];
-  
-  for (const item of result) {
-    if (!seen.has(item)) {
-      seen.add(item);
-      final.push(item);
-    }
+  // Generate the range
+  for (let i = start; i <= end; i++) {
+    result.push(i);
   }
 
-  return final;
+  return result;
 }
 
 // Calculate pagination info text
