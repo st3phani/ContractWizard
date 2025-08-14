@@ -368,7 +368,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                 title="Previous page"
                 aria-label="Previous page"
               >
-                Pagina anterioară
+Preview
               </Button>
               
               <div className="flex items-center space-x-1">
@@ -400,7 +400,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                 title="Next page"
                 aria-label="Next page"
               >
-                Pagina următoare
+Next
               </Button>
             </div>
           </div>
