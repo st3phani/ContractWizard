@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { getStatusColor, getStatusText, getInitials, getAvatarColor } from "@/lib/utils";
 import { useDateFormat } from "@/hooks/use-date-format";
 import type { ContractWithDetails } from "@shared/schema";
-import { paginateItems, type PaginationConfig } from "@/utils/paginationUtils";
+import { paginateItems, generatePageNumbers, type PaginationConfig } from "@/utils/paginationUtils";
 import { ContractLogModal } from "@/components/ContractLogModal";
 
 interface ContractTableProps {
@@ -372,19 +372,30 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
               </Button>
               
               <div className="flex space-x-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                  <Button
-                    key={pageNum}
-                    variant={currentPage === pageNum ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setCurrentPage(pageNum)}
-                    className="w-8 h-8 p-0"
-                    title={`Go to page ${pageNum}`}
-                    aria-label={`Go to page ${pageNum}`}
-                  >
-                    {pageNum}
-                  </Button>
-                ))}
+                {generatePageNumbers(currentPage, totalPages).map((pageItem, index) => {
+                  if (pageItem === 'ellipsis') {
+                    return (
+                      <span key={`ellipsis-${index}`} className="px-2 py-1 text-gray-500">
+                        ...
+                      </span>
+                    );
+                  }
+                  
+                  const pageNum = pageItem as number;
+                  return (
+                    <Button
+                      key={pageNum}
+                      variant={currentPage === pageNum ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(pageNum)}
+                      className="w-8 h-8 p-0"
+                      title={`Go to page ${pageNum}`}
+                      aria-label={`Go to page ${pageNum}`}
+                    >
+                      {pageNum}
+                    </Button>
+                  );
+                })}
               </div>
 
               <Button

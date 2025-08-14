@@ -41,26 +41,57 @@ export function paginateItems<T>(
   };
 }
 
-// Generate page numbers for pagination controls
+// Generate page numbers for pagination controls with smart ellipsis
 export function generatePageNumbers(
   currentPage: number, 
   totalPages: number, 
   maxVisible: number = 5
-): number[] {
-  if (totalPages <= maxVisible) {
+): (number | 'ellipsis')[] {
+  if (totalPages <= maxVisible + 2) {
+    // If total pages is small, show all pages
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
-  const half = Math.floor(maxVisible / 2);
-  let start = Math.max(1, currentPage - half);
-  let end = Math.min(totalPages, start + maxVisible - 1);
+  const pages: (number | 'ellipsis')[] = [];
+  const showFirst = currentPage > 3;
+  const showLast = currentPage < totalPages - 2;
 
-  // Adjust start if we're near the end
-  if (end - start + 1 < maxVisible) {
-    start = Math.max(1, end - maxVisible + 1);
+  // Always show first page
+  pages.push(1);
+
+  // Add ellipsis if current page is far from start
+  if (currentPage > 4) {
+    pages.push('ellipsis');
   }
 
-  return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  // Calculate the range around current page
+  const start = Math.max(2, currentPage - 2);
+  const end = Math.min(totalPages - 1, currentPage + 2);
+
+  // Add pages around current page (but not if they overlap with first/last)
+  for (let i = start; i <= end; i++) {
+    if (i > 1 && i < totalPages) {
+      pages.push(i);
+    }
+  }
+
+  // Add ellipsis if current page is far from end
+  if (currentPage < totalPages - 3) {
+    pages.push('ellipsis');
+  }
+
+  // Always show last page (if more than 1 page total)
+  if (totalPages > 1) {
+    pages.push(totalPages);
+  }
+
+  // Remove duplicates and sort
+  const uniquePages = pages.filter((page, index, arr) => {
+    if (page === 'ellipsis') return true;
+    return arr.indexOf(page) === index;
+  });
+
+  return uniquePages;
 }
 
 // Calculate pagination info text
