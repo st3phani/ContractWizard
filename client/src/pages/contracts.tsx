@@ -137,16 +137,15 @@ Contract Manager Team`,
               <h2 className="text-2xl font-semibold text-gray-900">Contracts</h2>
               <p className="text-gray-600 mt-1">Manage all contracts in the system</p>
             </div>
-            <Link href="/contract-form">
-              <Button 
-                className="bg-blue-600 hover:bg-blue-700"
-                title="Create a new contract"
-                aria-label="Create a new contract"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                New Contract
-              </Button>
-            </Link>
+            <Button 
+              onClick={() => setLocation("/contract-form")}
+              className="bg-blue-600 hover:bg-blue-700"
+              title="Create a new contract"
+              aria-label="Create a new contract"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              New Contract
+            </Button>
           </div>
         </header>
 
