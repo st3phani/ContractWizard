@@ -395,9 +395,7 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     
     y += 3;
     pdf.setFontSize(9);
-    // Always use the person's name, not company name
-    pdf.text(contract.beneficiary?.name || 'N/A', margin + 90, y);
-    y += 4;
+    // Only show the person who signed, not the company name
     pdf.text(contract.signedBy, margin + 90, y);
     y += 4;
     pdf.text(new Date(contract.signedAt).toLocaleString('ro-RO', { 
