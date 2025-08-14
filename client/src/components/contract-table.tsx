@@ -371,11 +371,11 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                 Previous
               </Button>
               
-              <div className="flex space-x-1">
+              <div className="flex items-center space-x-1">
                 {generatePageNumbers(currentPage, totalPages).map((pageItem, index) => {
                   if (pageItem === 'ellipsis') {
                     return (
-                      <span key={`ellipsis-${index}`} className="px-2 py-1 text-gray-500">
+                      <span key={`ellipsis-${index}`} className="flex items-center justify-center w-10 h-8 px-2 py-1 text-gray-500 text-sm">
                         ...
                       </span>
                     );
@@ -388,7 +388,11 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                       variant={currentPage === pageNum ? "default" : "outline"}
                       size="sm"
                       onClick={() => setCurrentPage(pageNum)}
-                      className="w-8 h-8 p-0"
+                      className={`min-w-[2.5rem] h-8 px-2 py-0 text-sm font-medium flex items-center justify-center ${
+                        currentPage === pageNum 
+                          ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700" 
+                          : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                      }`}
                       title={`Go to page ${pageNum}`}
                       aria-label={`Go to page ${pageNum}`}
                     >
