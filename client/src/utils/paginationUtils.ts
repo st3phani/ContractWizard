@@ -47,51 +47,66 @@ export function generatePageNumbers(
   totalPages: number, 
   maxVisible: number = 5
 ): (number | 'ellipsis')[] {
-  if (totalPages <= maxVisible + 2) {
-    // If total pages is small, show all pages
+  if (totalPages <= 7) {
+    // If total pages is small (7 or less), show all pages
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
   const pages: (number | 'ellipsis')[] = [];
-  const showFirst = currentPage > 3;
-  const showLast = currentPage < totalPages - 2;
+  
+  // Always show first 3 pages
+  pages.push(1, 2, 3);
 
-  // Always show first page
-  pages.push(1);
-
-  // Add ellipsis if current page is far from start
-  if (currentPage > 4) {
+  // Check if we need ellipsis after first 3
+  if (currentPage > 6) {
     pages.push('ellipsis');
   }
 
-  // Calculate the range around current page
-  const start = Math.max(2, currentPage - 2);
-  const end = Math.min(totalPages - 1, currentPage + 2);
-
-  // Add pages around current page (but not if they overlap with first/last)
-  for (let i = start; i <= end; i++) {
-    if (i > 1 && i < totalPages) {
-      pages.push(i);
+  // Add pages around current page if it's not near the beginning or end
+  if (currentPage > 3 && currentPage <= totalPages - 3) {
+    // Only add current page area if it doesn't overlap with first 3 or last 3
+    if (currentPage > 6 && currentPage < totalPages - 5) {
+      const start = currentPage - 1;
+      const end = currentPage + 1;
+      for (let i = start; i <= end; i++) {
+        if (!pages.includes(i)) {
+          pages.push(i);
+        }
+      }
+      pages.push('ellipsis');
     }
   }
 
-  // Add ellipsis if current page is far from end
-  if (currentPage < totalPages - 3) {
-    pages.push('ellipsis');
+  // Check if we need ellipsis before last 3
+  if (currentPage < totalPages - 5) {
+    // Only add ellipsis if it's not already there
+    if (pages[pages.length - 1] !== 'ellipsis') {
+      pages.push('ellipsis');
+    }
   }
 
-  // Always show last page (if more than 1 page total)
-  if (totalPages > 1) {
-    pages.push(totalPages);
+  // Always show last 3 pages
+  if (totalPages > 2) {
+    const lastThree = [totalPages - 2, totalPages - 1, totalPages];
+    lastThree.forEach(page => {
+      if (!pages.includes(page)) {
+        pages.push(page);
+      }
+    });
   }
 
-  // Remove duplicates and sort
-  const uniquePages = pages.filter((page, index, arr) => {
-    if (page === 'ellipsis') return true;
-    return arr.indexOf(page) === index;
-  });
+  // Clean up and remove any duplicates while preserving order
+  const result: (number | 'ellipsis')[] = [];
+  let lastAdded: number | 'ellipsis' | null = null;
+  
+  for (const page of pages) {
+    if (page !== lastAdded) {
+      result.push(page);
+      lastAdded = page;
+    }
+  }
 
-  return uniquePages;
+  return result;
 }
 
 // Calculate pagination info text
