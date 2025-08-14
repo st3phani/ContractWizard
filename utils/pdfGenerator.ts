@@ -343,10 +343,10 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     const boxWidth = 80;
     const boxHeight = 25;
     
-    // Prestator signature box with orange-red border
-    pdf.setDrawColor(255, 102, 51); // Orange-red color (RGB: 255, 102, 51)
+    // Prestator signature box with gray border and rounded corners
+    pdf.setDrawColor(128, 128, 128); // Gray color (RGB: 128, 128, 128)
     pdf.setLineWidth(0.5);
-    pdf.rect(margin - boxPadding, y - boxPadding, boxWidth, boxHeight);
+    pdf.roundedRect(margin - boxPadding, y - boxPadding, boxWidth, boxHeight, 1.8, 1.8); // 1.8mm ≈ 5px rounded corners
     
     // Add signature icon in blue color (same as Contract Nou button - bg-blue-600)
     pdf.setDrawColor(37, 99, 235); // Blue color (RGB: 37, 99, 235 - blue-600)
@@ -376,10 +376,10 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     // Reset y for partenery signature  
     y -= 15;
     
-    // Beneficiar signature box with orange-red border
-    pdf.setDrawColor(255, 102, 51); // Orange-red color (RGB: 255, 102, 51)
+    // Beneficiar signature box with gray border and rounded corners
+    pdf.setDrawColor(128, 128, 128); // Gray color (RGB: 128, 128, 128)
     pdf.setLineWidth(0.5);
-    pdf.rect(margin + 90 - boxPadding, y - boxPadding, boxWidth, boxHeight);
+    pdf.roundedRect(margin + 90 - boxPadding, y - boxPadding, boxWidth, boxHeight, 1.8, 1.8); // 1.8mm ≈ 5px rounded corners
     
     // Add signature icon for partenery in blue color
     pdf.setDrawColor(37, 99, 235); // Blue color (RGB: 37, 99, 235 - blue-600)
@@ -395,11 +395,8 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     
     y += 3;
     pdf.setFontSize(9);
-    const parteneryName = contract.beneficiary?.isCompany ? 
-      contract.beneficiary?.companyName : 
-      contract.beneficiary?.name;
-    
-    pdf.text(parteneryName || 'N/A', margin + 90, y);
+    // Always use the person's name, not company name
+    pdf.text(contract.beneficiary?.name || 'N/A', margin + 90, y);
     y += 4;
     pdf.text(contract.signedBy, margin + 90, y);
     y += 4;
