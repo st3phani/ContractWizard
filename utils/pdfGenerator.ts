@@ -358,8 +358,7 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     
     y += 3;
     pdf.setFontSize(9);
-    pdf.text(contract.provider?.name || 'N/A', margin, y);
-    y += 4;
+    // Only show the legal representative name, not the company name
     pdf.text(contract.provider?.legalRepresentative || 'N/A', margin, y);
     y += 4;
     pdf.text(new Date(contract.signedAt).toLocaleString('ro-RO', { 
