@@ -5,8 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -348,6 +348,14 @@ export default function ContractForm() {
     if (Object.keys(errors).length > 0) {
       console.log("Form has validation errors, not submitting");
       console.log("Detailed errors:", JSON.stringify(errors, null, 2));
+      
+      // Show user-friendly validation message
+      toast({
+        title: "Form Validation Error",
+        description: "Please check all required fields are filled correctly.",
+        variant: "destructive",
+      });
+      
       // Find the first error field
       let firstErrorField = null;
       
@@ -662,7 +670,7 @@ export default function ContractForm() {
                       </div>
 
                       {selectedBeneficiary && (
-                        <div className="p-3 bg-white rounded border border-blue-200">
+                        <div className="p-3 bg-white rounded border border-blue-200 space-y-3">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center">
                               <Avatar className="h-10 w-10 mr-3">
@@ -689,6 +697,30 @@ export default function ContractForm() {
                               Change
                             </Button>
                           </div>
+
+                          {/* Address field for individuals */}
+                          {!selectedBeneficiary?.isCompany && (
+                            <div className="space-y-2">
+                              <FormField
+                                control={form.control}
+                                name="beneficiary.address"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Address *</FormLabel>
+                                    <FormControl>
+                                      <Textarea 
+                                        {...field}
+                                        placeholder="Complete address"
+                                        rows={2}
+                                        className={form.formState.errors.beneficiary?.address ? "border-red-500 bg-red-50" : ""}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
