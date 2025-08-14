@@ -368,7 +368,7 @@ export default function ContractTable({ contracts, onView, onEdit, onDownload, o
                 title="Previous page"
                 aria-label="Previous page"
               >
-Preview
+                <ChevronLeft className="h-4 w-4" />
               </Button>
               
               <div className="flex items-center space-x-1">
@@ -400,7 +400,7 @@ Preview
                 title="Next page"
                 aria-label="Next page"
               >
-Next
+                <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
