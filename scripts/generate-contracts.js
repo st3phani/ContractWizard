@@ -30,17 +30,20 @@ async function generateContracts() {
       return;
     }
     
-    // Get current max order number
-    const maxOrderResult = await pool.query('SELECT MAX(order_number) as max_order FROM contracts');
-    let currentOrderNumber = (maxOrderResult.rows[0]?.max_order || 0);
+    // Get current max order number - cast to integer since order_number might be text
+    const maxOrderResult = await pool.query('SELECT MAX(CAST(order_number AS INTEGER)) as max_order FROM contracts');
+    let currentOrderNumber = parseInt(maxOrderResult.rows[0]?.max_order || 0);
     
     console.log(`📊 Starting from order number: ${currentOrderNumber + 1}`);
     
-    const contractsToGenerate = 1000;
+    const contractsToGenerate = 10000;
     const contractValue = 1000;
     const currencies = ['RON', 'EUR', 'USD'];
     
     console.log("📝 Generating contracts...");
+    
+    let successfulContracts = 0;
+    let skippedContracts = 0;
     
     for (let i = 0; i < contractsToGenerate; i++) {
       // Select random partner and template
@@ -59,6 +62,18 @@ async function generateContracts() {
       
       currentOrderNumber++;
       
+      // Skip if order number already exists
+      const existsResult = await pool.query('SELECT 1 FROM contracts WHERE order_number = $1', [currentOrderNumber.toString()]);
+      if (existsResult.rows.length > 0) {
+        skippedContracts++;
+        // Find next available order number
+        while (true) {
+          currentOrderNumber++;
+          const checkResult = await pool.query('SELECT 1 FROM contracts WHERE order_number = $1', [currentOrderNumber.toString()]);
+          if (checkResult.rows.length === 0) break;
+        }
+      }
+      
       try {
         await pool.query(`
           INSERT INTO contracts (
@@ -73,7 +88,7 @@ async function generateContracts() {
             created_at
           ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         `, [
-          currentOrderNumber,
+          currentOrderNumber.toString(),
           randomTemplate.id,
           randomPartner.id,
           contractValue,
@@ -84,16 +99,20 @@ async function generateContracts() {
           createdDate
         ]);
         
-        // Log progress every 100 contracts
-        if ((i + 1) % 100 === 0) {
-          console.log(`✅ Generated ${i + 1}/${contractsToGenerate} contracts`);
+        successfulContracts++;
+        
+        // Log progress every 500 contracts
+        if (successfulContracts % 500 === 0) {
+          console.log(`✅ Generated ${successfulContracts}/${contractsToGenerate} contracts (skipped ${skippedContracts} duplicates)`);
         }
       } catch (error) {
         console.error(`❌ Error generating contract ${i + 1}:`, error.message);
+        skippedContracts++;
       }
     }
     
-    console.log(`🎉 Successfully generated ${contractsToGenerate} contracts!`);
+    console.log(`🎉 Successfully generated ${successfulContracts}/${contractsToGenerate} contracts!`);
+    console.log(`📊 Skipped ${skippedContracts} duplicates`);
     console.log(`📊 Final order number: ${currentOrderNumber}`);
     
   } catch (error) {
