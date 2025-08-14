@@ -75,8 +75,8 @@ export default function ContractsPage() {
   const handleEmail = async (contract: ContractWithDetails) => {
     try {
       await apiRequest("POST", `/api/contracts/${contract.id}/email`, {
-        recipient: contract.beneficiary.email,
-        subject: `Contract ${contract.template.name} - No. ${contract.orderNumber}`,
+        recipient: contract.beneficiary?.email || '',
+        subject: `Contract ${contract.template?.name || 'Unknown'} - No. ${contract.orderNumber}`,
         message: `Hello,
 
 We are sending you the contract for signing.
