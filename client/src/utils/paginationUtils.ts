@@ -52,61 +52,76 @@ export function generatePageNumbers(
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
-  const pages: (number | 'ellipsis')[] = [];
-  
+  const result: (number | 'ellipsis')[] = [];
+
   // Always show first 3 pages
-  pages.push(1, 2, 3);
+  result.push(1, 2, 3);
 
-  // Check if we need ellipsis after first 3
-  if (currentPage > 6) {
-    pages.push('ellipsis');
+  // Check if current page is in the first group
+  if (currentPage <= 3) {
+    // Current page is in first 3, just add ellipsis and last 3
+    result.push('ellipsis');
   }
-
-  // Add pages around current page if it's not near the beginning or end
-  if (currentPage > 3 && currentPage <= totalPages - 3) {
-    // Only add current page area if it doesn't overlap with first 3 or last 3
-    if (currentPage > 6 && currentPage < totalPages - 5) {
-      const start = currentPage - 1;
-      const end = currentPage + 1;
-      for (let i = start; i <= end; i++) {
-        if (!pages.includes(i)) {
-          pages.push(i);
-        }
+  // Check if current page is close to first group (4, 5, 6)
+  else if (currentPage >= 4 && currentPage <= 6) {
+    // Extend first group to include current page
+    for (let i = 4; i <= Math.min(6, currentPage + 1); i++) {
+      result.push(i);
+    }
+    // Add ellipsis before last 3 if there's space
+    if (totalPages > 9) {
+      result.push('ellipsis');
+    }
+  }
+  // Check if current page is close to last group
+  else if (currentPage > totalPages - 6 && currentPage <= totalPages - 3) {
+    // Add ellipsis after first 3
+    result.push('ellipsis');
+    // Add pages around current page that don't overlap with last 3
+    const start = Math.max(4, totalPages - 5);
+    const end = totalPages - 3;
+    for (let i = start; i <= end; i++) {
+      if (!result.includes(i)) {
+        result.push(i);
       }
-      pages.push('ellipsis');
     }
   }
-
-  // Check if we need ellipsis before last 3
-  if (currentPage < totalPages - 5) {
-    // Only add ellipsis if it's not already there
-    if (pages[pages.length - 1] !== 'ellipsis') {
-      pages.push('ellipsis');
+  // Current page is in the middle
+  else {
+    result.push('ellipsis');
+    
+    // Add current page with one page before and after
+    const start = currentPage - 1;
+    const end = currentPage + 1;
+    for (let i = start; i <= end; i++) {
+      result.push(i);
     }
+    
+    result.push('ellipsis');
   }
 
   // Always show last 3 pages
   if (totalPages > 2) {
     const lastThree = [totalPages - 2, totalPages - 1, totalPages];
-    lastThree.forEach(page => {
-      if (!pages.includes(page)) {
-        pages.push(page);
+    for (const page of lastThree) {
+      if (!result.includes(page)) {
+        result.push(page);
       }
-    });
-  }
-
-  // Clean up and remove any duplicates while preserving order
-  const result: (number | 'ellipsis')[] = [];
-  let lastAdded: number | 'ellipsis' | null = null;
-  
-  for (const page of pages) {
-    if (page !== lastAdded) {
-      result.push(page);
-      lastAdded = page;
     }
   }
 
-  return result;
+  // Remove duplicates while preserving order
+  const seen = new Set<number | 'ellipsis'>();
+  const final: (number | 'ellipsis')[] = [];
+  
+  for (const item of result) {
+    if (!seen.has(item)) {
+      seen.add(item);
+      final.push(item);
+    }
+  }
+
+  return final;
 }
 
 // Calculate pagination info text
