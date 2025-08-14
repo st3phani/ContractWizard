@@ -341,7 +341,7 @@ export function generatePDF(populatedContent: string, contract: ContractWithDeta
     // Add signature boxes with padding (10px = ~3.5mm)
     const boxPadding = 3.5;
     const boxWidth = 80;
-    const boxHeight = 25;
+    const boxHeight = 20; // Reduced from 25 to 20 to eliminate empty space
     
     // Prestator signature box with gray border and rounded corners
     pdf.setDrawColor(128, 128, 128); // Gray color (RGB: 128, 128, 128)
