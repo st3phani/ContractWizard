@@ -137,67 +137,15 @@ Contract Manager Team`,
               <h2 className="text-2xl font-semibold text-gray-900">Contracts</h2>
               <p className="text-gray-600 mt-1">Manage all contracts in the system</p>
             </div>
-            <div>
-              {/* Test multiple approaches */}
-              <button
-                type="button"
-                onMouseEnter={() => console.log("Mouse entered button")}
-                onMouseLeave={() => console.log("Mouse left button")}
-                onFocus={() => console.log("Button focused")}
-                onBlur={() => console.log("Button blurred")}
-                onClick={(e) => {
-                  console.log("onClick triggered!", e);
-                  window.location.href = '/contract-form';
-                }}
-                onPointerDown={() => console.log("Pointer down")}
-                onPointerUp={() => console.log("Pointer up")}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer"
-                title="Create a new contract"
-                tabIndex={0}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                New Contract
-              </button>
-              
-              {/* Alternative native button */}
-              <br/><br/>
-              <button 
-                onClick={() => window.location.href = '/contract-form'}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: '#059669',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer'
-                }}
-              >
-                Alternative Button
-              </button>
-              
-              <br/><br/>
-              <div 
-                onClick={() => {
-                  console.log("DIV clicked!");
-                  window.location.href = '/contract-form';
-                }}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: '#dc2626',
-                  color: 'white',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  display: 'inline-block'
-                }}
-              >
-                DIV Button Test
-              </div>
-              
-              <br/><br/>
-              <small style={{ color: '#666' }}>
-                Direct: <a href="/contract-form" style={{ color: '#0066cc' }}>Link Test</a>
-              </small>
-            </div>
+            <Button
+              onClick={() => setLocation("/contract-form")}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              title="Create a new contract"
+              aria-label="Create a new contract"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              New Contract
+            </Button>
           </div>
         </header>
 

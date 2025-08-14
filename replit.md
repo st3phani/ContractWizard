@@ -13,6 +13,11 @@ Preferred communication style: Simple, everyday language.
 - **Backend**: Node.js with Express.js, TypeScript, Drizzle ORM, PostgreSQL (Neon Database).
 - **PDF Generation**: jsPDF with custom Romanian character encoding.
 
+### Recent Changes (August 14, 2025)
+- **Contract Form Fix**: Resolved "Generate Contract" button validation issue by adjusting Zod schema validation for address field in individual beneficiaries
+- **Form Validation**: Improved form validation user experience with better error messaging and field focus handling
+- **UI Enhancement**: Added editable address field in contract form for individual partners to ensure complete beneficiary data
+
 ### Data Model
 - **Entities**: Contract Templates, Beneficiaries (Partners), Contracts, User Profiles.
 - **Schema**: Centralized definitions in `shared/schema.ts` with Drizzle ORM for type-safe operations.
